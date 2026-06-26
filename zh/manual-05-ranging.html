@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>测距进阶 - 掌上无人机实验手册</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="wy-nav-side">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
+        <div class="version">latest</div>
+        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
+      </div>
+      <nav class="wy-menu">
+        <p class="caption">目录</p>
+        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
+<li><a class="" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
+<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
+<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
+<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>multiranger</a></li>
+<li><a class="active" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
+<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
+<li><a class="" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
+<li><a class="" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
+<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
+<li><a class="" href="manual-10-motion-commander.html"><span>实验 10</span>Motion Commander 进阶编程</a></li>
+<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
+<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>PositionCommander</a></li>
+<li><a class="" href="manual-13-project-demo.html"><span>实验 13</span>综合项目展示任务</a></li></ul>
+      </nav>
+    </div>
+  </aside>
+  <main class="wy-nav-content-wrap">
+    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
+    <article class="wy-nav-content">
+      <div class="rst-content">
+        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>测距进阶</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
+        <div class="language-switch"><span>中文</span><a href="../en/manual-05-ranging.html">English</a></div>
+        <h1>实验 5: 测距进阶</h1><p class="subtitle">Advanced Ranging Experiment</p><p>实验手册2——测距进阶</p>
+<p>实验目标</p>
+<p>继续熟悉cflib库中multiranger传感器相关的编程方法。</p>
+<p>使用multiranger传感器实现更多有趣的飞行任务</p>
+<p>实验准备</p>
+<p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
+<p>本实验中需要用到的硬件设备：</p>
+<p>* Crazyflie 2.0</p>
+<p>* Crazyradio PA</p>
+<p>* Flow deck</p>
+<p>* Multiranger deck</p>
+<p>实验步骤</p>
+<p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
+<p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
+<p>实验一：起飞前进，检测到障碍降落</p>
+<p>上节课的内容，大家学会了单独调用multiranger模块查看其参数，以及运行了一个现成的程序实现了“推动”无人机的效果。接下来同学们将跟着示例程序，自己从基础，一步一步地编程实现特定的功能。</p>
+<p>接下来给出一个可以运行的完整的示例程序，今天基于multiranger模块的相关编程，都可以以此为模板进行进一步的代码编写。</p>
+<p>import logging</p>
+<p>import sys</p>
+<p>import time</p>
+<p>import cflib.crtp</p>
+<p>from cflib.crazyflie import Crazyflie</p>
+<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
+<p>from cflib.positioning.motion_commander import MotionCommander</p>
+<p>from cflib.utils import uri_helper</p>
+<p>from cflib.utils.multiranger import Multiranger</p>
+<p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址&#x27;)</p>
+<p>if len(sys.argv) &gt; 1:</p>
+<p>URI = sys.argv[1]</p>
+<p># Only output errors from the logging framework</p>
+<p>logging.basicConfig(level=logging.ERROR)</p>
+<p>def is_close(range):</p>
+<p>MIN_DISTANCE = 0.4  # m</p>
+<p>if range is None:</p>
+<p>return False</p>
+<p>else:</p>
+<p>return range &lt; MIN_DISTANCE</p>
+<p>if __name__ == &#x27;__main__&#x27;:</p>
+<p># Initialize the low-level drivers</p>
+<p>cflib.crtp.init_drivers()</p>
+<p>cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)</p>
+<p>with SyncCrazyflie(URI, cf=cf) as scf:</p>
+<p># Arm the Crazyflie</p>
+<p>scf.cf.platform.send_arming_request(True)</p>
+<p>time.sleep(1.0)</p>
+<p>with MotionCommander(scf) as motion_commander:</p>
+<p>with Multiranger(scf) as multiranger:</p>
+<p>keep_flying = True</p>
+<p>print(&#x27;already,wait a second&#x27;)</p>
+<p>time.sleep(1.0)</p>
+<p>VELOCITY = 0.3</p>
+<p>velocity_x = 0.3</p>
+<p>velocity_y = 0.0</p>
+<p>while keep_flying: # 只要可以继续飞行就循环执行</p>
+<p># 检查上方有没有障碍物</p>
+<p>if is_close(multiranger.up):</p>
+<p>keep_flying = False #有障碍物！停止飞行</p>
+<p># 检查前方有没有障碍物</p>
+<p>if is_close(multiranger.front):</p>
+<p>keep_flying = False  #有障碍物！停止飞行</p>
+<p># 命令无人机以设定速度飞行</p>
+<p>motion_commander.start_linear_motion(</p>
+<p>velocity_x, velocity_y, 0)</p>
+<p>time.sleep(0.1)</p>
+<p>print(&#x27;Demo terminated!&#x27;)</p>
+<p>该代码实现了一个简单的功能，无人机起飞，稳定姿态1秒后以0.3m每秒的速度向前飞行，直到检测到无人机前方0.4m内有障碍物，则会停止前进并且降落。</p>
+<p>程序执行流程</p>
+<p>启动程序 → 连接无人机 → 解锁准备</p>
+<p>开始飞行 → 以0.3米/秒速度向前飞行</p>
+<p>持续检测 → 每0.1秒检查一次前方和上方</p>
+<p>遇到障碍 → 如果前方和上方距离小于40厘米就停止飞行</p>
+<p>结束任务 → 打印&quot;Demo terminated!&quot;</p>
+<p>同学们需要理解该代码中必要的一些语句，首先对于is_close这个函数，该函数定义了一个变量值为0.3，该函数将会返回multiranger传感器在某个方向上是否在某个距离内检测到障碍物，调用方法可以参考代码内该函数被调用的位置以及传入的参数。MIN_DISTANCE定义的距离0.3则代表了该函数将会在multiranger传感器在某个方向上的0.3m内检测到障碍物之后返回确定的值。</p>
+<figure><img src="../assets/images/manual-05-ranging/001.png" alt="manual image" loading="lazy"></figure>
+<p>同时，对于主程序中的while循环，一直在判断一个叫做keep_flying的标志位，该标志位为true时，while循环将会一直循环执行下面的语句（直到time.sleep（0.1）那一条语句）。当while语句结束，也就是keep_flying的标志位被置为false则跳出while循环，执行while循环之后的代码，也就是print语句，同时，motioncommander类也会因为被顺序执行完毕自动销毁，无人机会自动降落。这就是这个代码的原理。</p>
+<p>实验二：前后往返</p>
+<p>接下来，把motioncommander类里的代码内容换成如下内容：</p>
+<figure><img src="../assets/images/manual-05-ranging/002.png" alt="manual image" loading="lazy"></figure>
+<p>在运行该代码之前，将无人机放在两堵墙之间，无人机的前方垂直于两堵墙。运行效果为无人机将会在两面墙之间来回“弹跳”，想一想这个过程中，代码里有哪些参数修改了之后，会对无人机的运行效果造成怎样的影响？同样地，我们保留了若无人机检测到上方有物体时，也会自动降落的功能，该代码运行时，若不手动停止或者上方检测到障碍物，无人机将会在两面墙之间一直来回“弹跳”，希望同学们可以理解这个代码的原理为后面做铺垫。</p>
+<p>实验三：在一个盒子里“弹跳”</p>
+<p>运行下面完整的代码（也就是Bouncing_box.py）：</p>
+<p>注意，运行该代码前尽量将无人机放在运行场地中心的位置，该代码主要调用了flowdeck模块的功能实现视觉导航和定位，没有用到multiranger的功能。让无人机实现在一个正方形的区域内“弹跳”，即每次接触到这个看不见的正方形边界之后，无人机在x与y方向上的速度方向改变，达到一个“回头弹跳”的效果。</p>
+<p>因为使用的是flowdeck的功能，所以只在没有反光的场地上运行的效果最好，同样地会在这片看不见的正方形区域上无限弹跳，直到手动停止程序。BOX_LIMIT = 0.3则设置的是该正方形区域的大小，同学们可以适当修改这个值，注意起飞时最好放在场地中间。</p>
+<p>import logging</p>
+<p>import sys</p>
+<p>import time</p>
+<p>from threading import Event</p>
+<p>import cflib.crtp</p>
+<p>from cflib.crazyflie import Crazyflie</p>
+<p>from cflib.crazyflie.log import LogConfig</p>
+<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
+<p>from cflib.positioning.motion_commander import MotionCommander</p>
+<p>from cflib.utils import uri_helper</p>
+<p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)</p>
+<p>DEFAULT_HEIGHT = 0.35</p>
+<p>BOX_LIMIT = 0.3</p>
+<p>deck_attached_event = Event()</p>
+<p>logging.basicConfig(level=logging.ERROR)</p>
+<p>position_estimate = [0, 0]</p>
+<p>def move_box_limit(scf):</p>
+<p>with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:</p>
+<p>body_x_cmd = 0.2</p>
+<p>body_y_cmd = 0.1</p>
+<p>max_vel = 0.2</p>
+<p>while (1):</p>
+<p>#if position_estimate[0] &gt; BOX_LIMIT:</p>
+<p>#    mc.start_back()</p>
+<p>#elif position_estimate[0] &lt; -BOX_LIMIT:</p>
+<p>#    mc.start_forward()</p>
+<p>if position_estimate[0] &gt; BOX_LIMIT:</p>
+<p>body_x_cmd = -max_vel</p>
+<p>elif position_estimate[0] &lt; -BOX_LIMIT:</p>
+<p>body_x_cmd = max_vel</p>
+<p>if position_estimate[1] &gt; BOX_LIMIT:</p>
+<p>body_y_cmd = -max_vel</p>
+<p>elif position_estimate[1] &lt; -BOX_LIMIT:</p>
+<p>body_y_cmd = max_vel</p>
+<p>mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)</p>
+<p>time.sleep(0.1)</p>
+<p>def move_linear_simple(scf):</p>
+<p>...</p>
+<p>def take_off_simple(scf):</p>
+<p>...</p>
+<p>def log_pos_callback(timestamp, data, logconf):</p>
+<p>print(data)</p>
+<p>global position_estimate</p>
+<p>position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]</p>
+<p>position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]</p>
+<p>def param_deck_flow(_, value_str):</p>
+<p>value = int(value_str)</p>
+<p>print(value)</p>
+<p>if value:</p>
+<p>deck_attached_event.set()</p>
+<p>print(&#x27;Deck is attached!&#x27;)</p>
+<p>else:</p>
+<p>print(&#x27;Deck is NOT attached!&#x27;)</p>
+<p>if __name__ == &#x27;__main__&#x27;:</p>
+<p>cflib.crtp.init_drivers()</p>
+<p>with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</p>
+<p>scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,</p>
+<p>cb=param_deck_flow)</p>
+<p>time.sleep(1)</p>
+<p>logconf = LogConfig(name=&#x27;Position&#x27;, period_in_ms=10)</p>
+<p>logconf.add_variable(&#x27;stateEstimate.x&#x27;, &#x27;float&#x27;)</p>
+<p>logconf.add_variable(&#x27;stateEstimate.y&#x27;, &#x27;float&#x27;)</p>
+<p>scf.cf.log.add_config(logconf)</p>
+<p>logconf.data_received_cb.add_callback(log_pos_callback)</p>
+<p>if not deck_attached_event.wait(timeout=5):</p>
+<p>print(&#x27;No flow deck detected!&#x27;)</p>
+<p>sys.exit(1)</p>
+<p># Arm the Crazyflie</p>
+<p>scf.cf.platform.send_arming_request(True)</p>
+<p>time.sleep(1.0)</p>
+<p>logconf.start()</p>
+<p>move_box_limit(scf)</p>
+<p>logconf.stop()</p>
+<p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
+<p>实验四（拓展选做）：walk follow the wall</p>
+<p>将该节课附上的wall_following.py和multiranger_wall_following.py拷贝至虚拟机中。其中将multiranger_wall_following.py放在workspace目录下，在workspace目录下再新建一个名为wall_following的目录，将wall_following.py文件放入其中，以完成multiranger_wall_following.py文件运行所需要的依赖。</p>
+<p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
+      </div>
+    </article>
+  </main>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

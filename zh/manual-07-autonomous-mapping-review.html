@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自主建图+复习 - 掌上无人机实验手册</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="wy-nav-side">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
+        <div class="version">latest</div>
+        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
+      </div>
+      <nav class="wy-menu">
+        <p class="caption">目录</p>
+        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
+<li><a class="" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
+<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
+<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
+<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>multiranger</a></li>
+<li><a class="" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
+<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
+<li><a class="active" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
+<li><a class="" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
+<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
+<li><a class="" href="manual-10-motion-commander.html"><span>实验 10</span>Motion Commander 进阶编程</a></li>
+<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
+<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>PositionCommander</a></li>
+<li><a class="" href="manual-13-project-demo.html"><span>实验 13</span>综合项目展示任务</a></li></ul>
+      </nav>
+    </div>
+  </aside>
+  <main class="wy-nav-content-wrap">
+    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
+    <article class="wy-nav-content">
+      <div class="rst-content">
+        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>自主建图+复习</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
+        <div class="language-switch"><span>中文</span><a href="../en/manual-07-autonomous-mapping-review.html">English</a></div>
+        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p><p>实验手册4——自主建图+复习</p>
+<p>实验目标</p>
+<p>在前序实验中，同学们已经体验了操控无人机进行建图。本节课将进一步编写预定代码，让无人机自主飞行，并对复杂地图环境进行建模。</p>
+<p>同时，本节课也会帮助大家回顾前三天学习内容，为综合项目展示任务做准备。</p>
+<p>实验准备</p>
+<p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
+<p>本实验中需要用到的硬件设备：</p>
+<p>* Crazyflie 2.0</p>
+<p>* Crazyradio PA</p>
+<p>* Flow deck</p>
+<p>* Multiranger deck</p>
+<p>实验步骤</p>
+<p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
+<p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
+<p>实验：自主建图</p>
+<p>首先附上该实验的代码auto_multiranger_pointcloud.py。</p>
+<p>在该代码的中间部分实例化了一个motioncommander，同学们在这图示的128到137行的位置进行代码的修改，利用之前学到的motioncommander的编程知识编写出自己的控制无人机自主飞行的代码。</p>
+<p>注意，要想无人机建图的点云质量较高，建议放慢无人机的速度，给到0.2m/s的速度或者更低，注意无人机头部前方的朝向位置，每经过一些拐点，无人机的转向的方向和角度都是需要考虑的地方。</p>
+<figure><img src="../assets/images/manual-07-autonomous-mapping-review/001.png" alt="manual image" loading="lazy"></figure>
+<p>本节课的实验场地如下，尝试用该程序让无人机自主飞行建立这个地图的清晰的点云图。</p>
+<figure><img src="../assets/images/manual-07-autonomous-mapping-review/002.png" alt="manual image" loading="lazy"></figure>
+<p>复习</p>
+<p>各位同学，本次暑期学校的前三天实践已经进入综合整理阶段。本节课不再新增大量实验，而是鼓励大家复习之前学习到的内容，针对还不熟悉的环节查漏补缺，为后续综合项目展示做好准备。</p>
+<p>本节课也会把前三天使用到的实验手册和代码打包整理好，供大家继续调试和复盘。同学们可以回忆本次暑期学校已经学习到的内容，例如：</p>
+<p>如何在windows电脑上运行linux虚拟机？</p>
+<p>Linux系统的基础操作</p>
+<p>Crazyflie无人机的基本信息</p>
+<p>如何在linux系统上搭建crazyflie无人机的运行环境？</p>
+<p>Crazyflie无人机的基本编程库的使用</p>
+<p>Crazyflie无人机的传感器原理和应用</p>
+<p>无人机自主探索的基础理论</p>
+<p>列出以上知识点供大家启发</p>
+<p>后续综合项目展示会以实践方式展开，期望同学们把学到的理论落实到可运行的无人机任务中。展示内容将分为创意板块和竞速板块，具体任务都来自前三天实验手册涉及的知识点；完成基础任务即可达到展示要求，实现效果更好的小组会获得更高评价。</p>
+      </div>
+    </article>
+  </main>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

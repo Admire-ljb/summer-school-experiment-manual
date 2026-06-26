@@ -1,0 +1,371 @@
+{
+  "source_dir": "D:\\暑期学校\\实验手册",
+  "manuals": [
+    {
+      "slug": "manual-01-vm",
+      "number": 1,
+      "zh_title": "安装配置虚拟机",
+      "en_title": "Virtual Machine Installation and Configuration",
+      "source_name": "Day1_实验手册1-安装配置虚拟机.docx",
+      "purpose": "Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.",
+      "preparation": [
+        "Windows host computer with sufficient memory and disk space.",
+        "VMware Workstation Pro 16 installation package.",
+        "Ubuntu 20.04 LTS desktop image."
+      ],
+      "procedure": [
+        "Install VMware Workstation and verify that the new virtual-machine wizard is available.",
+        "Create an Ubuntu virtual machine with appropriate CPU, memory, disk, and NAT network settings.",
+        "Install Ubuntu, perform first-boot setup, install VMware Tools, and create a clean snapshot."
+      ],
+      "verification": [
+        "Confirm network access from Ubuntu.",
+        "Verify screen scaling and host-to-guest file transfer.",
+        "Restore the clean snapshot once to confirm recovery is available."
+      ]
+    },
+    {
+      "slug": "manual-02-ros",
+      "number": 2,
+      "zh_title": "配置认知 ROS",
+      "en_title": "ROS Configuration and Basic Concepts",
+      "source_name": "Day1_实验手册2-配置认知ROS.docx",
+      "purpose": "Install ROS and establish the basic concepts used by later robot-control experiments.",
+      "preparation": [
+        "Ubuntu virtual machine from Manual 1.",
+        "Network access for package installation.",
+        "Terminal access and basic Linux command familiarity."
+      ],
+      "procedure": [
+        "Install ROS using the documented installation path or classroom script.",
+        "Start roscore and run turtlesim-related commands.",
+        "Use ROS tools to inspect nodes, topics, graphs, and message data."
+      ],
+      "verification": [
+        "Explain package, node, topic, publisher, and subscriber roles.",
+        "Run turtlesim and teleoperation successfully.",
+        "Use rqt_graph, rqt_plot, rosnode, and rostopic for observation."
+      ]
+    },
+    {
+      "slug": "manual-03-crazyflie-setup",
+      "number": 3,
+      "zh_title": "初次配置与驱动 Crazyflie 无人机",
+      "en_title": "Initial Crazyflie Configuration and Operation",
+      "source_name": "Day1_实验手册3-初次配置与驱动crazyfile无人机.docx",
+      "purpose": "Prepare the Crazyflie software and hardware connection path for safe first operation.",
+      "preparation": [
+        "Ubuntu/ROS environment from the previous manuals.",
+        "Crazyflie aircraft, battery, USB cable, and Crazyradio.",
+        "cflib, Crazyflie client, and required Python dependencies."
+      ],
+      "procedure": [
+        "Install the Crazyflie client and required libraries.",
+        "Configure USB permissions and radio connection settings.",
+        "Connect to the aircraft and run conservative first-control tests."
+      ],
+      "verification": [
+        "Crazyflie client starts correctly.",
+        "USB and radio connection can detect the aircraft.",
+        "A short scripted test can be explained and stopped safely."
+      ]
+    },
+    {
+      "slug": "manual-04-multiranger",
+      "number": 4,
+      "zh_title": "multiranger",
+      "en_title": "Multi-ranger Sensor Experiment",
+      "source_name": "Day2_实验手册1-multiranger.docx",
+      "purpose": "Read multi-direction distance measurements and connect sensor readings to basic flight behavior.",
+      "preparation": [
+        "Crazyflie with Multi-ranger deck.",
+        "Working cflib environment.",
+        "Clear indoor test area with simple obstacles."
+      ],
+      "procedure": [
+        "Connect to Crazyflie through cflib.",
+        "Read front, back, left, right, up, and down range values.",
+        "Use threshold rules to generate simple reactive movement."
+      ],
+      "verification": [
+        "Range values change consistently when obstacles move.",
+        "Students can identify which sensor direction triggered a response.",
+        "The reactive behavior remains inside the safety area."
+      ]
+    },
+    {
+      "slug": "manual-05-ranging",
+      "number": 5,
+      "zh_title": "测距进阶",
+      "en_title": "Advanced Ranging Experiment",
+      "source_name": "Day2_实验手册2-测距进阶.docx",
+      "purpose": "Extend basic range reading into mission rules and obstacle-aware flight actions.",
+      "preparation": [
+        "Crazyflie and Multi-ranger deck.",
+        "Validated range-reading script.",
+        "Instructor-confirmed test area."
+      ],
+      "procedure": [
+        "Collect range readings under several obstacle configurations.",
+        "Implement obstacle-triggered actions such as landing, backing away, or bouncing.",
+        "Adjust thresholds and speeds conservatively."
+      ],
+      "verification": [
+        "The program exits through a safe stop condition.",
+        "Sensor logs support the observed behavior.",
+        "The selected thresholds can be justified from the measurements."
+      ]
+    },
+    {
+      "slug": "manual-06-complex-map",
+      "number": 6,
+      "zh_title": "复杂地图飞行与建图",
+      "en_title": "Complex-map Flight and Mapping",
+      "source_name": "Day2_实验手册3-复杂地图飞行与建图.docx",
+      "purpose": "Use controlled flight and range sensing to explore a more complex obstacle map.",
+      "preparation": [
+        "Prepared obstacle area.",
+        "Crazyflie with relevant sensing deck.",
+        "Mapping or logging script from the manual."
+      ],
+      "procedure": [
+        "Inspect the map constraints and permitted flight area.",
+        "Run the flight or mapping procedure slowly enough for stable data collection.",
+        "Review the generated obstacle points or map-like output."
+      ],
+      "verification": [
+        "The flight remains within the allowed area.",
+        "The map output reflects major walls or obstacle regions.",
+        "Failure cases are documented with likely causes."
+      ]
+    },
+    {
+      "slug": "manual-07-autonomous-mapping-review",
+      "number": 7,
+      "zh_title": "自主建图+复习",
+      "en_title": "Autonomous Mapping and Review",
+      "source_name": "Day2_实验手册4-自主建图+复习.docx",
+      "purpose": "Consolidate the ranging and mapping workflow through an autonomous mapping review task.",
+      "preparation": [
+        "Completed range-sensing and mapping exercises.",
+        "Known test area and flight restrictions.",
+        "Team notes from previous experiments."
+      ],
+      "procedure": [
+        "Review connection, sensing, control, and mapping requirements.",
+        "Design or modify a route that samples useful map areas.",
+        "Run the autonomous mapping task and record the result."
+      ],
+      "verification": [
+        "The route is reproducible.",
+        "The produced map or log supports the route explanation.",
+        "Main risks and improvements are recorded objectively."
+      ]
+    },
+    {
+      "slug": "manual-08-path-planning",
+      "number": 8,
+      "zh_title": "路径规划仿真",
+      "en_title": "Path-planning Simulation",
+      "source_name": "Day3_实验手册1-路径规划仿真.docx",
+      "purpose": "Run path-planning simulation experiments and compare route-generation behavior.",
+      "preparation": [
+        "Simulation project files.",
+        "Ubuntu environment with required dependencies.",
+        "Terminal access in the project directory."
+      ],
+      "procedure": [
+        "Prepare and build the simulation project as documented.",
+        "Set start and goal conditions in the simulator or visualization tool.",
+        "Run A*, RRT, RRT*, or the provided planning examples and observe outputs."
+      ],
+      "verification": [
+        "A route is generated for the selected task.",
+        "The observed route can be compared across algorithms or parameters.",
+        "Execution notes include commands, errors, and screenshots where applicable."
+      ]
+    },
+    {
+      "slug": "manual-09-cflib",
+      "number": 9,
+      "zh_title": "cflib 库编程",
+      "en_title": "cflib Programming",
+      "source_name": "Day3_实验手册2-cflib库编程.docx",
+      "purpose": "Use cflib to structure Crazyflie connection, logging, parameter access, and command scripts.",
+      "preparation": [
+        "Working Crazyflie connection.",
+        "Python environment with cflib installed.",
+        "Known radio URI or scanning procedure."
+      ],
+      "procedure": [
+        "Initialize CRTP drivers and create a Crazyflie object.",
+        "Use synchronized connection patterns for safer program structure.",
+        "Read parameters or logs and send controlled commands."
+      ],
+      "verification": [
+        "The script connects and exits cleanly.",
+        "Logged or printed values match the expected aircraft state.",
+        "Motion commands are short, conservative, and explainable."
+      ]
+    },
+    {
+      "slug": "manual-10-motion-commander",
+      "number": 10,
+      "zh_title": "Motion Commander 进阶编程",
+      "en_title": "Advanced Motion Commander Programming",
+      "source_name": "Day3_实验手册3-Motion Commander进阶编程.docx",
+      "purpose": "Use Motion Commander movement primitives to construct repeatable flight routines.",
+      "preparation": [
+        "cflib script template.",
+        "Safe test area.",
+        "Instructor-approved height and speed parameters."
+      ],
+      "procedure": [
+        "Create a MotionCommander context.",
+        "Combine takeoff, landing, directional movement, turns, and pauses.",
+        "Test short movement segments before a complete sequence."
+      ],
+      "verification": [
+        "The drone completes the intended primitive sequence.",
+        "Timing, height, and distance choices are recorded.",
+        "The program can be stopped safely if behavior deviates."
+      ]
+    },
+    {
+      "slug": "manual-11-integrated-practice",
+      "number": 11,
+      "zh_title": "阶段综合实践",
+      "en_title": "Integrated Practice",
+      "source_name": "Day3_实验手册4-阶段综合实践.docx",
+      "purpose": "Combine setup, sensing, planning, and control skills in a bounded practical task.",
+      "preparation": [
+        "Completed prior manuals.",
+        "Task area and constraints.",
+        "Team role assignment for operation, monitoring, and recording."
+      ],
+      "procedure": [
+        "Read the task constraints and define success criteria.",
+        "Break the route or behavior into testable components.",
+        "Run the integrated task and record results."
+      ],
+      "verification": [
+        "The task is completed within the defined constraints.",
+        "The team can explain the selected method.",
+        "Problems are documented with concrete evidence."
+      ]
+    },
+    {
+      "slug": "manual-12-position-commander",
+      "number": 12,
+      "zh_title": "PositionCommander",
+      "en_title": "PositionCommander",
+      "source_name": "Day3_实验手册5-PositionCommander.docx",
+      "purpose": "Use coordinate-based commands for waypoint routes and structured spatial tasks.",
+      "preparation": [
+        "Crazyflie setup with appropriate positioning support.",
+        "Coordinate-frame assumptions understood before flight.",
+        "Waypoint list or route sketch."
+      ],
+      "procedure": [
+        "Initialize PositionCommander or the documented position-control API.",
+        "Set default height, speed, and coordinate frame carefully.",
+        "Execute waypoint routes such as square, cube, star, or map-based paths."
+      ],
+      "verification": [
+        "The coordinate route matches the intended geometry.",
+        "The aircraft remains inside the allowed volume.",
+        "The route can be adjusted by editing explicit coordinates."
+      ]
+    },
+    {
+      "slug": "manual-13-project-demo",
+      "number": 13,
+      "zh_title": "综合项目展示任务",
+      "en_title": "Integrated Project Demonstration",
+      "source_name": "Day3_实验手册6-综合项目展示任务.docx",
+      "purpose": "Present a complete project task using the course experiments as technical basis.",
+      "preparation": [
+        "Project objective and success criteria.",
+        "Working code and tested hardware setup.",
+        "Presentation evidence such as logs, route sketches, video, or screenshots."
+      ],
+      "procedure": [
+        "Select a feasible demonstration task.",
+        "Implement and rehearse the workflow under safety constraints.",
+        "Present the method, result, limitations, and improvement plan."
+      ],
+      "verification": [
+        "The demonstration is executable or reproducible.",
+        "The presentation explains method and evidence objectively.",
+        "Safety, teamwork, and failure handling are included in the report."
+      ]
+    }
+  ],
+  "stats": {
+    "manual-01-vm": {
+      "paragraphs": 134,
+      "tables": 0,
+      "images": 22
+    },
+    "manual-02-ros": {
+      "paragraphs": 91,
+      "tables": 0,
+      "images": 24
+    },
+    "manual-03-crazyflie-setup": {
+      "paragraphs": 167,
+      "tables": 0,
+      "images": 24
+    },
+    "manual-04-multiranger": {
+      "paragraphs": 145,
+      "tables": 0,
+      "images": 4
+    },
+    "manual-05-ranging": {
+      "paragraphs": 160,
+      "tables": 0,
+      "images": 2
+    },
+    "manual-06-complex-map": {
+      "paragraphs": 30,
+      "tables": 0,
+      "images": 4
+    },
+    "manual-07-autonomous-mapping-review": {
+      "paragraphs": 33,
+      "tables": 0,
+      "images": 2
+    },
+    "manual-08-path-planning": {
+      "paragraphs": 104,
+      "tables": 0,
+      "images": 31
+    },
+    "manual-09-cflib": {
+      "paragraphs": 229,
+      "tables": 0,
+      "images": 9
+    },
+    "manual-10-motion-commander": {
+      "paragraphs": 85,
+      "tables": 0,
+      "images": 12
+    },
+    "manual-11-integrated-practice": {
+      "paragraphs": 13,
+      "tables": 0,
+      "images": 1
+    },
+    "manual-12-position-commander": {
+      "paragraphs": 101,
+      "tables": 0,
+      "images": 7
+    },
+    "manual-13-project-demo": {
+      "paragraphs": 65,
+      "tables": 0,
+      "images": 2
+    }
+  }
+}

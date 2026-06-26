@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motion Commander 进阶编程 - 掌上无人机实验手册</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="wy-nav-side">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
+        <div class="version">latest</div>
+        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
+      </div>
+      <nav class="wy-menu">
+        <p class="caption">目录</p>
+        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
+<li><a class="" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
+<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
+<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
+<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>multiranger</a></li>
+<li><a class="" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
+<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
+<li><a class="" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
+<li><a class="" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
+<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
+<li><a class="active" href="manual-10-motion-commander.html"><span>实验 10</span>Motion Commander 进阶编程</a></li>
+<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
+<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>PositionCommander</a></li>
+<li><a class="" href="manual-13-project-demo.html"><span>实验 13</span>综合项目展示任务</a></li></ul>
+      </nav>
+    </div>
+  </aside>
+  <main class="wy-nav-content-wrap">
+    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
+    <article class="wy-nav-content">
+      <div class="rst-content">
+        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>Motion Commander 进阶编程</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
+        <div class="language-switch"><span>中文</span><a href="../en/manual-10-motion-commander.html">English</a></div>
+        <h1>实验 10: Motion Commander 进阶编程</h1><p class="subtitle">Advanced Motion Commander Programming</p><p>实验手册3——Motion Commander进阶编程</p>
+<p>实验目标</p>
+<p>学习Motion Commander类下的各种子函数以控制无人机</p>
+<p>组合上述学到的子函数，让无人机做出一些花样飞行动作</p>
+<p>熟悉开发流程，为阶段综合实践做准备</p>
+<p>实验准备</p>
+<p>之前实验已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
+<p>实验内容</p>
+<p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
+<p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
+<p>一.深度认识motion commander</p>
+<p>首先我们先复习一下之前用到过的Motion Commander类代码。</p>
+<p>这里可以参考我们在第四节课用到的test.py中的内容，该python代码实现了简单的控制无人机的部分动作。</p>
+<p>import logging</p>
+<p>import time</p>
+<p>import cflib.crtp</p>
+<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
+<p>from cflib.positioning.motion_commander import MotionCommander</p>
+<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
+<p># Only output errors from the logging framework</p>
+<p>logging.basicConfig(level=logging.ERROR)</p>
+<p>if __name__ == &#x27;__main__&#x27;:</p>
+<p># Initialize the low-level drivers (don&#x27;t list the debug drivers)</p>
+<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
+<p>with SyncCrazyflie(URI) as scf:</p>
+<p># We take off when the commander is created</p>
+<p>with MotionCommander(scf) as mc:</p>
+<p>print(&#x27;Taking off!&#x27;)</p>
+<p>time.sleep(1)</p>
+<p># There is a set of functions that move a specific distance</p>
+<p># We can move in all directions</p>
+<p>print(&#x27;Moving forward 0.5m&#x27;)</p>
+<p>mc.forward(0.5)</p>
+<p># Wait a bit</p>
+<p>time.sleep(1)</p>
+<p>print(&#x27;Moving up 0.2m&#x27;)</p>
+<p>mc.up(0.2)</p>
+<p># Wait a bit</p>
+<p>time.sleep(1)</p>
+<p>print(&#x27;Doing a 270deg circle&#x27;);</p>
+<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
+<p>print(&#x27;Moving down 0.2m&#x27;)</p>
+<p>mc.down(0.2)</p>
+<p># Wait a bit</p>
+<p>time.sleep(1)</p>
+<p>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</p>
+<p>mc.left(0.2, velocity=0.6)</p>
+<p># Wait a bit</p>
+<p>time.sleep(1)</p>
+<p>print(&#x27;Moving forward 0.5m&#x27;)</p>
+<p>mc.forward(0.5)</p>
+<p># We land when the MotionCommander goes out of scope</p>
+<p>print(&#x27;Landing!&#x27;)</p>
+<p>我们再复习一下已经学到的相关内容，我们关注这个代码的核心部分，从第17行开始，我们创建了一个motion commander的实体类mc，这个实体mc创建之后负责控制无人机的运动，自创建的一瞬间，则会自动执行无人机起飞的程序，默认起飞至0.3m的高度，在第18行我们在终端中输出taking off，提示无人机已经起飞，并且让整个程序停止1秒，让无人机稳定一下飞行状态。接下来的代码，可以看到我们调用mc类的一个子函数forward，使得无人机向前移动0.5m后停下。注意，现在这套代码所适配的硬件为自身的陀螺仪和flowdeck模块，无人机的速度和高度都由flowdeck提供，但其精度有限，可能有时的偏差会略大，这种情况下保证无人机自身的状态正常，可以调节给函数传入的参数来让无人机飞到理想的位置。例如传入0.5但实际无人机多走了0.1m，可以减小传入的参数使得无人机在实际上能走到合适的位置。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/001.png" alt="manual image" loading="lazy"></figure>
+<p>再往下看，所有使用到time.sleep（1）函数的地方都是为了让无人机保持当前的状态1秒以稳定姿态。第17行，mc类调用了up的子函数，该语句使得无人机高度上升了0.2m。从这里可以看出，该类的很多子函数的作用从命名上就可以看出。我们再看一个复杂的，第31行的circle_right子函数传入了三个参数，该子函数的作用为让无人机从原地开始向右开始飞行出圆弧的轨迹。传入的第一个参数0.5代表了该圆的半径为0.5m，第二个参数velocity代表了速度为0.5m/s，第三个参数angle_degrees代表了旋转圆弧的度数，赋值360则会让无人机转完一整圈。之后的代码从命名上也能推断出其效果。</p>
+<p>那么如何严谨地了解到motion commander类的子函数到底有哪些功能，参数如何传入呢，我们可以点击到官方的开源网站查看，当然在虚拟机中已经安装好了cflib的库，也是可以查看源码的，这里方便大家查看，直接把源码的关键部分给大家贴出来，同时也放在了本节课的文件夹里。</p>
+<p>接下来依次给大家介绍motion commander类的常用子函数，大家可以自行调用尝试，参数尽量给小一点保证安全。</p>
+<p>调用方法示例：mc.left(0.2,velocity=0.6)</p>
+<p>即无人机向右移动0.2m，速度为0.6m/s</p>
+<figure><img src="../assets/images/manual-10-motion-commander/002.png" alt="manual image" loading="lazy"></figure>
+<p>同样地，一下函数都是同样地用法，注意，velocity参数可以不设置，则会使用默认的速度0.1m/s，参考之前的test.py的用法。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/007.png" alt="manual image" loading="lazy"></figure>
+<p>接下来是另一类子函数，turn_left子函数可以控制无人机的前方向左转向。</p>
+<p>用法示例：mc.turn_left(90,rate=45)代表无人机向左转90度，且转向的角速度为45度每秒，同样地可以不传入速度使用默认的角速度。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/008.png" alt="manual image" loading="lazy"></figure>
+<p>同样地也有turn_right的子函数，可以试验一下turn_right(180)和turn_left(180)的最终效果是否相同。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/009.png" alt="manual image" loading="lazy"></figure>
+<p>向左转圈的子函数circle_left的定义实现如下，同样也有circle_right的子函数方法。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/010.png" alt="manual image" loading="lazy"></figure>
+<p>最后再带大家认识move_distance子函数的用法，可以看到前面很多函数的定义都用到了该函数，该函数一共可传入四个值，前三个值分别代表了无人机在立体空间xyz轴上的位移距离，最后一个值代表了速度，使用该函数可以让无人机在立体空间中向任意方向移动。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/011.png" alt="manual image" loading="lazy"></figure>
+<p>更多的子函数可以再进一步查看motion_commander.py</p>
+<p>二．来做一些花样飞行</p>
+<p>1.用上面学到的motion commander的用法，让无人机飞出一个8字形的轨迹。提示一下具体的流程，首先无人机自动升空到0.3m，稍微让他飞高一些上升到0.4m的高度，稳定一下姿态，再调用motion commander相关的子函数让无人机飞出一个8字形的轨迹后降落，怎样调用子函数使得整个飞行逻辑更简洁？</p>
+<p>2.同样地，用上面学到的命令，使得无人机飞出一个三角形的轨迹，尽可能地飞出一个等边三角形的轨迹。</p>
+<p>3.让无人机升空后，原地左转三圈再右转三圈后降落，该如何编写代码？</p>
+<p>三．为阶段综合实践做准备</p>
+<p>下面介绍阶段综合实践的一部分内容，同学们只需要用前面学到的知识就能完成该任务。任务地图如下，总区域为一个1.5*1.5m的矩形，其中无人机的垂直投影在运行过程中不得落入红色区域，也不能超出该矩形区域范围。蓝色区域代表高30cm的障碍物，黄色箭头所指的方向代表正北方向。任务要求无人机从A区域任意位置起飞，起飞时正方向面对北方，起飞高度默认0.3m，编辑代码使无人机最终在B区域内任意位置降落。其中飞过蓝色障碍时，无人机高度至少为0.5m。</p>
+<figure><img src="../assets/images/manual-10-motion-commander/012.png" alt="manual image" loading="lazy"></figure>
+<p>相关区域大小已经给出，大家有余力可以先练习该项目；正式阶段综合实践时可能会加入更多要求，但都会控制在大家力所能及的范围内。</p>
+      </div>
+    </article>
+  </main>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

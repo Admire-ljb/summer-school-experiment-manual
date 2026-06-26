@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>路径规划仿真 - 掌上无人机实验手册</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="wy-nav-side">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
+        <div class="version">latest</div>
+        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
+      </div>
+      <nav class="wy-menu">
+        <p class="caption">目录</p>
+        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
+<li><a class="" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
+<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
+<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
+<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>multiranger</a></li>
+<li><a class="" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
+<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
+<li><a class="" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
+<li><a class="active" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
+<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
+<li><a class="" href="manual-10-motion-commander.html"><span>实验 10</span>Motion Commander 进阶编程</a></li>
+<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
+<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>PositionCommander</a></li>
+<li><a class="" href="manual-13-project-demo.html"><span>实验 13</span>综合项目展示任务</a></li></ul>
+      </nav>
+    </div>
+  </aside>
+  <main class="wy-nav-content-wrap">
+    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
+    <article class="wy-nav-content">
+      <div class="rst-content">
+        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>路径规划仿真</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
+        <div class="language-switch"><span>中文</span><a href="../en/manual-08-path-planning.html">English</a></div>
+        <h1>实验 8: 路径规划仿真</h1><p class="subtitle">Path-planning Simulation</p><p>实验手册1——路径规划仿真</p>
+<p>实验目标</p>
+<p>掌握从实体主机向虚拟机传送文件的方法</p>
+<p>成功运行编译一个使用了ROS的项目。</p>
+<p>通过运行几个经典的路径规划算法，理解路径规划的作用。</p>
+<p>实验准备</p>
+<p>实验2已经配置好ROS的Ubuntu20.04虚拟机。</p>
+<p>实验步骤</p>
+<p>实验一：将所要运行代码工程项目传输至虚拟机并解压</p>
+<p>首先，我们在虚拟机的用户目录下创建一个名为workspace的文件夹。</p>
+<p>点击左上角的用户目录图标，鼠标右键点击空白处，选择new folder,将新文件夹命名为workspace。</p>
+<figure><img src="../assets/images/manual-08-path-planning/001.png" alt="manual image" loading="lazy"></figure>
+<p>点击右上角绿色按钮create进行创建</p>
+<figure><img src="../assets/images/manual-08-path-planning/002.png" alt="manual image" loading="lazy"></figure>
+<p>然后点击创建好的workspace文件夹的图标，进入到该文件夹中。</p>
+<figure><img src="../assets/images/manual-08-path-planning/003.png" alt="manual image" loading="lazy"></figure>
+<p>同时再打开本机上存放今天实验所需要的工程文件压缩包的所在位置（该压缩包放在电脑桌面或者某个文件夹都可以）。鼠标选中本机上的压缩包文件，直接拖动到虚拟机中的workspace中。</p>
+<figure><img src="../assets/images/manual-08-path-planning/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/005.png" alt="manual image" loading="lazy"></figure>
+<p>再右键选中extract here,即可将文件解压到该目录中。</p>
+<figure><img src="../assets/images/manual-08-path-planning/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/007.png" alt="manual image" loading="lazy"></figure>
+<p>接下来我们点击解压好的工程文件的图标，进入界面后鼠标右键点击空白处，选择open in terminal，即可打开一个已经进入了当前文件目录的终端。</p>
+<figure><img src="../assets/images/manual-08-path-planning/008.png" alt="manual image" loading="lazy"></figure>
+<p>如图所示，终端中蓝色文字的部分则代表终端当前所在的文件目录的位置，可以看到在linux中，我们不仅可以用上述的图形化操作的方法访问该文件夹，也可以用命令行终端的方式访问。</p>
+<figure><img src="../assets/images/manual-08-path-planning/009.png" alt="manual image" loading="lazy"></figure>
+<p>如下图所示，我们在终端中输入pwd命令可以查看该终端当前所处的文件目录的路径，也就是该终端正在访问哪个文件夹。再输入ls命令可以看到当前文件夹目录下有哪些文件，这就是在linux系统中以图形化和命令行访问文件的两种方式，可以看到后方图形化界面和终端中显示的文件数量和名称是一致的，因为两者都是在访问同一文件夹。</p>
+<figure><img src="../assets/images/manual-08-path-planning/010.png" alt="manual image" loading="lazy"></figure>
+<p>实验二：配置工程运行环境和编译代码</p>
+<p>进入目录后，首先安装运行程序所必要的依赖，在终端中输入如下命令（可能会要求输入用户密码以获取权限）：</p>
+<pre><code>sudo apt install libeigen3-dev</code></pre>
+<figure><img src="../assets/images/manual-08-path-planning/011.png" alt="manual image" loading="lazy"></figure>
+<p>再输入：sudo apt-get install ros-noetic-octomap-ros</p>
+<figure><img src="../assets/images/manual-08-path-planning/012.png" alt="manual image" loading="lazy"></figure>
+<p>接下来我们将要对该工程项目的相关依赖进行编译，在当前终端的目录下输入如下命令：</p>
+<pre><code>cd 3rd/osqp/build</code></pre>
+<p>cd命令为linux下常用的用于进入下一级目录所使用的命令，在此处输入的命令意思为进入/workspace/uav_motion_planning目录下的3rd/osqp/build目录。</p>
+<figure><img src="../assets/images/manual-08-path-planning/013.png" alt="manual image" loading="lazy"></figure>
+<p>同样地我们也可以用图形化界面点击进入该文件目录，这一步只是想让大家理解linux下文件目录访问的逻辑</p>
+<figure><img src="../assets/images/manual-08-path-planning/014.png" alt="manual image" loading="lazy"></figure>
+<p>接下来输入以下命令（可能会因为无法连接到外网而失败，可以多试几次）:</p>
+<p>cmake ..</p>
+<p>cmake是一个常用的跨平台编程语言编译工具。</p>
+<figure><img src="../assets/images/manual-08-path-planning/015.png" alt="manual image" loading="lazy"></figure>
+<p>接下来再输入make命令，编译到100%即为成功。</p>
+<figure><img src="../assets/images/manual-08-path-planning/016.png" alt="manual image" loading="lazy"></figure>
+<p>接下来再输入以下命令：</p>
+<pre><code>sudo make install</code></pre>
+<figure><img src="../assets/images/manual-08-path-planning/017.png" alt="manual image" loading="lazy"></figure>
+<p>现在完成了osqp模块部分的编译，接下来还剩osqp-eigen模块的编译。</p>
+<p>输入以下命令：</p>
+<pre><code>cd ..</code></pre>
+<p>即可退回至上一层目录，这里我们在之前的终端连续输入三次直到退回该工程的主目录。</p>
+<figure><img src="../assets/images/manual-08-path-planning/018.png" alt="manual image" loading="lazy"></figure>
+<p>这里我们输入以下命令：</p>
+<pre><code>cd 3rd/osqp-eigen/build</code></pre>
+<p>进入另一个所需编译的模块的目录。</p>
+<figure><img src="../assets/images/manual-08-path-planning/019.png" alt="manual image" loading="lazy"></figure>
+<p>同样地流程输入cmake ..命令。</p>
+<figure><img src="../assets/images/manual-08-path-planning/020.png" alt="manual image" loading="lazy"></figure>
+<p>再输入make命令进行进一步编译。</p>
+<figure><img src="../assets/images/manual-08-path-planning/021.png" alt="manual image" loading="lazy"></figure>
+<p>再输入sudo make install命令完成该模块最后一步。</p>
+<figure><img src="../assets/images/manual-08-path-planning/022.png" alt="manual image" loading="lazy"></figure>
+<p>然后我们再次回到该工程文件的主目录。</p>
+<figure><img src="../assets/images/manual-08-path-planning/023.png" alt="manual image" loading="lazy"></figure>
+<p>进行最后一步编译，输入：</p>
+<p>catkin_make -DCMAKE_CXX_STANDARD=14</p>
+<p>等待编译结束，至此完成所有准备工作，接下来可以运行程序了。</p>
+<figure><img src="../assets/images/manual-08-path-planning/024.png" alt="manual image" loading="lazy"></figure>
+<p>实验三：运行经典路径规划程序</p>
+<p>在当前终端空白处点击鼠标右键，选择new window，能快速新建一个处于该目录的终端，</p>
+<figure><img src="../assets/images/manual-08-path-planning/025.png" alt="manual image" loading="lazy"></figure>
+<p>两个终端中都输入如下命令：</p>
+<pre><code>source devel/setup.bash</code></pre>
+<p>该命令用于在每次运行ros程序前导入相关环境变量，可以让ros找到你所想运行的程序。</p>
+<figure><img src="../assets/images/manual-08-path-planning/026.png" alt="manual image" loading="lazy"></figure>
+<p>1.A_star算法</p>
+<p>第一个终端输入如下命令：</p>
+<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<p>第二个终端输入：</p>
+<p>roslaunch test test_astar_searching.launch</p>
+<p>即可在模拟的仿真rviz界面中看到地图环境，</p>
+<figure><img src="../assets/images/manual-08-path-planning/027.png" alt="manual image" loading="lazy"></figure>
+<p>使用鼠标滚轮或者电脑触控板即可放缩视角看到环境的全貌，此时点击上方菜单栏中的3D Nav Goal选项，点击地图内任意一点给无人机发布一个终点信息，即可以查看到A_star路径规划算法计算出的无人机到达终点的红色路径。</p>
+<figure><img src="../assets/images/manual-08-path-planning/028.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/029.png" alt="manual image" loading="lazy"></figure>
+<p>2.RRT算法</p>
+<p>对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
+<p>第一个终端输入如下命令：</p>
+<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<p>第二个终端输入：</p>
+<p>roslaunch test test_rrt_searching.launch</p>
+<p>即可在模拟的仿真rviz界面中看到地图环境，</p>
+<p>以同样的方法发布终点，可以看到rrt算法进行路径规划的效果。</p>
+<figure><img src="../assets/images/manual-08-path-planning/030.png" alt="manual image" loading="lazy"></figure>
+<p>3.RRT_star算法</p>
+<p>同样的流程，对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
+<p>第一个终端输入如下命令：</p>
+<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<p>第二个终端输入：</p>
+<p>roslaunch test test_rrt_star_searching.launch</p>
+<p>即可在模拟的仿真rviz界面中看到地图环境，</p>
+<p>以同样的方法发布终点，可以看到rrt_star算法进行路径规划的效果,观察对比一下rrt算法与其改进后的rrt_star算法的不同，改进后的算法的优势在哪里？</p>
+<figure><img src="../assets/images/manual-08-path-planning/031.png" alt="manual image" loading="lazy"></figure>
+      </div>
+    </article>
+  </main>
+  <script src="../assets/site.js"></script>
+</body>
+</html>

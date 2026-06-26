@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>安装配置虚拟机 - 掌上无人机实验手册</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <aside class="wy-nav-side">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
+        <div class="version">latest</div>
+        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
+      </div>
+      <nav class="wy-menu">
+        <p class="caption">目录</p>
+        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
+<li><a class="active" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
+<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
+<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
+<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>multiranger</a></li>
+<li><a class="" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
+<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
+<li><a class="" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
+<li><a class="" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
+<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
+<li><a class="" href="manual-10-motion-commander.html"><span>实验 10</span>Motion Commander 进阶编程</a></li>
+<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
+<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>PositionCommander</a></li>
+<li><a class="" href="manual-13-project-demo.html"><span>实验 13</span>综合项目展示任务</a></li></ul>
+      </nav>
+    </div>
+  </aside>
+  <main class="wy-nav-content-wrap">
+    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
+    <article class="wy-nav-content">
+      <div class="rst-content">
+        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>安装配置虚拟机</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
+        <div class="language-switch"><span>中文</span><a href="../en/manual-01-vm.html">English</a></div>
+        <h1>实验 1: 安装配置虚拟机</h1><p class="subtitle">Virtual Machine Installation and Configuration</p><p>实验手册1——安装配置虚拟机</p>
+<h2>一、实验目标</h2>
+<p>掌握VMware虚拟化软件的基础安装与配置方法。</p>
+<p>学会在VMware中创建Ubuntu 20.04 LTS虚拟机，并完成系统安装。</p>
+<p>理解虚拟机的核心概念（如硬件隔离、快照管理）及其在开发测试中的应用场景。</p>
+<h2>二、实验准备</h2>
+<p>硬件要求</p>
+<p>物理机配置：建议8GB以上内存、50GB以上可用磁盘空间（虚拟机需占用约20GB）。</p>
+<p>软件资源（可从官网下载，为节省时间由助教拷贝）</p>
+<p>VMware Workstation Pro 16</p>
+<p>Ubuntu 20.04 LTS Desktop版镜像文件</p>
+<p>工具准备</p>
+<p>任务管理器（查看物理机CPU核心数）。</p>
+<p>文本编辑器（如记事本，用于记录虚拟机配置参数）。</p>
+<h2>三、实验步骤</h2>
+<h3>阶段1：VMware软件安装</h3>
+<p>具体图文流程在浏览器中打开此链接：</p>
+<pre><code>https://leigongbiji.blog.csdn.net/article/details/130641288?fromshare=blogdetail&amp;sharetype=blogdetail&amp;sharerId=130641288&amp;sharerefer=PC&amp;sharesource=SteveZhang114514&amp;sharefrom=from_link</code></pre>
+<p>下载与安装</p>
+<p>访问VMware官网，下载Workstation Pro 16安装包。</p>
+<p>双击安装包，按向导提示完成安装（建议安装路径选择D盘）。</p>
+<p>安装完成后，创建桌面快捷方式。</p>
+<p>验证安装</p>
+<p>启动VMware，检查主界面是否显示“创建新虚拟机”按钮。</p>
+<h3>阶段2：创建Ubuntu虚拟机</h3>
+<p>具体参考图文流程在浏览器中打开此链接：</p>
+<pre><code>https://blog.csdn.net/air_729/article/details/143105854?fromshare=blogdetail&amp;sharetype=blogdetail&amp;sharerId=143105854&amp;sharerefer=PC&amp;sharesource=SteveZhang114514&amp;sharefrom=from_link</code></pre>
+<p>新建虚拟机向导</p>
+<p>打开VMware，点击“主页”→“创建新的虚拟机”</p>
+<figure><img src="../assets/images/manual-01-vm/001.png" alt="manual image" loading="lazy"></figure>
+<p>选择自定义（高级）点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/002.png" alt="manual image" loading="lazy"></figure>
+<p>该界面直接选择下一步</p>
+<figure><img src="../assets/images/manual-01-vm/003.png" alt="manual image" loading="lazy"></figure>
+<p>该界面中点击浏览选中ubuntu20.04系统映像文件，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/004.png" alt="manual image" loading="lazy"></figure>
+<p>这一步中设置系统中的用户信息，建议密码统一用root，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/005.png" alt="manual image" loading="lazy"></figure>
+<p>这一步中设置该虚拟机名称，所处位置可自定义也可使用默认路径，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/006.png" alt="manual image" loading="lazy"></figure>
+<p>处理器数量以及内核数可以适量调整，可以按图示设置点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/007.png" alt="manual image" loading="lazy"></figure>
+<p>运行内存可以使用默认推荐内存，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/008.png" alt="manual image" loading="lazy"></figure>
+<p>网络类型可使用默认配置，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/009.png" alt="manual image" loading="lazy"></figure>
+<p>依然使用推荐控制器，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/010.png" alt="manual image" loading="lazy"></figure>
+<p>选择推荐磁盘类型，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/011.png" alt="manual image" loading="lazy"></figure>
+<p>选择创建新虚拟磁盘，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/012.png" alt="manual image" loading="lazy"></figure>
+<p>可以稍微增大磁盘空间，点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/013.png" alt="manual image" loading="lazy"></figure>
+<p>此页面直接点击下一步</p>
+<figure><img src="../assets/images/manual-01-vm/014.png" alt="manual image" loading="lazy"></figure>
+<p>至此点击完成，虚拟机即自动创建完成</p>
+<figure><img src="../assets/images/manual-01-vm/015.png" alt="manual image" loading="lazy"></figure>
+<p>命名与存储</p>
+<p>虚拟机名称：Ubuntu20.04_Test。</p>
+<p>存储路径：选择D盘下新建的VMware_Ubuntu文件夹。</p>
+<p>硬件配置</p>
+<p>处理器：根据物理机核心数分配（如4核CPU分配2核，每个核心1-2线程）。</p>
+<p>内存：</p>
+<p>基础任务：2GB</p>
+<p>多任务/开发环境：4GB</p>
+<p>保留至少4GB内存给物理机。</p>
+<p>磁盘：</p>
+<p>类型：SCSI（推荐）</p>
+<p>容量：分配60GB，选择“存储为单个文件”。</p>
+<p>网络：默认NAT模式（自动获取IP，可访问外网）。</p>
+<p>加载ISO镜像</p>
+<p>在虚拟机设置中，选择CD/DVD驱动器，加载下载的Ubuntu 20.04 ISO文件。</p>
+<h3>阶段3：安装Ubuntu 20.04</h3>
+<p>启动虚拟机</p>
+<p>点击“开启此虚拟机”，等待Ubuntu安装引导界面加载。</p>
+<p>系统安装流程</p>
+<p>语言选择：中文（简体）。</p>
+<p>键盘布局：默认English（US）。</p>
+<p>安装类型：选择“最小安装”（节省磁盘空间）或“正常安装”（含常用软件）。</p>
+<p>分区设置：</p>
+<p>选择“其他选项”，手动创建分区表。</p>
+<p>分区方案：</p>
+<p>/（根目录）：20GB，EXT4文件系统。</p>
+<p>/home（用户目录）：剩余空间，EXT4文件系统。</p>
+<p>Swap（交换分区）：2GB（内存不足时备用）。</p>
+<p>用户信息：设置用户名（如student）、密码（需牢记）。</p>
+<p>安装完成：点击“重启”，移除ISO镜像后按Enter键。</p>
+<p>系统初始化</p>
+<p>登录后，根据提示跳过在线账号绑定和隐私设置。</p>
+<p>调整任务栏图标：右键隐藏不常用应用，添加“终端”到收藏夹。</p>
+<h3>阶段4：虚拟机优化与快照管理</h3>
+<p>安装VMware Tools</p>
+<p>在VMware菜单栏选择“虚拟机”→“安装VMware Tools”。</p>
+<p>打开Ubuntu终端（在主界面同时按住ctrl+alt+T），执行以下命令：</p>
+<p>此处一共有三行三条命令，分别输入完一条之后按回车执行命令。</p>
+<figure><img src="../assets/images/manual-01-vm/016.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-01-vm/017.png" alt="manual image" loading="lazy"></figure>
+<p>reboot命令之后虚拟机将会重启，虚拟机窗口将自动适配屏幕分辨率，并支持与物理机间的文件拖拽。</p>
+<p>2.创建快照</p>
+<p>在VMware菜单栏点击“快照”→“拍摄快照”。</p>
+<figure><img src="../assets/images/manual-01-vm/018.png" alt="manual image" loading="lazy"></figure>
+<p>命名快照为Ubuntu20.04_Clean，备注“初始干净系统状态”。</p>
+<figure><img src="../assets/images/manual-01-vm/019.png" alt="manual image" loading="lazy"></figure>
+<h2>四、实验验证与测试</h2>
+<p>网络连通性测试</p>
+<p>打开Ubuntu终端，执行：</p>
+<figure><img src="../assets/images/manual-01-vm/020.png" alt="manual image" loading="lazy"></figure>
+<p>观察是否能正常收到回复包。</p>
+<figure><img src="../assets/images/manual-01-vm/021.png" alt="manual image" loading="lazy"></figure>
+<p>快照恢复测试</p>
+<p>在VMware中右键虚拟机，选择“快照”→“恢复到快照Ubuntu20.04_Clean”。</p>
+<p>确认系统恢复至初始状态。</p>
+<figure><img src="../assets/images/manual-01-vm/022.png" alt="manual image" loading="lazy"></figure>
+<h2>五、实验总结与拓展</h2>
+<p>核心知识点回顾</p>
+<p>虚拟机通过软件模拟硬件，实现操作系统隔离。</p>
+<p>快照功能可快速保存/恢复系统状态，适用于开发测试场景。</p>
+<p>拓展任务（选做）</p>
+<p>在虚拟机中安装Python3.10版本（可借助互联网）。</p>
+<h2>链接资料整理</h2>
+<p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
+<p class="step">1. VMware Workstation 16 安装教程（网页标题：【虚拟机】VMware16保姆级安装教程-CSDN博客）</p>
+<p>原始链接：https://leigongbiji.blog.csdn.net/article/details/130641288</p>
+<p>课堂用途：辅助完成 Windows 主机上的 VMware 安装、授权、重启与首次启动检查。</p>
+<p>• 适合作为虚拟机软件安装的图文参考，重点关注安装向导、许可协议、安装位置、增强键盘驱动和重启确认。</p>
+<p>• 课堂操作以本手册步骤为准；网页内容用于遇到安装界面差异时对照。</p>
+<p>• 安装后需确认 VMware 可以正常创建新虚拟机，并记录软件版本。</p>
+<p class="step">2. VMware 中安装配置 Ubuntu（网页标题：VMware中安装配置Ubuntu（2024最新版 超详细）_vmware安装ubuntu-CSDN博客）</p>
+<p>原始链接：https://blog.csdn.net/air_729/article/details/143105854</p>
+<p>课堂用途：辅助完成 Ubuntu 镜像下载、虚拟机创建、系统安装和国内镜像源配置。</p>
+<p>• 网页按照 VMware 创建虚拟机、选择 Ubuntu 镜像、配置 CPU/内存/磁盘、启动安装的流程展开。</p>
+<p>• 课堂建议使用 Ubuntu 20.04 LTS；若网页示例版本不同，只参考操作路径，不直接替换课程版本。</p>
+<p>• 安装后需验证系统可以进入桌面、终端可用，并建议保留初始快照。</p>
+      </div>
+    </article>
+  </main>
+  <script src="../assets/site.js"></script>
+</body>
+</html>
