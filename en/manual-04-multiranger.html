@@ -56,17 +56,17 @@
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
 <p>The Multiranger Deck features multiple ultrasonic sensors to detect obstacles around the Crazyflie. This helps the drone avoid collisions indoors or in environments with obstacles. The installation method is shown in the figure below:</p>
-<figure><img src="../assets/images/manual-04-multiranger/001.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/001.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 1 shows the flow deck installed below</p>
-<figure><img src="../assets/images/manual-04-multiranger/002.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/002.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 2 shows multi-ranger installed on it</p>
-<figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The official tutorial URL for this module: Multi-ranger deck | Bitcraze</p>
 <p>Experiment 1: Understand the role of multi-ranger</p>
 <p>The multi-ranging deck enables the drone to detect surrounding objects. This is achieved by measuring the distance of objects in the following 5 directions: front/back/left/right/up, with a detection distance of up to 4 meters.</p>
 <p>To get the most out of your multi-rangefinder, it should be paired with the Flow deck V2, which will measure movement along the ground and distance to the ground. It allows Crazyflie to sense the space around it and react when something is approaching, such as avoiding obstacles. It also allows starting to deal with environment awareness problems such as Simultaneous Localization and Mapping (SLAM) algorithms.</p>
 <p>Next, in the programming library cflib that controls drone flight, the multiranger class implements the call to this module. For the specific implementation of this library, see the file multiranger.py.</p>
-<figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>It can be seen that in the multiranger.py file, the member attributes of the multiranger class are defined. The multiranger sensor will return six parameters when working: front, back, left, right, up and down. Corresponding to the distance of the drone from obstacles in six directions, how to call the multiranger module and check its working status?</p>
 <p>Next, run the code below on the virtual machine and call the multiranger module on the drone. The specific operation process should be familiar to everyone. Let’s briefly review it here. Create a python file named multiranger_paramet.py in the workspace folder of the virtual machine. Copy and paste the following code into multiranger_paramet.py. The main function of this code is to remotely connect the drone with the wireless module, implement a multiranger class, call the multiranger module through this class, and output the return value of the module in the terminal. In this code, the distance in front of the multiranger module, that is, the front of the drone, from the obstacle is returned, in meters.</p>
 <pre><code>import logging</code></pre>

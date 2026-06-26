@@ -52,9 +52,9 @@
 <p>使用cflib编程以无线的方式连接到无人机</p>
 <p>在workspace的终端下使用touch命令创建python文件，如下图所示。</p>
 <pre><code>touch connect_log_param.py</code></pre>
-<figure><img src="../assets/images/manual-09-cflib/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>直接在图形化界面点击创建好的文件即可直接图形化编辑。如果有余力的同学也可以自选编辑器。</p>
-<figure><img src="../assets/images/manual-09-cflib/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>对于一个python程序而言，我们首先在第1、2行导入标准的python库，再在4到6行导入cflib的库，本节实验也将主要带大家认识学习cflib库的一些用法。在该小节实验中，我们将理解使用python语言调用cflib库用无线模块crazyradio连接到无人机。</p>
 <p>在第11行我们定义了一个叫做simple_connect的函数，函数的主要内容为在终端输出字符&quot;Yeah, I&#x27;m connected! :D&quot;，然后程序保持sleep3秒，再输出字符&quot;Now I will disconnect :&#x27;(&quot;。</p>
 <p>在17行，开始我们的python主程序，首先在19行调用cflib的库函数使得无人机各项设备初始化，然后在21行将创建一个具有指定link_uri的同步 Crazyflie 实例，以无线连接的方式创建，从21行开始，我们设定的主程序将会在这里执行，若没有循环的程序语句让程序不停地执行，则该同步 Crazyflie 实例将会在按照顺序执行完语句之后自动销毁，断开无线连接，程序结束。</p>
@@ -112,8 +112,8 @@
 <p>simple_log_async(scf, lg_stab)</p>
 <p>对比一下这个程序相较于上个程序增加了哪些内容。在运行该程序时，终端会在5秒内循环输出设定好的无人机的roll、pitch和yaw三项参数，此时将无人机拿在手中改变其姿态，将会观察到终端输出参数的变化。</p>
 <p>四旋翼无人机的 Roll（横滚）、Pitch（俯仰） 和 Yaw（偏航） 是描述其空间姿态的三个核心参数，分别对应无人机绕 X轴、Y轴 和 Z轴 的旋转运动。</p>
-<figure><img src="../assets/images/manual-09-cflib/003.png" alt="manual image" loading="lazy"></figure>
-<figure><img src="../assets/images/manual-09-cflib/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images/manual-09-cflib/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>认识motion commander</p>
 <p>上节课运行了简单的无人机起飞降落的python程序，这节实验将会带领大家详细认知python程序的细节。同样地使用touch命令创建一个名字为motion_flying.py的文件。</p>
 <pre><code>touch motion_flying.py</code></pre>
@@ -145,17 +145,17 @@
 <p>scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,</p>
 <p>cb=param_deck_flow)</p>
 <p>time.sleep(1)</p>
-<figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行，详细的类函数，有余力的同学可以进入该网址查看：github.com</p>
 <p>该python程序主要实现的功能为在无人机初始化的过程中检测当前无人机是否安装了flowdeck模块，该模块帮助无人机定位自身高度和检测飞行速度。</p>
 <p>起飞功能</p>
 <p>将已有的程序按照如下图所示的程序进行编写。（之前的param_deck_flow函数可以保留），然后运行该程序，无人机将会起飞悬停3秒后降落。第21至23行则会控制该飞行流程，第14行设置了默认起飞高度。可以适当改变这些参数来观察效果。</p>
-<figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>前进、转弯和后退</p>
 <p>我们再在主函数前添加以下函数，将程序最后一行要调用的函数替换为该函数。（例如将刚才在上图42行调用的take_off_simple函数替换为现在的move_linear_simple函数）。该函数的作用为无人机起飞之后，悬停一秒，前进0.5米，再悬停一秒，后退0.5米，再悬停一秒，随后降落。我们通过motioncommander类实体化一个对象mc，通过调用mc的成员函数forward和back实现无人机的前进后退。</p>
-<figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再进一步地，我们将函数的内容替换为如下：</p>
-<figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>观察无人机的运行情况，是否又回到了起飞的原地附近。</p>
 <p>记录飞行数据</p>
 <p>根据我们学习到的在终端中打印出无人机在实时运行时的飞行数据，参照如下代码（take_off_simple(scf)函数和param_deck_flow(name, value_str)函数可以保留，也可以如下所示无内容）：</p>
@@ -214,7 +214,7 @@
 <p>logconf.stop()</p>
 <p>再执行该代码，可以看到无人机在飞行过程中，终端也在不断地输出其飞行参数。</p>
 <p>来回游荡</p>
-<figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再新定义加入一个名字为move_box_limit的函数，放在主函数中，同样地参考程序如下：</p>
 <pre><code>import logging</code></pre>
 <pre><code>import sys</code></pre>

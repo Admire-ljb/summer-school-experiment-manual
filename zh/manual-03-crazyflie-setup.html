@@ -50,38 +50,38 @@
 <p>实验步骤</p>
 <p>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</p>
 <p>直接用图形化操作的方法，在主机windows的文件界面将软件包拖动进linux虚拟机的文件界面即可。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再双击该压缩包，点击extract解压至该文件目录下。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>此时再点击绿色的extract按键</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>点击进入解压好的目录中，右键界面空白处选择open in terminal呼出终端。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>然后，首先我们先安装一些必要的依赖，首先直接复制如下命令粘贴至终端：</p>
 <pre><code>sudo apt-get install python3 python3-pip python3-pyqt5 python3-pyqt5.qtsvg</code></pre>
 <p>按回车键输入命令，然后可能会要求输入用户密码以获得权限（此过程中已输入的密码内容和数量不可见），以及输入Y继续安装流程。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/005.png" alt="manual image" loading="lazy"></figure>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再输入以下命令安装其他依赖：</p>
 <pre><code>sudo apt install libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0</code></pre>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再输入以下命令配置一下pip3下载的软件源：</p>
 <p>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再输入以下命令更新软件工具：</p>
 <p>pip3 install --upgrade pip setuptools wheel</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>最后输入以下命令进行总的软件依赖安装整理：</p>
 <p>pip3 install -e .</p>
 <p>无报错安装完成之后，重启虚拟机，输入cfclient命令，出现如下界面则代表环境配置安装成功。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验二：认识crazyfile无人机的基础结构</p>
 <p>具体的无人机基础认知教程可参考该官方网址：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>
 <p>首先来认识一下无人机的基础组成部分，其基础的零件构成如下：</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 1 Crazyflie无人机的零部件</p>
 <p>Crazyflie 2.X控制芯片板(即上图零部件中有4个arm的芯片板)在生产过程中已经被充分测试过，但是为了确保运输过程没有导致任何损害，还是需要在组装之前做测试。芯片板如下图，芯片板有四个LED灯(M1, M2, M3, M4)用于显示无人机状态和报错调试等，下图中有彩色的四个点就是，并有对应的标号①②③④。M1灯在右上，有红绿两种灯；M2灯右下，只有蓝灯；M3灯在左下，只有蓝灯；M4灯在左上，有红绿两种灯。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 2 注意front direction的指向，以及四个LED灯</p>
 <p>将Crazyflie 2.X芯片板用USB线连上电源。注意观察LED灯M1和M4， 如果M4会快速闪5次绿灯，则测试通过。</p>
 <p>如何读懂LED灯的含义</p>
@@ -95,11 +95,11 @@
 <p>实验三：使用有线和无线的方式连接无人机</p>
 <p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以再参考官方网址的教程：</p>
 <p>USB permissions | Bitcraze</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>具体操作为在原目录的终端中依次输入以下命令：</p>
 <pre><code>sudo groupadd plugdev</code></pre>
 <pre><code>sudo usermod -a -G plugdev $USER</code></pre>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>注意以下命令较长，复制粘贴的时候保证命令完整性：</p>
 <p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
 <pre><code># Crazyradio (normal operation)</code></pre>
@@ -114,27 +114,27 @@
 <pre><code>sudo udevadm trigger</code></pre>
 <p>进行完以上操作后，输入sudo reboot的命令让虚拟机重启，以应用对usb权限的改动。</p>
 <p>接下来再将无人机使用uab线连接到电脑上，弹出如下窗口使得该usb设备连接到虚拟机上。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>然后点击scan按钮，如下显示检测到无人机，选择usb：//0的选项点击connect。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/016.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/016.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>在连接的过程中保证无人机平放在桌面上以使得其能初始化陀螺仪等定位设备，出现以下界面则代表成功以有线的方式连接，此时手拿起无人机可以看到姿态界面中发生的变化。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/017.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/017.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>接下来，我们查看一下无人机上的无线地址，记住这个地址，选中复制，粘贴到主界面的address栏中，我们将会用crazyradio来以无线的方式连接到无人机。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/018.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/018.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>将无人机的usb线取下，插上crazyradio，用cfclient客户端scan到该设备，注意保证下方的address中的地址为刚才查看到的无人机的无线连接地址，再点击connect</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同样在连接的过程中保证无人机静止平放，使其能初始化姿态，出现如下界面，手上拿着无人机，姿态界面出现相应的变化，则以无线的方式连接成功。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验四：使用python脚本让无人机自主起飞</p>
 <p>核心部件</p>
 <p>Flow Deck： Flow Deck 是一款激光雷达测距传感器板，用于测量Crazyflie无人机的高度和距离地面的距离。它可以帮助无人机进行高度定位和稳定悬停。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>确保前面的操作已经可以使用crazyradio以无线的方式连接到无人机，</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>并且扫描到crazyradio之后，记住其radio的地址，如图所示为：//0/80/2M</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同时将要运行的python脚本放入workspace文件夹下，双击test.py脚本文件进行编辑，修改第14行的URI地址，与当前crazyradio的地址一致，修改完之后点击save按钮后退出。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再安装最后一个所需的依赖，在终端中输入如下命令：</p>
 <p>pip3 install cflib</p>
 <p>然后在终端中输入python3 test.py命令运行该脚本，脚本开始运行后，先等待一段时间的初始化，通过无线的方式向无人机发送指令，无人机接收到指令后进行相印的飞行动作。</p>

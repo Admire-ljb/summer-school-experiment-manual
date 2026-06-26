@@ -54,9 +54,9 @@
 <p>Use cflib programming to connect to drones wirelessly</p>
 <p>Use the touch command in the workspace terminal to create a python file, as shown in the figure below.</p>
 <pre><code>touch connect_log_param.py</code></pre>
-<figure><img src="../assets/images/manual-09-cflib/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Click the created file directly on the graphical interface to directly edit it graphically. If you have some spare time, you can also choose your own editor.</p>
-<figure><img src="../assets/images/manual-09-cflib/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>For a python program, we first import the standard python library in lines 1 and 2, and then import the cflib library in lines 4 to 6. This section of the experiment will also mainly introduce you to some usages of the cflib library. In this section of the experiment, we will understand how to use the python language to call the cflib library and use the wireless module crazyradio to connect to the drone.</p>
 <p>In line 11 we define a function called simple_connect. The main content of the function is to output the characters &quot;Yeah, I&#x27;m connected! :D&quot; to the terminal, then the program keeps sleeping for 3 seconds, and then outputs the characters &quot;Now I will disconnect :&#x27;(&quot;.</p>
 <p>On line 17, we start our python main program. First, on line 19, we call the cflib library function to initialize the drone equipment. Then, on line 21, we will create a synchronous Crazyflie instance with a specified link_uri and create it through a wireless connection. Starting from line 21, the main program we set will be executed here. If there are no looping program statements to keep the program executing, the synchronous Crazyflie instance will be automatically destroyed after the statements are executed in sequence, the wireless connection will be disconnected, and the program will end.</p>
@@ -114,8 +114,8 @@
 <p>simple_log_async(scf, lg_stab)</p>
 <p>Compare what this program adds compared to the previous program. When running this program, the terminal will cyclically output the three parameters of roll, pitch and yaw of the drone within 5 seconds. At this time, if you hold the drone in your hand and change its posture, you will observe the changes in the terminal output parameters.</p>
 <p>The Roll (roll), Pitch (pitch) and Yaw (yaw) of a quad-rotor UAV are the three core parameters that describe its spatial attitude, corresponding to the rotational motion of the UAV around the X-axis, Y-axis and Z-axis respectively.</p>
-<figure><img src="../assets/images/manual-09-cflib/003.png" alt="manual image" loading="lazy"></figure>
-<figure><img src="../assets/images/manual-09-cflib/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images/manual-09-cflib/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Meet motion commander</p>
 <p>In the previous lesson, we ran a simple python program for taking off and landing a drone. This experiment will lead you to understand the details of the python program in detail. Similarly, use the touch command to create a file named motion_flying.py.</p>
 <pre><code>touch motion_flying.py</code></pre>
@@ -147,17 +147,17 @@
 <p>scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,</p>
 <p>cb=param_deck_flow)</p>
 <p>time.sleep(1)</p>
-<figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>As you can see, we imported the motioncommander module in cflib on line 10. We will call the function of this module to make the drone fly. For detailed class functions, students who have spare capacity can go to this website to view: github.com</p>
 <p>The main function of this python program is to detect whether the flowdeck module is installed on the current drone during the initialization process of the drone. This module helps the drone locate its own height and detect flight speed.</p>
 <p>Take-off function</p>
 <p>Write the existing program as shown in the figure below. (The previous param_deck_flow function can be retained), then run the program, the drone will take off and hover for 3 seconds before landing. Lines 21 to 23 will control the flight process, and line 14 sets the default takeoff altitude. These parameters can be changed appropriately to observe the effect.</p>
-<figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Forward, turn and reverse</p>
 <p>We then add the following function before the main function and replace the function to be called in the last line of the program with this function. (For example, replace the take_off_simple function just called in line 42 of the figure above with the current move_linear_simple function). The function of this function is that after the drone takes off, it hovers for one second, moves forward 0.5 meters, hovers for another second, retreats 0.5 meters, hovers for another second, and then lands. We materialize an object mc through the motioncommander class, and realize the forward and backward movement of the drone by calling the member functions forward and back of mc.</p>
-<figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Going a step further, we replace the content of the function with the following:</p>
-<figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Observe the operation of the drone to see if it returns to the place where it took off.</p>
 <p>Record flight data</p>
 <p>According to what we have learned about printing the flight data of the drone in real-time operation in the terminal, refer to the following code (the take_off_simple(scf) function and the param_deck_flow(name, value_str) function can be retained or have no content as shown below):</p>
@@ -216,7 +216,7 @@
 <p>logconf.stop()</p>
 <p>Executing the code again, you can see that the terminal is constantly outputting its flight parameters while the drone is flying.</p>
 <p>Wandering back and forth</p>
-<figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then redefine and add a function named move_box_limit and place it in the main function. The same reference program is as follows:</p>
 <pre><code>import logging</code></pre>
 <pre><code>import sys</code></pre>

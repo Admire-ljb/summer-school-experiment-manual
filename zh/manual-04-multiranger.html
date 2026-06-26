@@ -54,17 +54,17 @@
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
 <p>Multiranger Deck 具有多个超声波传感器，用于检测Crazyflie周围的障碍物。这有助于无人机在室内或有障碍物的环境中避免碰撞。安装方法如下图所示：</p>
-<figure><img src="../assets/images/manual-04-multiranger/001.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/001.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 示1  flow deck 安装在下面</p>
-<figure><img src="../assets/images/manual-04-multiranger/002.jpeg" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/002.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 示2 multi -ranger 安装在上面</p>
-<figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>该模块的官方教程网址：Multi-ranger deck | Bitcraze</p>
 <p>实验一：认识multi-ranger的作用</p>
 <p>多测距甲板使得无人机能够检测周围的物体。这是通过在以下5个方向上测量物体的距离来实现的：前/后/左/右/上，检测距离最高达4米。</p>
 <p>为了最大限度地利用您的多测距仪，它应该与Flow deck V2配对，后者将测量沿地面的运动和到地面的距离。它使Crazyflie能够感知周围的空间，并在有东西靠近时做出反应，例如避开障碍物。它还允许开始处理环境感知问题，如同步定位和映射（SLAM）算法。</p>
 <p>接下来，在控制无人机飞行的编程库cflib中，由multiranger类来实现对该模块的调用，该库的具体实现见multiranger.py这个文件。</p>
-<figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>可以看到，在multiranger.py这个文件中，定义了multiranger类的成员属性，multiranger传感器在工作时会返回六个参数：front、back、left、right、up和down。分别对应着无人机在着六个方向上距离障碍物的距离，具体该如何调用multiranger模块并且查看他的工作状态呢？</p>
 <p>接下来，将下方的代码在虚拟机上运行起来，调用无人机上的multiranger模块。具体的操作流程大家应该很熟悉了，这里再简单复述一下，在虚拟机的workspace文件夹下创建一个python文件命名为multiranger_paramet.py，将如下代码复制粘贴至multiranger_paramet.py。该代码主要实现的功能为由无线模块远程连接无人机，实现一个multiranger类，通过该类来调用multiranger模块，在终端中输出该模块的返回值，该代码中，返回了multiranger模块前方也就是无人机的前方朝向距离障碍物的距离，单位为米。</p>
 <pre><code>import logging</code></pre>

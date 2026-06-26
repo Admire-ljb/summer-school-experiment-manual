@@ -12,8 +12,15 @@ import urllib.request
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from io import BytesIO
 from pathlib import Path
 from xml.etree import ElementTree as ET
+
+try:
+    from PIL import Image, ImageOps
+except ImportError:
+    Image = None
+    ImageOps = None
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +28,8 @@ SOURCE_DIR = ROOT.parent / "\u5b9e\u9a8c\u624b\u518c"
 ASSET_DIR = ROOT / "assets"
 IMAGE_DIR = ASSET_DIR / "images"
 TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
+MAX_IMAGE_WIDTH = 1440
+MAX_IMAGE_HEIGHT = 1200
 
 NS = {
     "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
@@ -100,6 +109,34 @@ def paragraph_style(paragraph: ET.Element) -> str:
     return "" if style is None else style.attrib.get(f"{{{NS['w']}}}val", "")
 
 
+def optimize_image_bytes(data: bytes, suffix: str) -> bytes:
+    if Image is None or ImageOps is None:
+        return data
+    try:
+        with Image.open(BytesIO(data)) as opened:
+            if opened.width <= MAX_IMAGE_WIDTH and opened.height <= MAX_IMAGE_HEIGHT:
+                return data
+            image = ImageOps.exif_transpose(opened)
+            image.thumbnail((MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT), Image.Resampling.LANCZOS)
+            output = BytesIO()
+            if suffix in {".jpg", ".jpeg"}:
+                if image.mode not in {"RGB", "L"}:
+                    image = image.convert("RGB")
+                image.save(output, format="JPEG", quality=88, optimize=True, progressive=True)
+            elif suffix == ".webp":
+                if image.mode not in {"RGB", "RGBA"}:
+                    image = image.convert("RGBA" if "A" in image.getbands() else "RGB")
+                image.save(output, format="WEBP", quality=88, method=6)
+            else:
+                if image.mode == "CMYK":
+                    image = image.convert("RGB")
+                image.save(output, format="PNG", optimize=True)
+            optimized = output.getvalue()
+            return optimized if len(optimized) < len(data) else data
+    except Exception:
+        return data
+
+
 def copy_image(zf: zipfile.ZipFile, rels: dict[str, str], rid: str, manual: Manual, index: int) -> str | None:
     target = rels.get(rid)
     if not target:
@@ -111,7 +148,7 @@ def copy_image(zf: zipfile.ZipFile, rels: dict[str, str], rid: str, manual: Manu
     out_dir.mkdir(parents=True, exist_ok=True)
     suffix = Path(source_name).suffix.lower() or ".png"
     out_path = out_dir / f"{index:03d}{suffix}"
-    out_path.write_bytes(zf.read(source_name))
+    out_path.write_bytes(optimize_image_bytes(zf.read(source_name), suffix))
     return f"../assets/images/{manual.slug}/{out_path.name}"
 
 
@@ -220,7 +257,7 @@ def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, 
             blocks.append(f"<p>{escaped}</p>")
     for src in images:
         alt = english_text(stripped[:80], cache) if lang == "en" else stripped[:80]
-        blocks.append(f'<figure><img src="{html.escape(src)}" alt="{html.escape(alt or "manual image")}" loading="lazy"></figure>')
+        blocks.append(f'<figure><img src="{html.escape(src)}" alt="{html.escape(alt or "manual image")}" loading="lazy" decoding="async"></figure>')
     return "\n".join(blocks)
 
 
@@ -419,7 +456,72 @@ def write_assets() -> None:
 
 
 STYLE = """
-:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--text:#404040;--muted:#777;--border:#e1e4e5;--code:#f3f6f6}*{box-sizing:border-box}body{margin:0;color:var(--text);background:#edf0f2;font-family:"Lato","Segoe UI","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;line-height:1.65}a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-dark);text-decoration:underline}.wy-nav-side{position:fixed;inset:0 auto 0 0;width:300px;overflow:hidden;background:var(--sidebar);color:var(--sidebar-link)}.wy-side-scroll{height:100%;overflow-y:auto}.wy-side-nav-search{background:var(--accent);color:#fff;padding:24px 18px 18px;text-align:center}.icon-home{display:block;color:#fff;font-size:20px;font-weight:700;line-height:1.25}.icon-home:hover{color:#fff}.version{margin:8px 0 16px;font-size:13px;opacity:.85}#doc-search{width:100%;height:36px;border:0;border-radius:4px;padding:0 10px;color:#333}.wy-menu{padding:16px 0 32px}.caption{margin:0;padding:0 20px 8px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}.wy-menu ul{list-style:none;padding:0;margin:0}.wy-menu a{display:block;color:var(--sidebar-link);padding:10px 20px;border-left:4px solid transparent}.wy-menu a span{display:block;color:#9db9c9;font-size:12px;margin-bottom:2px}.wy-menu a.active,.wy-menu a:hover{background:var(--sidebar-dark);border-left-color:var(--accent);color:#fff;text-decoration:none}.wy-nav-content-wrap{margin-left:300px;min-height:100vh}.wy-nav-content{background:#fcfcfc;min-height:100vh;padding:34px 48px 80px}.rst-content{max-width:920px;margin:0 auto}.breadcrumbs{position:relative;color:var(--muted);font-size:14px;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px}.breadcrumbs span{margin:0 6px}.github-link{float:right}.language-switch{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin:0 0 10px;font-size:14px}.language-switch span,.language-switch a{border:1px solid var(--border);border-radius:4px;padding:4px 9px}.language-switch span{background:#f3f6f6;color:#555}h1,h2,h3{color:#222;font-family:"Roboto Slab","Noto Serif SC",Georgia,serif;font-weight:700;line-height:1.3}h1{font-size:34px;margin:20px 0 16px}h2{font-size:24px;margin-top:34px;border-bottom:1px solid var(--border);padding-bottom:6px}h3{font-size:19px;margin-top:26px}.subtitle{color:var(--muted);font-size:16px;margin-top:-8px}p{margin:0 0 14px}ul,ol{padding-left:24px}li{margin:6px 0}code{background:var(--code);border:1px solid #d6d8d8;border-radius:4px;padding:1px 5px;font-family:Consolas,"SFMono-Regular",monospace}pre{background:var(--code);border:1px solid #d6d8d8;border-radius:4px;overflow-x:auto;padding:12px 14px}pre code{border:0;padding:0}table{width:100%;border-collapse:collapse;margin:16px 0;background:#fff}td,th{border:1px solid var(--border);padding:8px 10px;vertical-align:top}figure{margin:18px 0}figure img{max-width:100%;border:1px solid var(--border);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08)}.admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}.admonition.warning{border-left-color:#c45f18;background:#fff5eb}.admonition-title{font-weight:700;margin-bottom:6px}.toctree-wrapper{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:16px}.doc-card{display:block;background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px 16px}.doc-card:hover{text-decoration:none;border-color:var(--accent)}.doc-card span{display:inline-block;color:#fff;background:var(--accent);border-radius:3px;padding:1px 6px;font-size:12px;margin-bottom:8px}.doc-card strong{display:block;color:#222}.doc-card em{display:block;color:var(--muted);font-style:normal;font-size:14px}.step{padding-left:12px;border-left:3px solid #d9e8f2}.mobile-bar{display:none;align-items:center;gap:12px;background:var(--sidebar);color:#fff;padding:10px 14px}#menu-toggle{appearance:none;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:4px;width:34px;height:32px;font-size:20px}.hidden-by-search{display:none!important}@media(max-width:900px){.wy-nav-side{transform:translateX(-100%);transition:transform .2s ease;z-index:10}body.nav-open .wy-nav-side{transform:translateX(0)}.wy-nav-content-wrap{margin-left:0}.mobile-bar{display:flex;position:sticky;top:0;z-index:5}.wy-nav-content{padding:22px 20px 64px}h1{font-size:28px}.github-link{float:none;display:block;margin-top:8px}}
+:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--text:#404040;--muted:#777;--border:#e1e4e5;--code:#f3f6f6}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text);background:#edf0f2;font-family:"Lato","Segoe UI","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;line-height:1.65}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-dark);text-decoration:underline}
+.wy-nav-side{position:fixed;inset:0 auto 0 0;width:300px;overflow:hidden;background:var(--sidebar);color:var(--sidebar-link)}
+.wy-side-scroll{height:100%;overflow-y:auto}
+.wy-side-nav-search{background:var(--accent);color:#fff;padding:24px 18px 18px;text-align:center}
+.icon-home{display:block;color:#fff;font-size:20px;font-weight:700;line-height:1.25}
+.icon-home:hover{color:#fff}
+.version{margin:8px 0 16px;font-size:13px;opacity:.85}
+#doc-search{width:100%;height:36px;border:0;border-radius:4px;padding:0 10px;color:#333}
+.wy-menu{padding:16px 0 32px}
+.caption{margin:0;padding:0 20px 8px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}
+.wy-menu ul{list-style:none;padding:0;margin:0}
+.wy-menu a{display:block;color:var(--sidebar-link);padding:10px 20px;border-left:4px solid transparent}
+.wy-menu a span{display:block;color:#9db9c9;font-size:12px;margin-bottom:2px}
+.wy-menu a.active,.wy-menu a:hover{background:var(--sidebar-dark);border-left-color:var(--accent);color:#fff;text-decoration:none}
+.wy-nav-content-wrap{margin-left:300px;min-height:100vh}
+.wy-nav-content{background:#fcfcfc;min-height:100vh;padding:34px 48px 80px}
+.rst-content{max-width:920px;margin:0 auto}
+.breadcrumbs{position:relative;color:var(--muted);font-size:14px;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px}
+.breadcrumbs span{margin:0 6px}
+.github-link{float:right}
+.language-switch{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin:0 0 10px;font-size:14px}
+.language-switch span,.language-switch a{border:1px solid var(--border);border-radius:4px;padding:4px 9px}
+.language-switch span{background:#f3f6f6;color:#555}
+h1,h2,h3{color:#222;font-family:"Roboto Slab","Noto Serif SC",Georgia,serif;font-weight:700;line-height:1.3}
+h1{font-size:34px;margin:20px 0 16px}
+h2{font-size:24px;margin-top:34px;border-bottom:1px solid var(--border);padding-bottom:6px}
+h3{font-size:19px;margin-top:26px}
+.subtitle{color:var(--muted);font-size:16px;margin-top:-8px}
+p{margin:0 0 14px}
+ul,ol{padding-left:24px}
+li{margin:6px 0}
+code{background:var(--code);border:1px solid #d6d8d8;border-radius:4px;padding:1px 5px;font-family:Consolas,"SFMono-Regular",monospace}
+pre{background:var(--code);border:1px solid #d6d8d8;border-radius:4px;overflow-x:auto;padding:12px 14px}
+pre code{border:0;padding:0}
+table{width:100%;border-collapse:collapse;margin:16px 0;background:#fff}
+td,th{border:1px solid var(--border);padding:8px 10px;vertical-align:top}
+figure{margin:20px 0;text-align:center;overflow-x:auto}
+figure img{display:block;width:auto;height:auto;max-width:min(100%,900px);max-height:78vh;object-fit:contain;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}
+.admonition.warning{border-left-color:#c45f18;background:#fff5eb}
+.admonition-title{font-weight:700;margin-bottom:6px}
+.toctree-wrapper{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:16px}
+.doc-card{display:block;background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px 16px}
+.doc-card:hover{text-decoration:none;border-color:var(--accent)}
+.doc-card span{display:inline-block;color:#fff;background:var(--accent);border-radius:3px;padding:1px 6px;font-size:12px;margin-bottom:8px}
+.doc-card strong{display:block;color:#222}
+.doc-card em{display:block;color:var(--muted);font-style:normal;font-size:14px}
+.step{padding-left:12px;border-left:3px solid #d9e8f2}
+.mobile-bar{display:none;align-items:center;gap:12px;background:var(--sidebar);color:#fff;padding:10px 14px}
+#menu-toggle{appearance:none;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:4px;width:34px;height:32px;font-size:20px}
+.hidden-by-search{display:none!important}
+@media(max-width:900px){
+  .wy-nav-side{transform:translateX(-100%);transition:transform .2s ease;z-index:10}
+  body.nav-open .wy-nav-side{transform:translateX(0)}
+  .wy-nav-content-wrap{margin-left:0}
+  .mobile-bar{display:flex;position:sticky;top:0;z-index:5}
+  .wy-nav-content{padding:22px 20px 64px}
+  figure{margin:18px 0}
+  figure img{max-width:100%;max-height:none}
+  h1{font-size:28px}
+  .github-link{float:none;display:block;margin-top:8px}
+}
 """.strip() + "\n"
 
 SCRIPT = """

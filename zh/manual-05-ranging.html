@@ -112,11 +112,11 @@
 <p>遇到障碍 → 如果前方和上方距离小于40厘米就停止飞行</p>
 <p>结束任务 → 打印&quot;Demo terminated!&quot;</p>
 <p>同学们需要理解该代码中必要的一些语句，首先对于is_close这个函数，该函数定义了一个变量值为0.3，该函数将会返回multiranger传感器在某个方向上是否在某个距离内检测到障碍物，调用方法可以参考代码内该函数被调用的位置以及传入的参数。MIN_DISTANCE定义的距离0.3则代表了该函数将会在multiranger传感器在某个方向上的0.3m内检测到障碍物之后返回确定的值。</p>
-<figure><img src="../assets/images/manual-05-ranging/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-05-ranging/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同时，对于主程序中的while循环，一直在判断一个叫做keep_flying的标志位，该标志位为true时，while循环将会一直循环执行下面的语句（直到time.sleep（0.1）那一条语句）。当while语句结束，也就是keep_flying的标志位被置为false则跳出while循环，执行while循环之后的代码，也就是print语句，同时，motioncommander类也会因为被顺序执行完毕自动销毁，无人机会自动降落。这就是这个代码的原理。</p>
 <p>实验二：前后往返</p>
 <p>接下来，把motioncommander类里的代码内容换成如下内容：</p>
-<figure><img src="../assets/images/manual-05-ranging/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-05-ranging/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>在运行该代码之前，将无人机放在两堵墙之间，无人机的前方垂直于两堵墙。运行效果为无人机将会在两面墙之间来回“弹跳”，想一想这个过程中，代码里有哪些参数修改了之后，会对无人机的运行效果造成怎样的影响？同样地，我们保留了若无人机检测到上方有物体时，也会自动降落的功能，该代码运行时，若不手动停止或者上方检测到障碍物，无人机将会在两面墙之间一直来回“弹跳”，希望同学们可以理解这个代码的原理为后面做铺垫。</p>
 <p>实验三：在一个盒子里“弹跳”</p>
 <p>运行下面完整的代码（也就是Bouncing_box.py）：</p>

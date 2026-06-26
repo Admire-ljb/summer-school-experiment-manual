@@ -56,60 +56,60 @@
 <p>在终端中输入如下命令(可以右键选中如下命令点击复制，再粘贴到终端中)：</p>
 <p>wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>
 <p>如要求输入密码赋予操作权限，则输入设定好的用户密码，注意输入的密码不显式显现，输入完毕直接按回车键。</p>
-<figure><img src="../assets/images/manual-02-ros/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>到这一步我们输入数字1后按回车键</p>
-<figure><img src="../assets/images/manual-02-ros/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>接下来选择更换系统源再继续安装，因为原生的Ubuntu系统的软件安装来源来自于外网，我们直接访问速度会很慢，但是有国内的镜像网站，我们访问国内的网站速度会更快，输入数字1再按回车键。</p>
-<figure><img src="../assets/images/manual-02-ros/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>到这一步输入数字2再按回车键。</p>
-<figure><img src="../assets/images/manual-02-ros/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再下一步让脚本自动帮助我们选择下载速度最快的源，输入数字1按回车键。</p>
-<figure><img src="../assets/images/manual-02-ros/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>经过一定时间地等待，到达这一步，我们选择安装ROS1，输入数字3按回车键。</p>
-<figure><img src="../assets/images/manual-02-ros/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>在这一步输入数字1按回车键选择桌面版。</p>
-<figure><img src="../assets/images/manual-02-ros/007.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>经过稍微较长的等待时间，ROS1系统就安装好了。</p>
-<figure><img src="../assets/images/manual-02-ros/008.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>然后输入以下命令：</p>
 <p>roscore</p>
 <p>如果正常出现以下界面，则代表ROS系统环境安装配置成功在运行所有ROS程序前，都要先运行该命令。现在可以尽情探索ROS的魅力了。此时再给已经配置好ROS1环境的ubuntu系统拍摄一个虚拟机的快照，保存此时的系统状态（拍摄系统快照的方法见实验手册1）。</p>
-<figure><img src="../assets/images/manual-02-ros/009.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验二：运行ROS的小海龟组件</p>
 <p>对于ROS1来说自带一个类似于“Hello world！”的程序，就是海龟模拟器组件，可以通过键盘操控一只海龟进行移动，理解该组件的运行原理可以极大地帮助入门学习ROS系统。</p>
 <p>对于原来打开的运行了roscore的终端不要关闭，重新呼出一个终端，输入如下命令：</p>
 <pre><code>rosrun turtlesim turtlesim_node</code></pre>
 <p>该命令启动了海龟仿真器节点。其中rosrun命令后面跟的两个命令，turtlesim代表的是一个功能包，可以理解为该功能包为一个集合，集合了运行模拟海龟组件的所有内容，turtlesim_node则代表了该功能包中的一个节点。运行完该命令后出现了一个模拟海龟的窗口。</p>
-<figure><img src="../assets/images/manual-02-ros/010.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再重新新建一个终端，输入rosrun turtlesim 后(注意命令最后有个空格)，双击tab键可以查看当前包下的节点。</p>
-<figure><img src="../assets/images/manual-02-ros/011.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Linux小技巧，对应的终端命令输入一半（已输入的字符可以定位到这一类或一个命令时），按tab键可以自动补全命令，免去输入错误的麻烦。</p>
-<figure><img src="../assets/images/manual-02-ros/012.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>运行turtle_teleop_key节点，鼠标点击该终端，即可使用方向键操控小海龟。</p>
-<figure><img src="../assets/images/manual-02-ros/013.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验三：使用可视化方法查看小海龟组件运行原理</p>
 <p>再新建一个终端，输入rqt_graph命令，出现一个可视化界面展示了当前运行的节点以及之间的通讯情况。可以看到/teleop_turtle（远程操控海龟节点）发布了/turtle1/cmd_vel话题，该话题的内容为即为海龟的速度转向的参数，由/turtlesim（海龟模拟节点）订阅该话题。若想停止某个终端正在执行的命令，在该终端按下ctrl加上c键即可终止。</p>
-<figure><img src="../assets/images/manual-02-ros/014.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同样地，rqt命令还有很多用法，输入rqt_之后再双击tab键可以看到rqt的其他可视化工具，我们再尝试一下rqt_plot命令，</p>
-<figure><img src="../assets/images/manual-02-ros/015.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>在所要监控的topic中选择海龟的位置信息，此时再键盘操控海龟，即可看到海龟的坐标信息的变化能被图表监控到。</p>
-<figure><img src="../assets/images/manual-02-ros/016.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/016.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验四（拓展）：ROS基本的rosnode和rostopic命令的使用</p>
 <p>直接在新的终端输入rosnode命令，显示了其用法，例如输入rosnode list命令即可展示当前正在运行的节点，输入rosnode info加上空格加上节点的名字即可查看该节点的详细信息。</p>
-<figure><img src="../assets/images/manual-02-ros/017.png" alt="manual image" loading="lazy"></figure>
-<figure><img src="../assets/images/manual-02-ros/018.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/017.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images/manual-02-ros/018.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同样地，对于rostopic命令也可查看当前话题的信息。</p>
-<figure><img src="../assets/images/manual-02-ros/019.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>注意，我们之前驱动海龟是由teleop_turtle节点读取键盘输入，在/turtle1/cmd_vel话题发布信息驱动海龟，我们同样可以通过命令行的方式让海龟自动行动。</p>
 <p>按照如下方式输入命令，在此时双击tab键 。</p>
-<figure><img src="../assets/images/manual-02-ros/020.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>可以看到控制海龟的/turtle1/cmd_vel话题由线速度和角速度的参数组成，按左右的方向键直接修改第一行linear后的x的值为1.0，再回车可以看到海龟行进了一小段距离就停止了，因为该话题止发布了一次。</p>
-<figure><img src="../assets/images/manual-02-ros/021.png" alt="manual image" loading="lazy"></figure>
-<figure><img src="../assets/images/manual-02-ros/022.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/021.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images/manual-02-ros/022.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>现在按照如下方式输入命令，加入-r 10的参数，意思是设置该话题循环每秒发布1次，这样海龟就会一直前进直到撞墙。</p>
-<figure><img src="../assets/images/manual-02-ros/023.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>现在，利用以上学到的操作，让海龟不停绕圈移动，利用可视化工具观察其位置坐标变化。</p>
-<figure><img src="../assets/images/manual-02-ros/024.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <p class="step">1. 鱼香 ROS 工具与学习入口（网页标题：鱼香ROS - 合肥幻刃科技有限公司）</p>

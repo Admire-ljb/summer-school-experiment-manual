@@ -68,7 +68,7 @@
 <p class="step">1. 初始化与起飞：PositionHlCommander (构造函数)</p>
 <p>我们通常配合 with 语句来使用这个类，这样可以实现**“自动起飞，自动降落”**，非常安全方便。</p>
 <p>代码范例：</p>
-<figure><img src="../assets/images/manual-12-position-commander/001.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>关键参数：</p>
 <p>x, y, z (浮点数): 设定无人机的起始坐标。通常保持默认 0.0, 0.0, 0.0，即以无人机上电启动位置为原点（重要！！！）。</p>
 <p>default_height (浮点数): 默认飞行高度（单位：米）。起飞后无人机会自动悬停在这个高度。建议设置为 0.3 到 0.5 米。</p>
@@ -77,7 +77,7 @@
 <p class="step">2. 绝对坐标飞行：go_to(x, y, z, velocity)</p>
 <p>这是实现路径规划最核心的函数。你告诉无人机一个具体的坐标点 (X, Y, Z)，它就会直线飞过去。</p>
 <p>函数原型：pc.go_to(x, y, z=None, velocity=None)</p>
-<figure><img src="../assets/images/manual-12-position-commander/002.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>参数详解：</p>
 <p>x, y (必须): 目标点的 X 和 Y 坐标（米）。</p>
 <p>z (可选): 目标高度。如果不填，保持默认高度。</p>
@@ -91,15 +91,15 @@
 <p>forward(distance) / back(distance)</p>
 <p>功能：沿 X 轴 正方向（前）或负方向（后）移动指定距离。</p>
 <p>数学含义： =  + distance， Y 和 Z 不变。</p>
-<figure><img src="../assets/images/manual-12-position-commander/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>left(distance) / right(distance)</p>
 <p>功能：沿 Y 轴 正方向（左）或负方向（右）移动指定距离。</p>
 <p>数学含义：  =   + distance， X 和 Z 不变。</p>
 <p>重要提示：Crazyflie 遵循右手坐标系，面向 X 轴正向时，Y 轴正向在左手边。</p>
-<figure><img src="../assets/images/manual-12-position-commander/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>up(distance) / down(distance)</p>
 <p>功能：沿 Z 轴 垂直上升或下降指定距离。</p>
-<figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>重要注意事项！！！</p>
 <p>positioncommander类调用的无人机初始化位置为无人机上电启动时的位置。</p>
 <p>即，每次运行带有positioncommander类的代码时，无人机一定要放在起飞的位置，放平稳后再上电，此时坐标定位为（0，0，0），然后再运行程序。并且因为每次飞行和降落时都会让定位产生偏差，所以每次飞行都要严格按照这样的流程，让无人机在起飞位置静止地上电，也就是如果无人机正常平稳降落了，要运行下一个程序前，也得重新上电，执行该步骤。否则无人机的定位会紊乱，起飞就会炸机，一定要注意！</p>
@@ -135,11 +135,11 @@
 <p>实验二：以坐标轴来实现花样立体飞行</p>
 <p>让无人机的飞行轨迹在xy平面上呈现一个标准的五角星，然后，再让这颗五角星立起来，在xz或者yz平面上呈现一个标准的五角星。这样的要求，如果用之前的motioncommander来做，是不是就会比较麻烦，如果用坐标来实现，是不是也就是几行代码的事？</p>
 <p>飞行轨迹如下图所示：</p>
-<figure><img src="../assets/images/manual-12-position-commander/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验三：用坐标的概念来探索地图</p>
 <p>此次课的地图沿用上节课的设计，接下来按照下图所示的障碍地图环境，让无人机从A区域起飞，整个流程中无人机的飞行高度不要超过0.4m，探索整个地图，也就是一路飞行不要碰撞到墙壁，直到在B区域内降落。</p>
 <p>请注意，今天所学习的positioncommander的重点内容为操控无人机在一个坐标系内飞行，注意无人机初始放置的位置决定了坐标系的建立位置，一定要注意初始无人机位置的放置，以及无人机前方的朝向，每个隔板的大小为35cm*45cm，也就是说，该图从上往下看，每一个隔板的长度为35cm，如果我们用坐标的方式来理解规划这个路径，路径规划问题是不是会更简单？无人机能知道自己在哪里，下一步往哪里走。注意无人机起飞的初始位置尽量远离墙，否则可能大概率会受到气流的影响。</p>
-<figure><img src="../assets/images/manual-12-position-commander/007.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-12-position-commander/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
       </div>
     </article>
   </main>
