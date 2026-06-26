@@ -56,54 +56,54 @@
 <p>实验一：起飞前进，检测到障碍降落</p>
 <p>上节课的内容，大家学会了单独调用multiranger模块查看其参数，以及运行了一个现成的程序实现了“推动”无人机的效果。接下来同学们将跟着示例程序，自己从基础，一步一步地编程实现特定的功能。</p>
 <p>接下来给出一个可以运行的完整的示例程序，今天基于multiranger模块的相关编程，都可以以此为模板进行进一步的代码编写。</p>
-<p>import logging</p>
-<p>import sys</p>
-<p>import time</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie import Crazyflie</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.motion_commander import MotionCommander</p>
-<p>from cflib.utils import uri_helper</p>
-<p>from cflib.utils.multiranger import Multiranger</p>
+<pre><code>import logging</code></pre>
+<pre><code>import sys</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
+<pre><code>from cflib.utils.multiranger import Multiranger</code></pre>
 <p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址&#x27;)</p>
 <p>if len(sys.argv) &gt; 1:</p>
 <p>URI = sys.argv[1]</p>
-<p># Only output errors from the logging framework</p>
+<pre><code># Only output errors from the logging framework</code></pre>
 <p>logging.basicConfig(level=logging.ERROR)</p>
-<p>def is_close(range):</p>
+<pre><code>def is_close(range):</code></pre>
 <p>MIN_DISTANCE = 0.4  # m</p>
 <p>if range is None:</p>
-<p>return False</p>
+<pre><code>return False</code></pre>
 <p>else:</p>
-<p>return range &lt; MIN_DISTANCE</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
-<p># Initialize the low-level drivers</p>
+<pre><code>return range &lt; MIN_DISTANCE</code></pre>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers</code></pre>
 <p>cflib.crtp.init_drivers()</p>
 <p>cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)</p>
-<p>with SyncCrazyflie(URI, cf=cf) as scf:</p>
-<p># Arm the Crazyflie</p>
+<pre><code>with SyncCrazyflie(URI, cf=cf) as scf:</code></pre>
+<pre><code># Arm the Crazyflie</code></pre>
 <p>scf.cf.platform.send_arming_request(True)</p>
 <p>time.sleep(1.0)</p>
-<p>with MotionCommander(scf) as motion_commander:</p>
-<p>with Multiranger(scf) as multiranger:</p>
+<pre><code>with MotionCommander(scf) as motion_commander:</code></pre>
+<pre><code>with Multiranger(scf) as multiranger:</code></pre>
 <p>keep_flying = True</p>
-<p>print(&#x27;already,wait a second&#x27;)</p>
+<pre><code>print(&#x27;already,wait a second&#x27;)</code></pre>
 <p>time.sleep(1.0)</p>
 <p>VELOCITY = 0.3</p>
 <p>velocity_x = 0.3</p>
 <p>velocity_y = 0.0</p>
-<p>while keep_flying: # 只要可以继续飞行就循环执行</p>
-<p># 检查上方有没有障碍物</p>
+<pre><code>while keep_flying: # 只要可以继续飞行就循环执行</code></pre>
+<pre><code># 检查上方有没有障碍物</code></pre>
 <p>if is_close(multiranger.up):</p>
 <p>keep_flying = False #有障碍物！停止飞行</p>
-<p># 检查前方有没有障碍物</p>
+<pre><code># 检查前方有没有障碍物</code></pre>
 <p>if is_close(multiranger.front):</p>
 <p>keep_flying = False  #有障碍物！停止飞行</p>
-<p># 命令无人机以设定速度飞行</p>
+<pre><code># 命令无人机以设定速度飞行</code></pre>
 <p>motion_commander.start_linear_motion(</p>
 <p>velocity_x, velocity_y, 0)</p>
 <p>time.sleep(0.1)</p>
-<p>print(&#x27;Demo terminated!&#x27;)</p>
+<pre><code>print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>该代码实现了一个简单的功能，无人机起飞，稳定姿态1秒后以0.3m每秒的速度向前飞行，直到检测到无人机前方0.4m内有障碍物，则会停止前进并且降落。</p>
 <p>程序执行流程</p>
 <p>启动程序 → 连接无人机 → 解锁准备</p>
@@ -122,32 +122,32 @@
 <p>运行下面完整的代码（也就是Bouncing_box.py）：</p>
 <p>注意，运行该代码前尽量将无人机放在运行场地中心的位置，该代码主要调用了flowdeck模块的功能实现视觉导航和定位，没有用到multiranger的功能。让无人机实现在一个正方形的区域内“弹跳”，即每次接触到这个看不见的正方形边界之后，无人机在x与y方向上的速度方向改变，达到一个“回头弹跳”的效果。</p>
 <p>因为使用的是flowdeck的功能，所以只在没有反光的场地上运行的效果最好，同样地会在这片看不见的正方形区域上无限弹跳，直到手动停止程序。BOX_LIMIT = 0.3则设置的是该正方形区域的大小，同学们可以适当修改这个值，注意起飞时最好放在场地中间。</p>
-<p>import logging</p>
-<p>import sys</p>
-<p>import time</p>
-<p>from threading import Event</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie import Crazyflie</p>
-<p>from cflib.crazyflie.log import LogConfig</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.motion_commander import MotionCommander</p>
-<p>from cflib.utils import uri_helper</p>
+<pre><code>import logging</code></pre>
+<pre><code>import sys</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>from threading import Event</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.log import LogConfig</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
 <p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)</p>
 <p>DEFAULT_HEIGHT = 0.35</p>
 <p>BOX_LIMIT = 0.3</p>
 <p>deck_attached_event = Event()</p>
 <p>logging.basicConfig(level=logging.ERROR)</p>
 <p>position_estimate = [0, 0]</p>
-<p>def move_box_limit(scf):</p>
-<p>with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:</p>
+<pre><code>def move_box_limit(scf):</code></pre>
+<pre><code>with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:</code></pre>
 <p>body_x_cmd = 0.2</p>
 <p>body_y_cmd = 0.1</p>
 <p>max_vel = 0.2</p>
-<p>while (1):</p>
-<p>#if position_estimate[0] &gt; BOX_LIMIT:</p>
-<p>#    mc.start_back()</p>
-<p>#elif position_estimate[0] &lt; -BOX_LIMIT:</p>
-<p>#    mc.start_forward()</p>
+<pre><code>while (1):</code></pre>
+<pre><code>#if position_estimate[0] &gt; BOX_LIMIT:</code></pre>
+<pre><code>#    mc.start_back()</code></pre>
+<pre><code>#elif position_estimate[0] &lt; -BOX_LIMIT:</code></pre>
+<pre><code>#    mc.start_forward()</code></pre>
 <p>if position_estimate[0] &gt; BOX_LIMIT:</p>
 <p>body_x_cmd = -max_vel</p>
 <p>elif position_estimate[0] &lt; -BOX_LIMIT:</p>
@@ -158,26 +158,26 @@
 <p>body_y_cmd = max_vel</p>
 <p>mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)</p>
 <p>time.sleep(0.1)</p>
-<p>def move_linear_simple(scf):</p>
+<pre><code>def move_linear_simple(scf):</code></pre>
 <p>...</p>
-<p>def take_off_simple(scf):</p>
+<pre><code>def take_off_simple(scf):</code></pre>
 <p>...</p>
-<p>def log_pos_callback(timestamp, data, logconf):</p>
-<p>print(data)</p>
+<pre><code>def log_pos_callback(timestamp, data, logconf):</code></pre>
+<pre><code>print(data)</code></pre>
 <p>global position_estimate</p>
 <p>position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]</p>
 <p>position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]</p>
-<p>def param_deck_flow(_, value_str):</p>
+<pre><code>def param_deck_flow(_, value_str):</code></pre>
 <p>value = int(value_str)</p>
-<p>print(value)</p>
+<pre><code>print(value)</code></pre>
 <p>if value:</p>
 <p>deck_attached_event.set()</p>
-<p>print(&#x27;Deck is attached!&#x27;)</p>
+<pre><code>print(&#x27;Deck is attached!&#x27;)</code></pre>
 <p>else:</p>
-<p>print(&#x27;Deck is NOT attached!&#x27;)</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
+<pre><code>print(&#x27;Deck is NOT attached!&#x27;)</code></pre>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
 <p>cflib.crtp.init_drivers()</p>
-<p>with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</p>
+<pre><code>with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</code></pre>
 <p>scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,</p>
 <p>cb=param_deck_flow)</p>
 <p>time.sleep(1)</p>
@@ -187,9 +187,9 @@
 <p>scf.cf.log.add_config(logconf)</p>
 <p>logconf.data_received_cb.add_callback(log_pos_callback)</p>
 <p>if not deck_attached_event.wait(timeout=5):</p>
-<p>print(&#x27;No flow deck detected!&#x27;)</p>
+<pre><code>print(&#x27;No flow deck detected!&#x27;)</code></pre>
 <p>sys.exit(1)</p>
-<p># Arm the Crazyflie</p>
+<pre><code># Arm the Crazyflie</code></pre>
 <p>scf.cf.platform.send_arming_request(True)</p>
 <p>time.sleep(1.0)</p>
 <p>logconf.start()</p>

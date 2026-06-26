@@ -67,41 +67,41 @@
 <figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy"></figure>
 <p>可以看到，在multiranger.py这个文件中，定义了multiranger类的成员属性，multiranger传感器在工作时会返回六个参数：front、back、left、right、up和down。分别对应着无人机在着六个方向上距离障碍物的距离，具体该如何调用multiranger模块并且查看他的工作状态呢？</p>
 <p>接下来，将下方的代码在虚拟机上运行起来，调用无人机上的multiranger模块。具体的操作流程大家应该很熟悉了，这里再简单复述一下，在虚拟机的workspace文件夹下创建一个python文件命名为multiranger_paramet.py，将如下代码复制粘贴至multiranger_paramet.py。该代码主要实现的功能为由无线模块远程连接无人机，实现一个multiranger类，通过该类来调用multiranger模块，在终端中输出该模块的返回值，该代码中，返回了multiranger模块前方也就是无人机的前方朝向距离障碍物的距离，单位为米。</p>
-<p>import logging</p>
-<p>import sys</p>
-<p>import time</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie import Crazyflie</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.motion_commander import MotionCommander</p>
-<p>from cflib.utils import uri_helper</p>
-<p>from cflib.utils.multiranger import Multiranger</p>
+<pre><code>import logging</code></pre>
+<pre><code>import sys</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
+<pre><code>from cflib.utils.multiranger import Multiranger</code></pre>
 <p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/60/2M/注意改成对的硬件地址&#x27;)</p>
 <p>if len(sys.argv) &gt; 1:</p>
 <p>URI = sys.argv[1]</p>
-<p># Only output errors from the logging framework</p>
+<pre><code># Only output errors from the logging framework</code></pre>
 <p>logging.basicConfig(level=logging.ERROR)</p>
-<p>def is_close(range):</p>
+<pre><code>def is_close(range):</code></pre>
 <p>MIN_DISTANCE = 0.2  # m</p>
 <p>if range is None:</p>
-<p>return False</p>
+<pre><code>return False</code></pre>
 <p>else:</p>
-<p>return range &lt; MIN_DISTANCE</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
-<p># Initialize the low-level drivers</p>
+<pre><code>return range &lt; MIN_DISTANCE</code></pre>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers</code></pre>
 <p>cflib.crtp.init_drivers()</p>
 <p>cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)</p>
-<p>with SyncCrazyflie(URI, cf=cf) as scf:</p>
-<p># Arm the Crazyflie</p>
+<pre><code>with SyncCrazyflie(URI, cf=cf) as scf:</code></pre>
+<pre><code># Arm the Crazyflie</code></pre>
 <p>scf.cf.platform.send_arming_request(True)</p>
 <p>time.sleep(1.0)</p>
-<p>with Multiranger(scf) as multiranger:</p>
+<pre><code>with Multiranger(scf) as multiranger:</code></pre>
 <p>keep_flying = True</p>
-<p>while keep_flying:</p>
-<p>print(&quot;--------------------------------------&quot;)</p>
-<p>print(&quot;multiranger.front:&quot;+str(multiranger.front))</p>
+<pre><code>while keep_flying:</code></pre>
+<pre><code>print(&quot;--------------------------------------&quot;)</code></pre>
+<pre><code>print(&quot;multiranger.front:&quot;+str(multiranger.front))</code></pre>
 <p>time.sleep(0.1)</p>
-<p>print(&#x27;Demo terminated!&#x27;)</p>
+<pre><code>print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>现在，大家能通过cflib的库函数调用查看到了multiranger模块返回的无人机前方离障碍物的距离，现在根据前面查看到的multiranger.py的内容，调用multiranger类的属性，查看其它五个方向（back、left、right、up、down）离障碍物的距离,在终端中输出。</p>
 <p>实验二：“推动“无人机</p>
 <p>现在用multiranger模块结合flow deck模块，实现一些有趣的效果。</p>
@@ -121,38 +121,38 @@
 <p>* Flow deck</p>
 <p>* Multiranger deck</p>
 <p>&quot;&quot;&quot;</p>
-<p>import logging</p>
-<p>import sys</p>
-<p>import time</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie import Crazyflie</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.motion_commander import MotionCommander</p>
-<p>from cflib.utils import uri_helper</p>
-<p>from cflib.utils.multiranger import Multiranger</p>
+<pre><code>import logging</code></pre>
+<pre><code>import sys</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
+<pre><code>from cflib.utils.multiranger import Multiranger</code></pre>
 <p>URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/注意改成对的硬件地址&#x27;)</p>
 <p>if len(sys.argv) &gt; 1:</p>
 <p>URI = sys.argv[1]</p>
-<p># Only output errors from the logging framework</p>
+<pre><code># Only output errors from the logging framework</code></pre>
 <p>logging.basicConfig(level=logging.ERROR)</p>
-<p>def is_close(range):</p>
+<pre><code>def is_close(range):</code></pre>
 <p>MIN_DISTANCE = 0.2  # m</p>
 <p>if range is None:</p>
-<p>return False</p>
+<pre><code>return False</code></pre>
 <p>else:</p>
-<p>return range &lt; MIN_DISTANCE</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
-<p># Initialize the low-level drivers</p>
+<pre><code>return range &lt; MIN_DISTANCE</code></pre>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers</code></pre>
 <p>cflib.crtp.init_drivers()</p>
 <p>cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)</p>
-<p>with SyncCrazyflie(URI, cf=cf) as scf:</p>
-<p># Arm the Crazyflie</p>
+<pre><code>with SyncCrazyflie(URI, cf=cf) as scf:</code></pre>
+<pre><code># Arm the Crazyflie</code></pre>
 <p>scf.cf.platform.send_arming_request(True)</p>
 <p>time.sleep(1.0)</p>
-<p>with MotionCommander(scf) as motion_commander:</p>
-<p>with Multiranger(scf) as multiranger:</p>
+<pre><code>with MotionCommander(scf) as motion_commander:</code></pre>
+<pre><code>with Multiranger(scf) as multiranger:</code></pre>
 <p>keep_flying = True</p>
-<p>while keep_flying:</p>
+<pre><code>while keep_flying:</code></pre>
 <p>VELOCITY = 0.5</p>
 <p>velocity_x = 0.0</p>
 <p>velocity_y = 0.0</p>
@@ -169,7 +169,7 @@
 <p>motion_commander.start_linear_motion(</p>
 <p>velocity_x, velocity_y, 0)</p>
 <p>time.sleep(0.1)</p>
-<p>print(&#x27;Demo terminated!&#x27;)</p>
+<pre><code>print(&#x27;Demo terminated!&#x27;)</code></pre>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <p class="step">1. Bitcraze cflib 用户指南（网页标题：User guides | Bitcraze）</p>

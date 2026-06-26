@@ -41,15 +41,107 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-12-position-commander.html">中文</a></div>
         
 <h1>Experiment 12: PositionCommander</h1>
-<p class="subtitle">PositionCommander</p>
-<h2>Purpose</h2>
-<p>Use coordinate-based commands for waypoint routes and structured spatial tasks.</p>
-<h2>Preparation</h2>
-<ul><li>Crazyflie setup with appropriate positioning support.</li><li>Coordinate-frame assumptions understood before flight.</li><li>Waypoint list or route sketch.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Initialize PositionCommander or the documented position-control API.</li><li>Set default height, speed, and coordinate frame carefully.</li><li>Execute waypoint routes such as square, cube, star, or map-based paths.</li></ol>
-<h2>Verification</h2>
-<ul><li>The coordinate route matches the intended geometry.</li><li>The aircraft remains inside the allowed volume.</li><li>The route can be adjusted by editing explicit coordinates.</li></ul>
+<p>Lab Manual 5 - PositionCommander</p>
+<p>Experimental goals</p>
+<p>This lesson aims to enable students to master the core usage of the PositionHlCommander class and achieve precise path planning for drones.</p>
+<p>1. Understand the concept of spatial coordinate system</p>
+<p>Understand the difference between the world coordinate system (absolute coordinates) and the body coordinate system (relative coordinates) during drone flight.</p>
+<p>Master the origin (0,0,0) setting logic of Crazyflie combined with Flow deck v2 when powered on.</p>
+<p>2. Master the basic usage of PositionHlCommander class</p>
+<p>Learn to use take_off() and land() to implement automatic take-off and landing, and understand the role of default parameters (height, speed).</p>
+<p>Core skills: Master the go_to(x, y, z) command to fly the drone to a specific absolute coordinate point in space.</p>
+<p>Advanced skills: Master relative position control instructions such as forward(), back(), left(), right(), etc., and understand their mixed use with absolute coordinate control.</p>
+<p>3.Write combined flight routines</p>
+<p>You can use the above instructions comprehensively to write Python scripts to drive the drone to fly in specified geometric shapes (such as squares, rectangles or three-dimensional step trajectories).</p>
+<p>Experiment preparation</p>
+<p>The virtual machine system of the client connected to the drone has been configured previously. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
+<p>Hardware equipment needed in this experiment:</p>
+<p>* Crazyflie 2.0</p>
+<p>* Crazyradio PA</p>
+<p>* Flow deck</p>
+<p>* Multiranger deck</p>
+<p>Experimental steps</p>
+<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
+<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
+<p>First, let’s get to know the member functions and usage of the PositionHlCommander class:</p>
+<p>The source code of this class can be viewed in the position_hl_commander.py file attached to this course as a reference.</p>
+<p>Before writing the flight code, we need to &quot;get to know&quot; our commander - PositionHlCommander. This class encapsulates a series of instructions that allow us to tell the drone where to go just like directing traffic.</p>
+<p>Here are the core functions we&#x27;ll use frequently in this lesson:</p>
+<p class="step">1. Initialization and take-off: PositionHlCommander (constructor)</p>
+<p>We usually use this class with the with statement, so that we can achieve &quot;automatic takeoff and automatic landing&quot;, which is very safe and convenient.</p>
+<p>Code example:</p>
+<figure><img src="../assets/images/manual-12-position-commander/001.png" alt="manual image" loading="lazy"></figure>
+<p>Key parameters:</p>
+<p>x, y, z (floating point number): Set the starting coordinates of the drone. Usually keep the default value of 0.0, 0.0, 0.0, that is, take the starting position of the drone as the origin (important!!!).</p>
+<p>default_height (floating point number): Default flight height (unit: meters). The drone will automatically hover at this height after taking off. The recommended setting is 0.3 to 0.5 meters.</p>
+<p>default_velocity (floating point number): Default flight speed (unit: meters/second). It is recommended to set it to 0.3 for beginners and increase it to 0.5 for those who are proficient.</p>
+<p>default_landing_height (floating point number): Landing height. This parameter needs to be adjusted if you want to take off on the table but land on the floor, or vice versa. Defaults to 0.0 (ground).</p>
+<p class="step">2. Absolute coordinate flight: go_to(x, y, z, velocity)</p>
+<p>This is the core function to implement path planning. You tell the drone a specific coordinate point (X, Y, Z), and it will fly straight there.</p>
+<p>Function prototype: pc.go_to(x, y, z=None, velocity=None)</p>
+<figure><img src="../assets/images/manual-12-position-commander/002.png" alt="manual image" loading="lazy"></figure>
+<p>Detailed explanation of parameters:</p>
+<p>x, y (required): X and Y coordinates of the target point (meters).</p>
+<p>z (optional): target height. If left blank, keep the default height.</p>
+<p>velocity (optional): The flight speed for this section of the journey. If left blank, the default speed is used.</p>
+<p>hint:</p>
+<p>This function is blocking, which means that the code will not continue until the drone flies to its destination.</p>
+<p>The UAV always keeps its nose facing the positive direction of the X-axis (Yaw = 0) during flight and will not turn its head.</p>
+<p class="step">3. Relative coordinate movement (axial movement)</p>
+<p>In order to simplify programming, PositionHlCommander provides a set of &quot;front, back, left, and right&quot; shortcut instructions.</p>
+<p>Note: The &quot;front, back, left, and right&quot; here are relative to the coordinate axis, not relative to the drone&#x27;s nose (because the nose is always facing the positive X-axis).</p>
+<p>forward(distance) / back(distance)</p>
+<p>Function: Move the specified distance along the X-axis in the positive direction (front) or negative direction (back).</p>
+<p>Mathematical meaning: = + distance, Y and Z are unchanged.</p>
+<figure><img src="../assets/images/manual-12-position-commander/003.png" alt="manual image" loading="lazy"></figure>
+<p>left(distance) / right(distance)</p>
+<p>Function: Move the specified distance along the Y-axis in the positive direction (left) or negative direction (right).</p>
+<p>Mathematical meaning: = + distance, X and Z are unchanged.</p>
+<p>Important: Crazyflie follows a right-handed coordinate system. When facing the positive X-axis, the positive Y-axis is on the left-hand side.</p>
+<figure><img src="../assets/images/manual-12-position-commander/004.png" alt="manual image" loading="lazy"></figure>
+<p>up(distance) / down(distance)</p>
+<p>Function: Vertically rise or fall a specified distance along the Z axis.</p>
+<figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy"></figure>
+<p>Important note! ! !</p>
+<p>The initial position of the drone called by the positioncommander class is the position when the drone is powered on.</p>
+<p>That is, every time you run the code with the positioncommander class, the drone must be placed at the take-off position, and then powered on after it is stable. At this time, the coordinates are positioned at (0, 0, 0), and then run the program. And because the positioning will deviate every time you fly and land, you must strictly follow this process every time you fly, and power on the drone stationary at the take-off position. That is, if the drone lands normally and smoothly, you must power on again and perform this step before running the next program. Otherwise, the positioning of the drone will be disordered and the drone will explode when taking off. Be careful!</p>
+<p>Experiment 1: From Square to Cube</p>
+<p>The following example program is given. The effect achieved by this program is that the drone takes off. On the plane with the z-axis coordinate of 0.5, it traverses four coordinate points in sequence, and the flight trajectory is a square. You can name the python script position_commander_demo.py</p>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.position_hl_commander import PositionHlCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
+<pre><code># URI to the Crazyflie to connect to</code></pre>
+<p>uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E4&#x27;)</p>
+<pre><code>def simple_sequence():</code></pre>
+<pre><code>with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</code></pre>
+<pre><code># Arm the Crazyflie</code></pre>
+<p>scf.cf.platform.send_arming_request(True)</p>
+<p>time.sleep(2.0)</p>
+<pre><code>with PositionHlCommander(</code></pre>
+<p>scf,</p>
+<p>x=0.0, y=0.0, z=0.0,</p>
+<p>default_velocity=0.25,</p>
+<p>default_height=0.35,</p>
+<p>controller=PositionHlCommander.CONTROLLER_PID) as pc:</p>
+<p>pc.go_to(1.0, 0.0, 0.5)</p>
+<p>pc.go_to(1.0, 1.0, 0.5)</p>
+<p>pc.go_to(0.0, 1.0, 0.5)</p>
+<p>pc.go_to(0.0, 0.0, 0.5)</p>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<p>cflib.crtp.init_drivers()</p>
+<p>simple_sequence()</p>
+<p>Now, modify the program so that the drone&#x27;s flight trajectory traverses eight points of a three-dimensional rectangle in the air. Note that the height of the rectangle is 0.5m, that is, set the maximum height of the z-axis to 1m.</p>
+<p>Experiment 2: Use coordinate axes to achieve patterned three-dimensional flight</p>
+<p>Let the drone&#x27;s flight trajectory present a standard five-pointed star on the xy plane, and then let the five-pointed star stand up to present a standard five-pointed star on the xz or yz plane. Would it be more troublesome to implement such a request using the previous motioncommander? If implemented using coordinates, would it only require a few lines of code?</p>
+<p>The flight trajectory is shown in the figure below:</p>
+<figure><img src="../assets/images/manual-12-position-commander/006.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 3: Use the concept of coordinates to explore the map</p>
+<p>The map of this lesson follows the design of the previous lesson. Next, let the drone take off from area A according to the obstacle map environment shown in the figure below. During the entire process, the flying height of the drone should not exceed 0.4m. Explore the entire map, that is, fly all the way without hitting the wall until it lands in area B.</p>
+<p>Please note that the focus of the PositionCommander learned today is to control the UAV to fly within a coordinate system. Note that the initial placement of the UAV determines the establishment position of the coordinate system. Be sure to pay attention to the placement of the initial UAV position and the orientation of the front of the UAV. The size of each partition is 35cm*45cm. In other words, when viewed from top to bottom in this picture, the length of each partition is 35cm. If we use coordinates to understand and plan this path, will the path planning problem be simpler? The drone knows where it is and where to go next. Please note that the initial take-off position of the drone is as far away from the wall as possible, otherwise it may be affected by airflow with a high probability.</p>
+<figure><img src="../assets/images/manual-12-position-commander/007.png" alt="manual image" loading="lazy"></figure>
 
       </div>
     </article>

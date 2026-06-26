@@ -41,15 +41,111 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-08-path-planning.html">中文</a></div>
         
 <h1>Experiment 8: Path-planning Simulation</h1>
-<p class="subtitle">路径规划仿真</p>
-<h2>Purpose</h2>
-<p>Run path-planning simulation experiments and compare route-generation behavior.</p>
-<h2>Preparation</h2>
-<ul><li>Simulation project files.</li><li>Ubuntu environment with required dependencies.</li><li>Terminal access in the project directory.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Prepare and build the simulation project as documented.</li><li>Set start and goal conditions in the simulator or visualization tool.</li><li>Run A*, RRT, RRT*, or the provided planning examples and observe outputs.</li></ol>
-<h2>Verification</h2>
-<ul><li>A route is generated for the selected task.</li><li>The observed route can be compared across algorithms or parameters.</li><li>Execution notes include commands, errors, and screenshots where applicable.</li></ul>
+<p>Experiment Manual 1 - Path Planning Simulation</p>
+<p>Experimental goals</p>
+<p>Learn how to transfer files from a physical host to a virtual machine</p>
+<p>Successfully run and compile a project using ROS.</p>
+<p>Understand the role of path planning by running several classic path planning algorithms.</p>
+<p>Experiment preparation</p>
+<p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS.</p>
+<p>Experimental steps</p>
+<p>Experiment 1: Transfer the code project to be run to the virtual machine and decompress it</p>
+<p>First, we create a folder named workspace in the user directory of the virtual machine.</p>
+<p>Click the user directory icon in the upper left corner, right-click on the blank space, select new folder, and name the new folder workspace.</p>
+<figure><img src="../assets/images/manual-08-path-planning/001.png" alt="manual image" loading="lazy"></figure>
+<p>Click the green button create in the upper right corner to create</p>
+<figure><img src="../assets/images/manual-08-path-planning/002.png" alt="manual image" loading="lazy"></figure>
+<p>Then click the icon of the created workspace folder to enter the folder.</p>
+<figure><img src="../assets/images/manual-08-path-planning/003.png" alt="manual image" loading="lazy"></figure>
+<p>At the same time, open the location on the local computer where the compressed package of project files required for today&#x27;s experiment is stored (the compressed package can be placed on the computer desktop or in a certain folder). Select the compressed package file on the local machine with the mouse and drag it directly to the workspace in the virtual machine.</p>
+<figure><img src="../assets/images/manual-08-path-planning/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/005.png" alt="manual image" loading="lazy"></figure>
+<p>Then right-click and select extract here to extract the file into the directory.</p>
+<figure><img src="../assets/images/manual-08-path-planning/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/007.png" alt="manual image" loading="lazy"></figure>
+<p>Next, we click on the icon of the decompressed project file. After entering the interface, right-click on the blank space and select open in terminal to open a terminal that has entered the current file directory.</p>
+<figure><img src="../assets/images/manual-08-path-planning/008.png" alt="manual image" loading="lazy"></figure>
+<p>As shown in the figure, the blue text in the terminal represents the location of the file directory where the terminal is currently located. It can be seen that in Linux, we can not only access the folder using the above graphical operation method, but also use the command line terminal.</p>
+<figure><img src="../assets/images/manual-08-path-planning/009.png" alt="manual image" loading="lazy"></figure>
+<p>As shown in the figure below, we can enter the pwd command in the terminal to view the path of the file directory where the terminal is currently located, that is, which folder the terminal is accessing. Enter the ls command again to see what files are in the current folder directory. These are the two ways to access files graphically and from the command line in the Linux system. You can see that the number and names of files displayed in the graphical interface and the terminal are the same, because both are accessing the same folder.</p>
+<figure><img src="../assets/images/manual-08-path-planning/010.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 2: Configuring the project running environment and compiling the code</p>
+<p>After entering the directory, first install the necessary dependencies to run the program, and enter the following command in the terminal (you may be asked to enter the user password to obtain permissions):</p>
+<pre><code>sudo apt install libeigen3-dev</code></pre>
+<figure><img src="../assets/images/manual-08-path-planning/011.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter: sudo apt-get install ros-noetic-octomap-ros</p>
+<figure><img src="../assets/images/manual-08-path-planning/012.png" alt="manual image" loading="lazy"></figure>
+<p>Next we will compile the relevant dependencies of the project and enter the following command in the directory of the current terminal:</p>
+<pre><code>cd 3rd/osqp/build</code></pre>
+<p>The cd command is a commonly used command under Linux to enter the next-level directory. The command entered here means entering the 3rd/osqp/build directory under the /workspace/uav_motion_planning directory.</p>
+<figure><img src="../assets/images/manual-08-path-planning/013.png" alt="manual image" loading="lazy"></figure>
+<p>Similarly, we can also click to enter the file directory using the graphical interface. This step is just to let everyone understand the logic of file directory access under Linux.</p>
+<figure><img src="../assets/images/manual-08-path-planning/014.png" alt="manual image" loading="lazy"></figure>
+<p>Next enter the following command (it may fail because you cannot connect to the external network, you can try a few more times):</p>
+<p>cmake ..</p>
+<p>cmake is a commonly used cross-platform programming language compilation tool.</p>
+<figure><img src="../assets/images/manual-08-path-planning/015.png" alt="manual image" loading="lazy"></figure>
+<p>Next, enter the make command and compile to 100%, which is considered successful.</p>
+<figure><img src="../assets/images/manual-08-path-planning/016.png" alt="manual image" loading="lazy"></figure>
+<p>Next enter the following command:</p>
+<pre><code>sudo make install</code></pre>
+<figure><img src="../assets/images/manual-08-path-planning/017.png" alt="manual image" loading="lazy"></figure>
+<p>Now that the compilation of the osqp module part is completed, the compilation of the osqp-eigen module remains.</p>
+<p>Enter the following command:</p>
+<pre><code>cd ..</code></pre>
+<p>You can return to the upper directory. Here we enter three times in the previous terminal until we return to the main directory of the project.</p>
+<figure><img src="../assets/images/manual-08-path-planning/018.png" alt="manual image" loading="lazy"></figure>
+<p>Here we enter the following command:</p>
+<pre><code>cd 3rd/osqp-eigen/build</code></pre>
+<p>Enter the directory of another module that needs to be compiled.</p>
+<figure><img src="../assets/images/manual-08-path-planning/019.png" alt="manual image" loading="lazy"></figure>
+<p>Enter the cmake .. command in the same process.</p>
+<figure><img src="../assets/images/manual-08-path-planning/020.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the make command for further compilation.</p>
+<figure><img src="../assets/images/manual-08-path-planning/021.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the sudo make install command to complete the last step of the module.</p>
+<figure><img src="../assets/images/manual-08-path-planning/022.png" alt="manual image" loading="lazy"></figure>
+<p>Then we return to the main directory of the project file again.</p>
+<figure><img src="../assets/images/manual-08-path-planning/023.png" alt="manual image" loading="lazy"></figure>
+<p>For the final step of compilation, enter:</p>
+<p>catkin_make -DCMAKE_CXX_STANDARD=14</p>
+<p>Wait for the compilation to complete. All preparations have been completed and you can run the program.</p>
+<figure><img src="../assets/images/manual-08-path-planning/024.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 3: Running the classic path planning program</p>
+<p>Right-click the blank space of the current terminal and select new window to quickly create a new terminal in the directory.</p>
+<figure><img src="../assets/images/manual-08-path-planning/025.png" alt="manual image" loading="lazy"></figure>
+<p>Enter the following commands in both terminals:</p>
+<pre><code>source devel/setup.bash</code></pre>
+<p>This command is used to import relevant environment variables before running the ros program each time, so that ros can find the program you want to run.</p>
+<figure><img src="../assets/images/manual-08-path-planning/026.png" alt="manual image" loading="lazy"></figure>
+<p>1.A_star algorithm</p>
+<p>Enter the following command in the first terminal:</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
+<p>Enter the second terminal:</p>
+<pre><code>roslaunch test test_astar_searching.launch</code></pre>
+<p>You can see the map environment in the simulated rviz interface.</p>
+<figure><img src="../assets/images/manual-08-path-planning/027.png" alt="manual image" loading="lazy"></figure>
+<p>Use the mouse wheel or computer touchpad to zoom in and out to see the entire environment. At this time, click the 3D Nav Goal option in the menu bar above, click on any point on the map to post an end point information to the drone, and then you can view the red path for the drone to reach the end point calculated by the A_star path planning algorithm.</p>
+<figure><img src="../assets/images/manual-08-path-planning/028.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-08-path-planning/029.png" alt="manual image" loading="lazy"></figure>
+<p>2.RRT algorithm</p>
+<p>For the two terminals running above, click on the terminal respectively, use the ctrl plus c command to interrupt the running program, and then perform the following steps:</p>
+<p>Enter the following command in the first terminal:</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
+<p>Enter the second terminal:</p>
+<pre><code>roslaunch test test_rrt_searching.launch</code></pre>
+<p>You can see the map environment in the simulated rviz interface.</p>
+<p>Publish the end point in the same way, and you can see the effect of path planning by the rrt algorithm.</p>
+<figure><img src="../assets/images/manual-08-path-planning/030.png" alt="manual image" loading="lazy"></figure>
+<p>3.RRT_star algorithm</p>
+<p>In the same process, for the two terminals running above, click the mouse on the terminal respectively, use the ctrl plus c command to interrupt the running program, and then perform the following steps:</p>
+<p>Enter the following command in the first terminal:</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
+<p>Enter the second terminal:</p>
+<pre><code>roslaunch test test_rrt_star_searching.launch</code></pre>
+<p>You can see the map environment in the simulated rviz interface.</p>
+<p>Release the end point in the same way, and you can see the effect of path planning by the rrt_star algorithm. Observe and compare the difference between the rrt algorithm and its improved rrt_star algorithm. What are the advantages of the improved algorithm?</p>
+<figure><img src="../assets/images/manual-08-path-planning/031.png" alt="manual image" loading="lazy"></figure>
 
       </div>
     </article>

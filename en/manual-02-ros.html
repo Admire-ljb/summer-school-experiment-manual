@@ -41,15 +41,97 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-02-ros.html">中文</a></div>
         
 <h1>Experiment 2: ROS Configuration and Basic Concepts</h1>
-<p class="subtitle">配置认知 ROS</p>
-<h2>Purpose</h2>
-<p>Install ROS and establish the basic concepts used by later robot-control experiments.</p>
-<h2>Preparation</h2>
-<ul><li>Ubuntu virtual machine from Manual 1.</li><li>Network access for package installation.</li><li>Terminal access and basic Linux command familiarity.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Install ROS using the documented installation path or classroom script.</li><li>Start roscore and run turtlesim-related commands.</li><li>Use ROS tools to inspect nodes, topics, graphs, and message data.</li></ol>
-<h2>Verification</h2>
-<ul><li>Explain package, node, topic, publisher, and subscriber roles.</li><li>Run turtlesim and teleoperation successfully.</li><li>Use rqt_graph, rqt_plot, rosnode, and rostopic for observation.</li></ul>
+<p>Lab Manual 2 - Configuring Cognitive ROS</p>
+<p>Experimental goals</p>
+<p>Master how to configure and install ROS1 in a Linux virtual machine.</p>
+<p>Understand the characteristics of the ROS system and learn the basic commands of ROS.</p>
+<p>Understand the topic mechanism by driving the little turtle node, and use visualization tools to view the relationships between nodes.</p>
+<p>Experiment preparation</p>
+<p>Experiment 1 has installed and configured Ubuntu20.04 virtual machine.</p>
+<p>Make sure the virtual machine is connected and can access the network.</p>
+<p>Experimental steps</p>
+<p>Experiment 1: Configuring the ROS1 operating environment on Ubuntu</p>
+<p>First, I recommend a ROS learning website. Various ROS1/2 tutorials are shared in detail on this website, allowing students to independently explore the learning fun of ROS: Yuxiang ROS Robot https://fishros.com</p>
+<p>Here we will use an open source script to install and configure the ROS environment with one click. Using this script to configure the ROS system will be extremely convenient and suitable for beginners to quickly get started with ROS. At the same time, we also recommend some online teaching videos to students. Students who are willing to learn can refer to the videos to consolidate and expand their ROS learning:</p>
+<pre><code>https://www.bilibili.com/video/BV1zt411G7Vn/?share_source=copy_web&amp;vd_source=55dbc55501d5dcce34712b0bbd70daa4</code></pre>
+<p>Open the virtual machine, enter the main interface and call out the terminal (after clicking the mouse on the desktop, press and hold the ctrl+alt+T keys at the same time, refer to the experiment manual of the first lesson.)</p>
+<p>Enter the following command in the terminal (you can right-click to select the following command, click copy, and then paste it into the terminal):</p>
+<p>wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>
+<p>If you are required to enter a password to grant operation permission, enter the set user password. Note that the entered password will not be displayed explicitly. After inputting, directly press the Enter key.</p>
+<figure><img src="../assets/images/manual-02-ros/001.png" alt="manual image" loading="lazy"></figure>
+<p>At this step, we enter the number 1 and press the Enter key.</p>
+<figure><img src="../assets/images/manual-02-ros/002.png" alt="manual image" loading="lazy"></figure>
+<p>Next, choose to change the system source and continue the installation. Because the software installation source of the native Ubuntu system comes from the external network, our direct access speed will be very slow, but there are domestic mirror websites, and our access to domestic websites will be faster. Enter the number 1 and press the Enter key.</p>
+<figure><img src="../assets/images/manual-02-ros/003.png" alt="manual image" loading="lazy"></figure>
+<p>At this point enter the number 2 and press Enter.</p>
+<figure><img src="../assets/images/manual-02-ros/004.png" alt="manual image" loading="lazy"></figure>
+<p>The next step is to let the script automatically help us select the source with the fastest download speed. Enter the number 1 and press Enter.</p>
+<figure><img src="../assets/images/manual-02-ros/005.png" alt="manual image" loading="lazy"></figure>
+<p>After waiting for a certain period of time, we reach this step. We choose to install ROS1, enter the number 3 and press the Enter key.</p>
+<figure><img src="../assets/images/manual-02-ros/006.png" alt="manual image" loading="lazy"></figure>
+<p>In this step, enter the number 1 and press Enter to select the desktop version.</p>
+<figure><img src="../assets/images/manual-02-ros/007.png" alt="manual image" loading="lazy"></figure>
+<p>After a slightly longer waiting time, the ROS1 system is installed.</p>
+<figure><img src="../assets/images/manual-02-ros/008.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the following command:</p>
+<p>roscore</p>
+<p>If the following interface appears normally, it means that the ROS system environment is installed and configured successfully. This command must be run before running all ROS programs. Now you can explore the charm of ROS. At this time, take a snapshot of the virtual machine on the ubuntu system that has been configured with the ROS1 environment, and save the system status at this time (see Experiment Manual 1 for the method of taking system snapshots).</p>
+<figure><img src="../assets/images/manual-02-ros/009.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 2: Running the little turtle component of ROS</p>
+<p>For ROS1, it comes with a program similar to &quot;Hello world!&quot;, which is the turtle simulator component. You can control a turtle to move through the keyboard. Understanding the operating principle of this component can greatly help you get started learning the ROS system.</p>
+<p>Do not close the originally opened terminal running roscore. Call out a new terminal and enter the following command:</p>
+<pre><code>rosrun turtlesim turtlesim_node</code></pre>
+<p>This command starts the turtle emulator node. Among the two commands following the rosrun command, turtlesim represents a function package, which can be understood as a collection that collects all the content for running simulated turtle components, and turtlesim_node represents a node in the function package. After running this command, a window simulating a turtle appears.</p>
+<figure><img src="../assets/images/manual-02-ros/010.png" alt="manual image" loading="lazy"></figure>
+<p>Create a new terminal, enter rosrun turtlesim (note that there is a space at the end of the command), and double-click the tab key to view the nodes under the current package.</p>
+<figure><img src="../assets/images/manual-02-ros/011.png" alt="manual image" loading="lazy"></figure>
+<p>A Linux tip: enter half of the corresponding terminal command (when the entered characters can be located in this category or a command), and press the tab key to automatically complete the command, eliminating the trouble of typing errors.</p>
+<figure><img src="../assets/images/manual-02-ros/012.png" alt="manual image" loading="lazy"></figure>
+<p>Run the turtle_teleop_key node, click the terminal with the mouse, and use the arrow keys to control the turtle.</p>
+<figure><img src="../assets/images/manual-02-ros/013.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 3: Use visualization methods to view the operating principle of the turtle component</p>
+<p>Create a new terminal and enter the rqt_graph command. A visual interface will appear showing the currently running nodes and the communication between them. You can see that /teleop_turtle (remotely controlled turtle node) published the /turtle1/cmd_vel topic. The content of this topic is the parameters of the turtle&#x27;s speed steering. /turtlesim (turtle simulation node) subscribes to this topic. If you want to stop a command being executed by a terminal, press ctrl plus the c key on the terminal to terminate.</p>
+<figure><img src="../assets/images/manual-02-ros/014.png" alt="manual image" loading="lazy"></figure>
+<p>Similarly, there are many uses for the rqt command. After typing rqt_ and double-clicking the tab key, you can see other visualization tools of rqt. Let’s try the rqt_plot command again.</p>
+<figure><img src="../assets/images/manual-02-ros/015.png" alt="manual image" loading="lazy"></figure>
+<p>Select the turtle&#x27;s position information in the topic to be monitored, and then use the keyboard to control the turtle, and you will see that the changes in the turtle&#x27;s coordinate information can be monitored by the chart.</p>
+<figure><img src="../assets/images/manual-02-ros/016.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 4 (Extended): Use of basic rosnode and rostopic commands in ROS</p>
+<p>Directly enter the rosnode command in a new terminal to display its usage. For example, enter the rosnode list command to display the currently running nodes. Enter rosnode info plus a space plus the name of the node to view the detailed information of the node.</p>
+<figure><img src="../assets/images/manual-02-ros/017.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/018.png" alt="manual image" loading="lazy"></figure>
+<p>Similarly, the rostopic command can also view information on the current topic.</p>
+<figure><img src="../assets/images/manual-02-ros/019.png" alt="manual image" loading="lazy"></figure>
+<p>Note that before we drove the turtle, we used the teleop_turtle node to read keyboard input and publish information in the /turtle1/cmd_vel topic to drive the turtle. We can also use the command line to make the turtle act automatically.</p>
+<p>Enter the command as follows and double-click the tab key at this time.</p>
+<figure><img src="../assets/images/manual-02-ros/020.png" alt="manual image" loading="lazy"></figure>
+<p>You can see that the /turtle1/cmd_vel topic that controls the turtle consists of linear velocity and angular velocity parameters. Press the left and right arrow keys to directly modify the value of x after linear in the first line to 1.0. Press Enter again and you can see that the turtle stopped after traveling a short distance because this topic has only been published once.</p>
+<figure><img src="../assets/images/manual-02-ros/021.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-02-ros/022.png" alt="manual image" loading="lazy"></figure>
+<p>Now enter the command as follows and add the -r 10 parameter, which means to set the topic loop to publish once every second, so that the turtle will keep moving forward until it hits the wall.</p>
+<figure><img src="../assets/images/manual-02-ros/023.png" alt="manual image" loading="lazy"></figure>
+<p>Now, use the operations learned above to make the turtle move in circles, and use visualization tools to observe changes in its position coordinates.</p>
+<figure><img src="../assets/images/manual-02-ros/024.png" alt="manual image" loading="lazy"></figure>
+<h2>Organizing link information</h2>
+<p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
+<p class="step">1. Yuxiang ROS tools and learning portal (Webpage title: Yuxiang ROS - Hefei Magic Blade Technology Co., Ltd.)</p>
+<p>Original link: https://fishros.com</p>
+<p>Classroom use: As a supplementary entrance for ROS installation, configuration and introductory learning.</p>
+<p>• This portal aggregates ROS installation scripts, tutorials, and FAQ materials.</p>
+<p>• In the classroom, one-click installation scripts are mainly used to complete the ROS1 environment configuration. After installation, roscore, turtlesim, and rqt_graph are used to verify.</p>
+<p>• If access to the installation source is slow, you can troubleshoot by combining domestic image sources and the network environment provided by the classroom.</p>
+<p class="step">2. ROS introductory video course</p>
+<p>Original link: https://www.bilibili.com/video/BV1zt411G7Vn/</p>
+<p>Classroom Purpose: Supplementary video for understanding ROS nodes, topics, services and tool chains after class.</p>
+<p>• Suitable for viewing after completing this manual to supplement the basic concepts of ROS.</p>
+<p>• Emphasis on roscore, turtlesim, teleop, rostopic, rosnode, and rqt_graph in this manual.</p>
+<p>• The video content is long. It is recommended to search and watch by question instead of playing the entire video in class.</p>
+<p class="step">3. Yuxiang ROS one-click installation script entry</p>
+<p>Original link: http://fishros.com/install</p>
+<p>Classroom use: Used to download and run the ROS installation script through the command line.</p>
+<p>• The command in the manual is: wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>
+<p>• Before running the script, you need to confirm that the virtual machine is connected to the Internet normally. During execution, select ROS1 and desktop version according to the classroom requirements.</p>
+<p>• The script will change the system software source and installation package. Please create a snapshot of the virtual machine after successful installation.</p>
 
       </div>
     </article>

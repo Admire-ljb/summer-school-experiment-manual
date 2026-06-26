@@ -41,15 +41,19 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-11-integrated-practice.html">中文</a></div>
         
 <h1>Experiment 11: Integrated Practice</h1>
-<p class="subtitle">阶段综合实践</p>
-<h2>Purpose</h2>
-<p>Combine setup, sensing, planning, and control skills in a bounded practical task.</p>
-<h2>Preparation</h2>
-<ul><li>Completed prior manuals.</li><li>Task area and constraints.</li><li>Team role assignment for operation, monitoring, and recording.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Read the task constraints and define success criteria.</li><li>Break the route or behavior into testable components.</li><li>Run the integrated task and record results.</li></ol>
-<h2>Verification</h2>
-<ul><li>The task is completed within the defined constraints.</li><li>The team can explain the selected method.</li><li>Problems are documented with concrete evidence.</li></ul>
+<p>Experiment Manual 4 - Stage Comprehensive Practice</p>
+<p>one. Comprehensive practice instructions for stages</p>
+<p>The comprehensive practice at this stage is used to test students&#x27; mastery of the basic control of the Crazyflie drone, flight function calls and task process organization. As long as the drone can complete specified flight actions through programming, or basically complete the main actions and explain the implementation ideas, this practice can be regarded as completed. Encourage everyone to collaborate in debugging in groups and pay attention to on-site order and flight safety.</p>
+<p>two. Practical tasks</p>
+<p>There are two tasks set up for this practice. Completing any one of them can be regarded as the completion of the comprehensive practice in the stage.</p>
+<p>In addition, let me explain in advance that the drone sensor used by the professor so far is flow deck, which mainly uses optical flow sensors to achieve speed positioning. If the ground is smooth and reflective, it will cause inaccurate positioning and the drone&#x27;s position will easily drift. The best way to solve this problem is to fly on a non-reflective ground. For this purpose, a carpet has been specially laid for everyone. You can test fly on the carpet and show it to the teacher when you are ready. Pay attention to the orderliness of the entire process and flight safety.</p>
+<p>Topic 1: Pattern flying</p>
+<p>First, the drone automatically lifts off to 0.3m. Let it fly a little higher to a height of 0.4m. Stabilize the attitude. Then, let the drone stay still. First, rotate 360 ​​degrees to the right on the spot, and then rotate 360 ​​degrees to the left. After stabilizing the attitude of the drone, let the drone fly a figure-8 trajectory and then land.</p>
+<p>Think about what functions this process will call to control the flight of the drone. In order to ensure flight safety, the radius and speed of the figure-8 flight trajectory can be set smaller so that the flight attitude can be clearly seen. After the flight is completed, display the flight code to complete the task.</p>
+<p>Topic 2: Cruise flight</p>
+<p>The flight map is as shown in the figure below. There are three obstacles ABC, shown by the blue squares. The placement distance of these three obstacles has been marked in the figure. The drone needs to take off from any position in the lower left corner of obstacle A. The forward direction of the drone when taking off is not restricted. Follow the flight path diagram shown by the purple arrow, bypass obstacles B and C, and finally land in the triangular area surrounded by three obstacles ABC. The drone landing on the boundary line is considered successful.</p>
+<p>Please note that the purple trajectory is just a hint. The drone does not have to fly an arc trajectory. The same effect can be achieved by going straight, turning around, and then going straight again.</p>
+<figure><img src="../assets/images/manual-11-integrated-practice/001.png" alt="manual image" loading="lazy"></figure>
 
       </div>
     </article>

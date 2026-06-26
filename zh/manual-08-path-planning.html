@@ -118,9 +118,9 @@
 <figure><img src="../assets/images/manual-08-path-planning/026.png" alt="manual image" loading="lazy"></figure>
 <p>1.A_star算法</p>
 <p>第一个终端输入如下命令：</p>
-<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
 <p>第二个终端输入：</p>
-<p>roslaunch test test_astar_searching.launch</p>
+<pre><code>roslaunch test test_astar_searching.launch</code></pre>
 <p>即可在模拟的仿真rviz界面中看到地图环境，</p>
 <figure><img src="../assets/images/manual-08-path-planning/027.png" alt="manual image" loading="lazy"></figure>
 <p>使用鼠标滚轮或者电脑触控板即可放缩视角看到环境的全貌，此时点击上方菜单栏中的3D Nav Goal选项，点击地图内任意一点给无人机发布一个终点信息，即可以查看到A_star路径规划算法计算出的无人机到达终点的红色路径。</p>
@@ -129,18 +129,18 @@
 <p>2.RRT算法</p>
 <p>对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
 <p>第一个终端输入如下命令：</p>
-<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
 <p>第二个终端输入：</p>
-<p>roslaunch test test_rrt_searching.launch</p>
+<pre><code>roslaunch test test_rrt_searching.launch</code></pre>
 <p>即可在模拟的仿真rviz界面中看到地图环境，</p>
 <p>以同样的方法发布终点，可以看到rrt算法进行路径规划的效果。</p>
 <figure><img src="../assets/images/manual-08-path-planning/030.png" alt="manual image" loading="lazy"></figure>
 <p>3.RRT_star算法</p>
 <p>同样的流程，对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
 <p>第一个终端输入如下命令：</p>
-<p>roslaunch plan_manage single_run_in_sim.launch</p>
+<pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
 <p>第二个终端输入：</p>
-<p>roslaunch test test_rrt_star_searching.launch</p>
+<pre><code>roslaunch test test_rrt_star_searching.launch</code></pre>
 <p>即可在模拟的仿真rviz界面中看到地图环境，</p>
 <p>以同样的方法发布终点，可以看到rrt_star算法进行路径规划的效果,观察对比一下rrt算法与其改进后的rrt_star算法的不同，改进后的算法的优势在哪里？</p>
 <figure><img src="../assets/images/manual-08-path-planning/031.png" alt="manual image" loading="lazy"></figure>

@@ -78,7 +78,7 @@
 <p>实验二：运行ROS的小海龟组件</p>
 <p>对于ROS1来说自带一个类似于“Hello world！”的程序，就是海龟模拟器组件，可以通过键盘操控一只海龟进行移动，理解该组件的运行原理可以极大地帮助入门学习ROS系统。</p>
 <p>对于原来打开的运行了roscore的终端不要关闭，重新呼出一个终端，输入如下命令：</p>
-<p>rosrun turtlesim turtlesim_node</p>
+<pre><code>rosrun turtlesim turtlesim_node</code></pre>
 <p>该命令启动了海龟仿真器节点。其中rosrun命令后面跟的两个命令，turtlesim代表的是一个功能包，可以理解为该功能包为一个集合，集合了运行模拟海龟组件的所有内容，turtlesim_node则代表了该功能包中的一个节点。运行完该命令后出现了一个模拟海龟的窗口。</p>
 <figure><img src="../assets/images/manual-02-ros/010.png" alt="manual image" loading="lazy"></figure>
 <p>再重新新建一个终端，输入rosrun turtlesim 后(注意命令最后有个空格)，双击tab键可以查看当前包下的节点。</p>

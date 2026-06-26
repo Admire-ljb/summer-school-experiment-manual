@@ -2,9 +2,15 @@
 
 import html
 import json
+import os
 import re
 import shutil
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -14,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT.parent / "\u5b9e\u9a8c\u624b\u518c"
 ASSET_DIR = ROOT / "assets"
 IMAGE_DIR = ASSET_DIR / "images"
+TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
 
 NS = {
     "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
@@ -33,6 +40,21 @@ class Manual:
     preparation: tuple[str, ...]
     procedure: tuple[str, ...]
     verification: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ParagraphBlock:
+    text: str
+    style: str
+    images: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class TableBlock:
+    rows: tuple[tuple[str, ...], ...]
+
+
+Block = ParagraphBlock | TableBlock
 
 
 MANUALS = [
@@ -93,40 +115,140 @@ def copy_image(zf: zipfile.ZipFile, rels: dict[str, str], rid: str, manual: Manu
     return f"../assets/images/{manual.slug}/{out_path.name}"
 
 
-def para_to_html(text: str, style: str, images: list[str]) -> str:
+def has_cjk(text: str) -> bool:
+    return bool(re.search(r"[\u3400-\u9fff]", text))
+
+
+def is_code_like(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return False
+    if stripped.startswith(("http://", "https://")):
+        return True
+    if re.match(r"^(sudo|pip|python|python3|ros|rosrun|roslaunch|catkin|source|git|cd|mkdir|touch|ping|reboot)\b", stripped):
+        return True
+    if re.match(r"^(import\b|from\b|def\b|class\b|if __name__|for |while |with |try:|except|return\b|print\(|#)", stripped):
+        return True
+    return False
+
+
+def load_translation_cache() -> dict[str, str]:
+    if not TRANSLATION_CACHE.exists():
+        return {}
+    return json.loads(TRANSLATION_CACHE.read_text(encoding="utf-8"))
+
+
+def save_translation_cache(cache: dict[str, str]) -> None:
+    TRANSLATION_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    TRANSLATION_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def translation_opener() -> urllib.request.OpenerDirector:
+    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY") or "http://127.0.0.1:7888"
+    return urllib.request.build_opener(urllib.request.ProxyHandler({"http": proxy, "https": proxy}))
+
+
+def translate_remote(text: str, opener: urllib.request.OpenerDirector) -> str:
+    query = urllib.parse.quote(text)
+    url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=t&q={query}"
+    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    for attempt in range(4):
+        try:
+            with opener.open(request, timeout=30) as response:
+                payload = response.read().decode("utf-8")
+            data = json.loads(payload)
+            translated = "".join(part[0] for part in data[0] if part and part[0])
+            return translated.strip() or text
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
+            if attempt == 3:
+                return text
+            time.sleep(1.5 * (attempt + 1))
+    return text
+
+
+def should_translate(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped or not has_cjk(stripped):
+        return False
+    if is_code_like(stripped):
+        return stripped.startswith("#") or "#" in stripped
+    return True
+
+
+def ensure_translations(texts: set[str]) -> dict[str, str]:
+    cache = load_translation_cache()
+    pending = sorted(text for text in texts if should_translate(text) and text not in cache)
+    if not pending:
+        return cache
+
+    opener = translation_opener()
+    completed = 0
+    print(f"Translating {len(pending)} text blocks for English pages...")
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(translate_remote, text, opener): text for text in pending}
+        for future in as_completed(futures):
+            source = futures[future]
+            cache[source] = future.result()
+            completed += 1
+            if completed % 50 == 0 or completed == len(pending):
+                save_translation_cache(cache)
+                print(f"Translated {completed}/{len(pending)}")
+    return cache
+
+
+def english_text(text: str, cache: dict[str, str]) -> str:
+    if not should_translate(text):
+        return text
+    return cache.get(text, text)
+
+
+def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, cache: dict[str, str]) -> str:
     stripped = text.strip()
     blocks: list[str] = []
     if stripped:
-        escaped = html.escape(stripped)
+        rendered = english_text(stripped, cache) if lang == "en" else stripped
+        escaped = html.escape(rendered)
         if stripped in {"\u4e00\u3001\u5b9e\u9a8c\u76ee\u6807", "\u4e8c\u3001\u5b9e\u9a8c\u51c6\u5907", "\u4e09\u3001\u5b9e\u9a8c\u6b65\u9aa4", "\u56db\u3001\u5b9e\u9a8c\u9a8c\u8bc1\u4e0e\u6d4b\u8bd5", "\u4e94\u3001\u5b9e\u9a8c\u603b\u7ed3\u4e0e\u62d3\u5c55", "\u94fe\u63a5\u8d44\u6599\u6574\u7406"}:
             blocks.append(f"<h2>{escaped}</h2>")
         elif re.match(r"^\u9636\u6bb5\s*\d+", stripped) or style.lower().startswith("heading"):
             blocks.append(f"<h3>{escaped}</h3>")
-        elif stripped.startswith(("http://", "https://")) or re.match(r"^(sudo|pip|python|ros|catkin|source|git|cd|mkdir|ping|reboot)\b", stripped):
+        elif is_code_like(stripped):
             blocks.append(f"<pre><code>{escaped}</code></pre>")
         elif re.match(r"^[0-9]+[.)]\s", stripped):
             blocks.append(f'<p class="step">{escaped}</p>')
         else:
             blocks.append(f"<p>{escaped}</p>")
     for src in images:
-        blocks.append(f'<figure><img src="{html.escape(src)}" alt="{html.escape(stripped[:80] or "manual image")}" loading="lazy"></figure>')
+        alt = english_text(stripped[:80], cache) if lang == "en" else stripped[:80]
+        blocks.append(f'<figure><img src="{html.escape(src)}" alt="{html.escape(alt or "manual image")}" loading="lazy"></figure>')
     return "\n".join(blocks)
 
 
-def table_to_html(table: ET.Element) -> str:
-    rows = []
+def table_to_rows(table: ET.Element) -> tuple[tuple[str, ...], ...]:
+    rows: list[tuple[str, ...]] = []
     for tr in table.findall("./w:tr", NS):
-        cells = [f"<td>{html.escape(text_from(tc))}</td>" for tc in tr.findall("./w:tc", NS)]
+        cells = tuple(text_from(tc) for tc in tr.findall("./w:tc", NS))
         if cells:
-            rows.append("<tr>" + "".join(cells) + "</tr>")
-    return "" if not rows else "<table><tbody>\n" + "\n".join(rows) + "\n</tbody></table>"
+            rows.append(cells)
+    return tuple(rows)
 
 
-def extract_manual(manual: Manual) -> tuple[list[str], dict[str, int]]:
+def render_table(rows: tuple[tuple[str, ...], ...], lang: str, cache: dict[str, str]) -> str:
+    rendered_rows = []
+    for row in rows:
+        cells = []
+        for cell in row:
+            text = english_text(cell, cache) if lang == "en" else cell
+            cells.append(f"<td>{html.escape(text)}</td>")
+        rendered_rows.append("<tr>" + "".join(cells) + "</tr>")
+    return "" if not rendered_rows else "<table><tbody>\n" + "\n".join(rendered_rows) + "\n</tbody></table>"
+
+
+def extract_manual(manual: Manual) -> tuple[list[Block], dict[str, int]]:
     source = SOURCE_DIR / manual.source_name
     if not source.exists():
         raise FileNotFoundError(source)
-    blocks: list[str] = []
+    blocks: list[Block] = []
     stats = {"paragraphs": 0, "tables": 0, "images": 0}
     with zipfile.ZipFile(source) as zf:
         rels = relationship_map(zf)
@@ -149,13 +271,41 @@ def extract_manual(manual: Manual) -> tuple[list[str], dict[str, int]]:
                             stats["images"] += 1
                 if text or images:
                     stats["paragraphs"] += 1
-                    blocks.append(para_to_html(text, paragraph_style(child), images))
+                    blocks.append(ParagraphBlock(text, paragraph_style(child), tuple(images)))
             elif child.tag == f"{{{NS['w']}}}tbl":
-                table = table_to_html(child)
+                table = table_to_rows(child)
                 if table:
                     stats["tables"] += 1
-                    blocks.append(table)
+                    blocks.append(TableBlock(table))
     return blocks, stats
+
+
+def collect_translation_texts(blocks: list[Block]) -> set[str]:
+    texts: set[str] = set()
+    for block in blocks:
+        if isinstance(block, ParagraphBlock):
+            if should_translate(block.text):
+                texts.add(block.text.strip())
+            if block.images and should_translate(block.text[:80]):
+                texts.add(block.text[:80].strip())
+        else:
+            for row in block.rows:
+                for cell in row:
+                    if should_translate(cell):
+                        texts.add(cell.strip())
+    return texts
+
+
+def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str]) -> str:
+    rendered: list[str] = []
+    for block in blocks:
+        if isinstance(block, ParagraphBlock):
+            html_block = render_paragraph(block.text, block.style, block.images, lang, cache)
+        else:
+            html_block = render_table(block.rows, lang, cache)
+        if html_block:
+            rendered.append(html_block)
+    return "\n".join(rendered)
 
 
 def nav_html(lang: str, current_slug: str | None = None) -> str:
@@ -232,37 +382,34 @@ def write_index(lang: str) -> None:
     else:
         body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
         for manual in MANUALS:
-            body += f'<a class="doc-card" href="{manual.slug}.html"><span>Experiment {manual.number}</span><strong>{html.escape(manual.en_title)}</strong><em>{html.escape(manual.zh_title)}</em></a>\n'
+            body += f'<a class="doc-card" href="{manual.slug}.html"><span>Experiment {manual.number}</span><strong>{html.escape(manual.en_title)}</strong></a>\n'
         body += "</div>"
         title = "Palm-sized UAV Experiment Manual"
     (ROOT / lang / "index.html").write_text(layout(lang, title, body), encoding="utf-8")
 
-def english_body(manual: Manual, stats: dict[str, int]) -> str:
-    prep = "".join(f"<li>{html.escape(item)}</li>" for item in manual.preparation)
-    proc = "".join(f"<li>{html.escape(item)}</li>" for item in manual.procedure)
-    verify = "".join(f"<li>{html.escape(item)}</li>" for item in manual.verification)
+def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str]) -> str:
     return f"""
 <h1>Experiment {manual.number}: {html.escape(manual.en_title)}</h1>
-<p class="subtitle">{html.escape(manual.zh_title)}</p>
-<h2>Purpose</h2>
-<p>{html.escape(manual.purpose)}</p>
-<h2>Preparation</h2>
-<ul>{prep}</ul>
-<h2>Procedure</h2>
-<ol>{proc}</ol>
-<h2>Verification</h2>
-<ul>{verify}</ul>
+{render_blocks(blocks, "en", cache)}
 """
 
 
 def write_pages() -> dict[str, dict[str, int]]:
     manifest: dict[str, dict[str, int]] = {}
+    extracted: dict[str, tuple[Manual, list[Block], dict[str, int]]] = {}
+    translation_texts: set[str] = set()
     for manual in MANUALS:
         blocks, stats = extract_manual(manual)
+        extracted[manual.slug] = (manual, blocks, stats)
         manifest[manual.slug] = stats
-        zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + "\n".join(blocks)
+        translation_texts.update(collect_translation_texts(blocks))
+
+    cache = ensure_translations(translation_texts)
+
+    for manual, blocks, _stats in extracted.values():
+        zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
-        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, english_body(manual, stats), manual.slug), encoding="utf-8")
+        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, english_body(manual, blocks, cache), manual.slug), encoding="utf-8")
     return manifest
 
 
@@ -353,4 +500,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
 

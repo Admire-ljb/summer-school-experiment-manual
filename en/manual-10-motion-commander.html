@@ -41,15 +41,91 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-10-motion-commander.html">中文</a></div>
         
 <h1>Experiment 10: Advanced Motion Commander Programming</h1>
-<p class="subtitle">Motion Commander 进阶编程</p>
-<h2>Purpose</h2>
-<p>Use Motion Commander movement primitives to construct repeatable flight routines.</p>
-<h2>Preparation</h2>
-<ul><li>cflib script template.</li><li>Safe test area.</li><li>Instructor-approved height and speed parameters.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Create a MotionCommander context.</li><li>Combine takeoff, landing, directional movement, turns, and pauses.</li><li>Test short movement segments before a complete sequence.</li></ol>
-<h2>Verification</h2>
-<ul><li>The drone completes the intended primitive sequence.</li><li>Timing, height, and distance choices are recorded.</li><li>The program can be stopped safely if behavior deviates.</li></ul>
+<p>Experiment Manual 3—Motion Commander Advanced Programming</p>
+<p>Experimental goals</p>
+<p>Learn various sub-functions under the Motion Commander class to control the drone</p>
+<p>Combine the sub-functions learned above to let the drone make some fancy flying movements</p>
+<p>Be familiar with the development process and prepare for comprehensive practice in stages</p>
+<p>Experiment preparation</p>
+<p>The virtual machine system of the client connected to the drone has been configured in the previous experiment. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
+<p>Experiment content</p>
+<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
+<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
+<p>1. Deep understanding of motion commander</p>
+<p>First, let&#x27;s review the Motion Commander class code we used before.</p>
+<p>Here you can refer to the content in test.py we used in the fourth lesson. This python code implements some simple actions to control the drone.</p>
+<pre><code>import logging</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
+<pre><code># Only output errors from the logging framework</code></pre>
+<p>logging.basicConfig(level=logging.ERROR)</p>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
+<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
+<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
+<pre><code># We take off when the commander is created</code></pre>
+<pre><code>with MotionCommander(scf) as mc:</code></pre>
+<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
+<p>time.sleep(1)</p>
+<pre><code># There is a set of functions that move a specific distance</code></pre>
+<pre><code># We can move in all directions</code></pre>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
+<p>mc.forward(0.5)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
+<p>mc.up(0.2)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
+<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
+<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
+<p>mc.down(0.2)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
+<p>mc.left(0.2, velocity=0.6)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
+<p>mc.forward(0.5)</p>
+<pre><code># We land when the MotionCommander goes out of scope</code></pre>
+<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
+<p>Let&#x27;s review the relevant content we have learned. Let&#x27;s focus on the core part of this code. Starting from line 17, we create a motion commander entity class mc. After this entity mc is created, it is responsible for controlling the movement of the drone. The moment it is created, it will automatically execute the drone take-off program, which takes off to a height of 0.3m by default. On line 18, we output taking off in the terminal, indicating that the drone has taken off, and stop the entire program for 1 second to allow the drone to stabilize its flight status. In the following code, you can see that we call a sub-function forward of the mc class to make the drone move forward 0.5m and then stop. Note that the hardware that this code is adapted to now is its own gyroscope and flowdeck module. The speed and altitude of the drone are provided by flowdeck, but its accuracy is limited, and the deviation may sometimes be slightly larger. In this case, ensure that the drone itself is in a normal state, and the parameters passed to the function can be adjusted to allow the drone to fly to the ideal position. For example, if 0.5 is entered but the actual drone travels 0.1m more, the parameters passed in can be reduced so that the drone can actually go to the appropriate position.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/001.png" alt="manual image" loading="lazy"></figure>
+<p>Looking further down, all the places where the time.sleep(1) function is used are to keep the drone in its current state for 1 second to stabilize its attitude. On line 17, the mc class calls the sub-function of up. This statement causes the height of the drone to rise by 0.2m. It can be seen from here that the functions of many sub-functions of this class can be seen from the naming. Let’s look at another complicated one. The circle_right sub-function on line 31 passes in three parameters. The function of this sub-function is to make the drone fly to the right starting from the original position and flying an arc trajectory. The first parameter passed in, 0.5, represents the radius of the circle of 0.5m, the second parameter velocity represents the speed of 0.5m/s, and the third parameter angle_degrees represents the degree of the rotation arc. Assigning a value of 360 will cause the drone to complete a full circle. The subsequent code can also infer its effect from its naming.</p>
+<p>So how to rigorously understand the functions of the sub-functions of the motion commander class and how to pass in the parameters? We can click to view the official open source website. Of course, the cflib library has been installed in the virtual machine, and the source code can also be viewed. It is convenient for everyone to view it. The key parts of the source code are directly posted for everyone, and they are also placed in the folder of this lesson.</p>
+<p>Next, I will introduce to you the commonly used sub-functions of the motion commander class. You can call them yourself and try to make the parameters as small as possible to ensure safety.</p>
+<p>Example of calling method: mc.left(0.2,velocity=0.6)</p>
+<p>That is, the drone moves 0.2m to the right with a speed of 0.6m/s</p>
+<figure><img src="../assets/images/manual-10-motion-commander/002.png" alt="manual image" loading="lazy"></figure>
+<p>Similarly, the following functions are used in the same way. Note that the velocity parameter does not need to be set, and the default speed of 0.1m/s will be used. Please refer to the previous usage of test.py.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/003.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/004.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/006.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-10-motion-commander/007.png" alt="manual image" loading="lazy"></figure>
+<p>Next is another type of sub-function, the turn_left sub-function can control the forward direction of the drone to turn left.</p>
+<p>Usage example: mc.turn_left(90,rate=45) means that the drone turns 90 degrees to the left, and the turning angular speed is 45 degrees per second. Similarly, the default angular speed can be used without passing in the speed.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/008.png" alt="manual image" loading="lazy"></figure>
+<p>Similarly, there are sub-functions of turn_right. You can test whether the final effects of turn_right(180) and turn_left(180) are the same.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/009.png" alt="manual image" loading="lazy"></figure>
+<p>The definition and implementation of the sub-function circle_left for turning circles to the left is as follows. There is also a sub-function method for circle_right.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/010.png" alt="manual image" loading="lazy"></figure>
+<p>Finally, I will introduce you to the usage of the move_distance sub-function. You can see that this function is used in the definition of many previous functions. This function can pass in a total of four values. The first three values ​​represent the displacement distance of the drone on the xyz axis of the three-dimensional space. The last value represents the speed. Using this function, the drone can move in any direction in the three-dimensional space.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/011.png" alt="manual image" loading="lazy"></figure>
+<p>For more sub-functions, you can check motion_commander.py further.</p>
+<p>two. Let&#x27;s do some flying tricks</p>
+<p>1. Use the motion commander method learned above to make the drone fly a figure-8 trajectory. Let me remind you of the specific process. First, the drone automatically lifts off to 0.3m, then lets it fly a little higher to a height of 0.4m, stabilizes the attitude, and then calls the sub-function related to the motion commander to make the drone fly a figure-8 trajectory and then land. How to call the sub-function to make the entire flight logic more concise?</p>
+<p>2. Similarly, use the commands learned above to make the drone fly a triangular trajectory and try to fly an equilateral triangle trajectory as much as possible.</p>
+<p>3. After the drone takes off, how to write the code to make it turn left three times and then right three times before landing?</p>
+<p>three. Prepare for phased comprehensive practice</p>
+<p>The following introduces part of the comprehensive practice in the stage. Students only need to use the knowledge they have learned previously to complete the task. The mission map is as follows. The total area is a 1.5*1.5m rectangle. The vertical projection of the drone must not fall into the red area during operation, nor can it exceed the rectangular area. The blue area represents an obstacle with a height of 30cm, and the direction pointed by the yellow arrow represents the due north direction. The task requires the drone to take off from any location in area A. When taking off, face the north in the positive direction. The default take-off height is 0.3m. Edit the code to make the drone land anywhere in area B. When flying over blue obstacles, the height of the drone must be at least 0.5m.</p>
+<figure><img src="../assets/images/manual-10-motion-commander/012.png" alt="manual image" loading="lazy"></figure>
+<p>The size of the relevant area has been given. If you have spare capacity, you can practice the project first; more requirements may be added during the comprehensive practice in the formal stage, but they will be controlled within everyone&#x27;s ability.</p>
 
       </div>
     </article>

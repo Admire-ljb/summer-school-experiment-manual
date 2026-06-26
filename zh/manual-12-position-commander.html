@@ -105,20 +105,20 @@
 <p>即，每次运行带有positioncommander类的代码时，无人机一定要放在起飞的位置，放平稳后再上电，此时坐标定位为（0，0，0），然后再运行程序。并且因为每次飞行和降落时都会让定位产生偏差，所以每次飞行都要严格按照这样的流程，让无人机在起飞位置静止地上电，也就是如果无人机正常平稳降落了，要运行下一个程序前，也得重新上电，执行该步骤。否则无人机的定位会紊乱，起飞就会炸机，一定要注意！</p>
 <p>实验一：从正方形到立方体</p>
 <p>给出如下示例程序，该程序实现的效果为无人机起飞，在z轴坐标为0.5的平面上，依次遍历四个坐标点，飞行轨迹为一个正方形。可以给该python脚本命名为position_commander_demo.py</p>
-<p>import time</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie import Crazyflie</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.position_hl_commander import PositionHlCommander</p>
-<p>from cflib.utils import uri_helper</p>
-<p># URI to the Crazyflie to connect to</p>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie import Crazyflie</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.position_hl_commander import PositionHlCommander</code></pre>
+<pre><code>from cflib.utils import uri_helper</code></pre>
+<pre><code># URI to the Crazyflie to connect to</code></pre>
 <p>uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E4&#x27;)</p>
-<p>def simple_sequence():</p>
-<p>with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</p>
-<p># Arm the Crazyflie</p>
+<pre><code>def simple_sequence():</code></pre>
+<pre><code>with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:</code></pre>
+<pre><code># Arm the Crazyflie</code></pre>
 <p>scf.cf.platform.send_arming_request(True)</p>
 <p>time.sleep(2.0)</p>
-<p>with PositionHlCommander(</p>
+<pre><code>with PositionHlCommander(</code></pre>
 <p>scf,</p>
 <p>x=0.0, y=0.0, z=0.0,</p>
 <p>default_velocity=0.25,</p>
@@ -128,7 +128,7 @@
 <p>pc.go_to(1.0, 1.0, 0.5)</p>
 <p>pc.go_to(0.0, 1.0, 0.5)</p>
 <p>pc.go_to(0.0, 0.0, 0.5)</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
 <p>cflib.crtp.init_drivers()</p>
 <p>simple_sequence()</p>
 <p>现在，修改该程序，让无人机的飞行轨迹遍历空中立体的矩形的八个点，注意，矩形的高度为0.5m即可，即设置z轴的最大高度为1m即可。</p>

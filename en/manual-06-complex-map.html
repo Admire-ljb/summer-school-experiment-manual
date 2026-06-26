@@ -41,15 +41,36 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-06-complex-map.html">中文</a></div>
         
 <h1>Experiment 6: Complex-map Flight and Mapping</h1>
-<p class="subtitle">复杂地图飞行与建图</p>
-<h2>Purpose</h2>
-<p>Use controlled flight and range sensing to explore a more complex obstacle map.</p>
-<h2>Preparation</h2>
-<ul><li>Prepared obstacle area.</li><li>Crazyflie with relevant sensing deck.</li><li>Mapping or logging script from the manual.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Inspect the map constraints and permitted flight area.</li><li>Run the flight or mapping procedure slowly enough for stable data collection.</li><li>Review the generated obstacle points or map-like output.</li></ol>
-<h2>Verification</h2>
-<ul><li>The flight remains within the allowed area.</li><li>The map output reflects major walls or obstacle regions.</li><li>Failure cases are documented with likely causes.</li></ul>
+<p>Experiment Manual 3 - Complex Map Flying and Mapping</p>
+<p>Experimental goals</p>
+<p>Continue to familiarize yourself with the programming methods related to the multiranger sensor in the cflib library.</p>
+<p>Use multiranger sensors to achieve more interesting flight missions</p>
+<p>Experiment preparation</p>
+<p>The virtual machine system of the client connected to the drone has been configured previously. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
+<p>Hardware equipment needed in this experiment:</p>
+<p>* Crazyflie 2.0</p>
+<p>* Crazyradio PA</p>
+<p>* Flow deck</p>
+<p>* Multiranger deck</p>
+<p>Experimental steps</p>
+<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
+<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
+<p>Experiment 1: walk follow the wall</p>
+<p>This experiment is an expanded experiment of the previous class. Now the parameters that can be adjusted in the code are given. Students can modify the parameters to test the operation effect.</p>
+<p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>
+<p>As shown in the figure below, lines 75 to 77 in the multiranger_wall_following.py file</p>
+<figure><img src="../assets/images/manual-06-complex-map/001.png" alt="manual image" loading="lazy"></figure>
+<p>In the process of initializing the instance, the first parameter angle_value_buffer controls the tolerance of the UAV&#x27;s judgment angle. The larger the value, the slower the UAV&#x27;s response will be, but the path will be relatively smooth. The smaller the value, the more agile the UAV&#x27;s response will be and the path will jitter more. Reference_distance_from_wall This value controls the shortest distance the drone expects to be from the wall, in m. The larger the value, the farther the drone is from the wall. The value max_forward_speed represents the fastest forward speed of the drone, in m/s. Students can slightly modify these parameters and observe whether there are significant changes in the flight path of the drone. However, during this process, they must pay attention to the rationality of the parameters, and the values ​​should not be too extreme to ensure flight safety.</p>
+<p>Experiment 2: Obstacle avoidance flight with more options</p>
+<p>Now that everyone is proficient in using optical flow sensors and obstacle avoidance sensors, let the drone take off from area A according to the obstacle map environment shown in the figure below. During the entire process, the flying height of the drone should not exceed 0.4m. Explore the entire map, that is, fly all the way without hitting the wall until it lands in area B. Now that the students have mastered the programming methods of motioncommander and multiranger, think about what kind of programming method can be used in such a map environment to logically complete the fixed flight route task in this map environment known in advance more efficiently.</p>
+<p>Note that the content of this experiment will be related to part of the final assessment. This experiment hopes to improve and test the students&#x27; programming proficiency. If more clever code logic is used to implement such tasks, it will make everyone&#x27;s practical assessment results even better.</p>
+<figure><img src="../assets/images/manual-06-complex-map/002.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 3: Manually control flight mapping</p>
+<p>Put the multiranger_pointcloud.py file attached to this lesson into the workspace, and the python script can be run directly. As shown in the figure below, the main function of this program is to use the multiranger module of the crazyflie drone in an obstacle environment to construct point cloud maps of surrounding obstacles.</p>
+<figure><img src="../assets/images/manual-06-complex-map/003.png" alt="manual image" loading="lazy"></figure>
+<p>After running this program, you will use the keyboard to manually control the drone to fly in an obstacle environment and sense the surrounding environment. Use the direction keys to control the flight direction of the drone. The drone will rise to the default height of 0.3m. The a and d keys are used to control the drone&#x27;s steering slowly, the z and x keys are used to control the drone&#x27;s steering quickly, and the height is controlled by the w and s keys. Since the multiranger&#x27;s sampling speed is limited, if the drone flies too fast, the sampled environment map may not be clear. Therefore, if you want to get a clearer point cloud map, you can slightly slow down the drone&#x27;s flight speed to get a clearer point cloud map.</p>
+<figure><img src="../assets/images/manual-06-complex-map/004.png" alt="manual image" loading="lazy"></figure>
+<p>Now run this program to construct a clear point cloud map of the map obstacles for this lesson.</p>
 
       </div>
     </article>

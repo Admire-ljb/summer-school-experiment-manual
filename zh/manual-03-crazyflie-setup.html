@@ -102,11 +102,11 @@
 <figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy"></figure>
 <p>注意以下命令较长，复制粘贴的时候保证命令完整性：</p>
 <p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
-<p># Crazyradio (normal operation)</p>
+<pre><code># Crazyradio (normal operation)</code></pre>
 <p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;7777&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
-<p># Bootloader</p>
+<pre><code># Bootloader</code></pre>
 <p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;0101&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
-<p># Crazyflie (over USB)</p>
+<pre><code># Crazyflie (over USB)</code></pre>
 <p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
 <p>EOF</p>
 <p>再输入以下命令：</p>
@@ -140,46 +140,46 @@
 <p>然后在终端中输入python3 test.py命令运行该脚本，脚本开始运行后，先等待一段时间的初始化，通过无线的方式向无人机发送指令，无人机接收到指令后进行相印的飞行动作。</p>
 <p>补充，实验官方教程网址为：https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
 <p>test.py脚本内容为：</p>
-<p>import logging</p>
-<p>import time</p>
-<p>import cflib.crtp</p>
-<p>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</p>
-<p>from cflib.positioning.motion_commander import MotionCommander</p>
+<pre><code>import logging</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
 <p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
-<p># Only output errors from the logging framework</p>
+<pre><code># Only output errors from the logging framework</code></pre>
 <p>logging.basicConfig(level=logging.ERROR)</p>
-<p>if __name__ == &#x27;__main__&#x27;:</p>
-<p># Initialize the low-level drivers (don&#x27;t list the debug drivers)</p>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
 <p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
-<p>with SyncCrazyflie(URI) as scf:</p>
-<p># We take off when the commander is created</p>
-<p>with MotionCommander(scf) as mc:</p>
-<p>print(&#x27;Taking off!&#x27;)</p>
+<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
+<pre><code># We take off when the commander is created</code></pre>
+<pre><code>with MotionCommander(scf) as mc:</code></pre>
+<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
 <p>time.sleep(1)</p>
-<p># There is a set of functions that move a specific distance</p>
-<p># We can move in all directions</p>
-<p>print(&#x27;Moving forward 0.5m&#x27;)</p>
+<pre><code># There is a set of functions that move a specific distance</code></pre>
+<pre><code># We can move in all directions</code></pre>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
 <p>mc.forward(0.5)</p>
-<p># Wait a bit</p>
+<pre><code># Wait a bit</code></pre>
 <p>time.sleep(1)</p>
-<p>print(&#x27;Moving up 0.2m&#x27;)</p>
+<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
 <p>mc.up(0.2)</p>
-<p># Wait a bit</p>
+<pre><code># Wait a bit</code></pre>
 <p>time.sleep(1)</p>
-<p>print(&#x27;Doing a 270deg circle&#x27;);</p>
+<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
 <p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
-<p>print(&#x27;Moving down 0.2m&#x27;)</p>
+<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
 <p>mc.down(0.2)</p>
-<p># Wait a bit</p>
+<pre><code># Wait a bit</code></pre>
 <p>time.sleep(1)</p>
-<p>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</p>
+<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
 <p>mc.left(0.2, velocity=0.6)</p>
-<p># Wait a bit</p>
+<pre><code># Wait a bit</code></pre>
 <p>time.sleep(1)</p>
-<p>print(&#x27;Moving forward 0.5m&#x27;)</p>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
 <p>mc.forward(0.5)</p>
-<p># We land when the MotionCommander goes out of scope</p>
-<p>print(&#x27;Landing!&#x27;)</p>
+<pre><code># We land when the MotionCommander goes out of scope</code></pre>
+<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <p class="step">1. 清华大学 PyPI 镜像源</p>

@@ -41,15 +41,140 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-01-vm.html">中文</a></div>
         
 <h1>Experiment 1: Virtual Machine Installation and Configuration</h1>
-<p class="subtitle">安装配置虚拟机</p>
-<h2>Purpose</h2>
-<p>Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.</p>
-<h2>Preparation</h2>
-<ul><li>Windows host computer with sufficient memory and disk space.</li><li>VMware Workstation Pro 16 installation package.</li><li>Ubuntu 20.04 LTS desktop image.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Install VMware Workstation and verify that the new virtual-machine wizard is available.</li><li>Create an Ubuntu virtual machine with appropriate CPU, memory, disk, and NAT network settings.</li><li>Install Ubuntu, perform first-boot setup, install VMware Tools, and create a clean snapshot.</li></ol>
-<h2>Verification</h2>
-<ul><li>Confirm network access from Ubuntu.</li><li>Verify screen scaling and host-to-guest file transfer.</li><li>Restore the clean snapshot once to confirm recovery is available.</li></ul>
+<p>Experiment Manual 1 - Installing and Configuring Virtual Machines</p>
+<h2>1. Experimental goals</h2>
+<p>Master the basic installation and configuration methods of VMware virtualization software.</p>
+<p>Learn to create an Ubuntu 20.04 LTS virtual machine in VMware and complete the system installation.</p>
+<p>Understand the core concepts of virtual machines (such as hardware isolation, snapshot management) and their application scenarios in development and testing.</p>
+<h2>2. Experimental preparation</h2>
+<p>Hardware requirements</p>
+<p>Physical machine configuration: It is recommended to have more than 8GB of memory and more than 50GB of available disk space (the virtual machine needs to occupy about 20GB).</p>
+<p>Software resources (can be downloaded from the official website, copied by the teaching assistant to save time)</p>
+<p>VMware Workstation Pro 16</p>
+<p>Ubuntu 20.04 LTS Desktop version image file</p>
+<p>Tool preparation</p>
+<p>Task Manager (check the number of CPU cores on the physical machine).</p>
+<p>A text editor (such as Notepad, used to record virtual machine configuration parameters).</p>
+<h2>3. Experimental steps</h2>
+<h3>Phase 1: VMware software installation</h3>
+<p>For the specific graphic process, open this link in your browser:</p>
+<pre><code>https://leigongbiji.blog.csdn.net/article/details/130641288?fromshare=blogdetail&amp;sharetype=blogdetail&amp;sharerId=130641288&amp;sharerefer=PC&amp;sharesource=SteveZhang114514&amp;sharefrom=from_link</code></pre>
+<p>Download and install</p>
+<p>Visit the VMware official website and download the Workstation Pro 16 installation package.</p>
+<p>Double-click the installation package and follow the wizard prompts to complete the installation (it is recommended to select the D drive for the installation path).</p>
+<p>Once the installation is complete, create a desktop shortcut.</p>
+<p>Verify installation</p>
+<p>Start VMware and check whether the &quot;Create New Virtual Machine&quot; button is displayed on the main interface.</p>
+<h3>Stage 2: Create Ubuntu virtual machine</h3>
+<p>Please refer to the graphic process for specific details and open this link in your browser:</p>
+<pre><code>https://blog.csdn.net/air_729/article/details/143105854?fromshare=blogdetail&amp;sharetype=blogdetail&amp;sharerId=143105854&amp;sharerefer=PC&amp;sharesource=SteveZhang114514&amp;sharefrom=from_link</code></pre>
+<p>New Virtual Machine Wizard</p>
+<p>Open VMware, click &quot;Home&quot; → &quot;Create New Virtual Machine&quot;</p>
+<figure><img src="../assets/images/manual-01-vm/001.png" alt="manual image" loading="lazy"></figure>
+<p>Select Custom (Advanced) and click Next</p>
+<figure><img src="../assets/images/manual-01-vm/002.png" alt="manual image" loading="lazy"></figure>
+<p>Directly select next step in this interface</p>
+<figure><img src="../assets/images/manual-01-vm/003.png" alt="manual image" loading="lazy"></figure>
+<p>In this interface, click Browse to select the ubuntu20.04 system image file, and click Next</p>
+<figure><img src="../assets/images/manual-01-vm/004.png" alt="manual image" loading="lazy"></figure>
+<p>In this step, set the user information in the system. It is recommended to use root as the password. Click Next.</p>
+<figure><img src="../assets/images/manual-01-vm/005.png" alt="manual image" loading="lazy"></figure>
+<p>In this step, set the name of the virtual machine. The location can be customized or the default path can be used. Click Next.</p>
+<figure><img src="../assets/images/manual-01-vm/006.png" alt="manual image" loading="lazy"></figure>
+<p>The number of processors and cores can be adjusted appropriately. You can set it as shown and click Next.</p>
+<figure><img src="../assets/images/manual-01-vm/007.png" alt="manual image" loading="lazy"></figure>
+<p>You can use the default recommended memory for running memory, click Next</p>
+<figure><img src="../assets/images/manual-01-vm/008.png" alt="manual image" loading="lazy"></figure>
+<p>You can use the default configuration for the network type, click Next</p>
+<figure><img src="../assets/images/manual-01-vm/009.png" alt="manual image" loading="lazy"></figure>
+<p>Still using the recommended controller, click Next</p>
+<figure><img src="../assets/images/manual-01-vm/010.png" alt="manual image" loading="lazy"></figure>
+<p>Select the recommended disk type and click Next</p>
+<figure><img src="../assets/images/manual-01-vm/011.png" alt="manual image" loading="lazy"></figure>
+<p>Select Create a new virtual disk and click Next</p>
+<figure><img src="../assets/images/manual-01-vm/012.png" alt="manual image" loading="lazy"></figure>
+<p>You can slightly increase the disk space, click Next</p>
+<figure><img src="../assets/images/manual-01-vm/013.png" alt="manual image" loading="lazy"></figure>
+<p>Just click Next on this page</p>
+<figure><img src="../assets/images/manual-01-vm/014.png" alt="manual image" loading="lazy"></figure>
+<p>Click Finish at this point, and the virtual machine will be automatically created.</p>
+<figure><img src="../assets/images/manual-01-vm/015.png" alt="manual image" loading="lazy"></figure>
+<p>Naming and storage</p>
+<p>Virtual machine name: Ubuntu20.04_Test.</p>
+<p>Storage path: Select the newly created VMware_Ubuntu folder under drive D.</p>
+<p>Hardware configuration</p>
+<p>Processor: allocated according to the number of cores of the physical machine (for example, a 4-core CPU is allocated 2 cores, and each core has 1-2 threads).</p>
+<p>Memory:</p>
+<p>Basic tasks: 2GB</p>
+<p>Multitasking/development environment: 4GB</p>
+<p>Reserve at least 4GB of memory for the physical machine.</p>
+<p>disk:</p>
+<p>Type: SCSI (recommended)</p>
+<p>Capacity: Allocate 60GB, select &quot;Store as single file&quot;.</p>
+<p>Network: Default NAT mode (automatically obtains IP and can access the external network).</p>
+<p>Load ISO image</p>
+<p>In the virtual machine settings, select the CD/DVD drive and load the downloaded Ubuntu 20.04 ISO file.</p>
+<h3>Stage 3: Install Ubuntu 20.04</h3>
+<p>Start virtual machine</p>
+<p>Click &quot;Start this virtual machine&quot; and wait for the Ubuntu installation boot interface to load.</p>
+<p>System installation process</p>
+<p>Language selection: Chinese (Simplified).</p>
+<p>Keyboard layout: Default English (US).</p>
+<p>Installation type: Select &quot;Minimal Installation&quot; (to save disk space) or &quot;Normal Installation&quot; (including commonly used software).</p>
+<p>Partition settings:</p>
+<p>Select &quot;Other options&quot; to create the partition table manually.</p>
+<p>Partitioning scheme:</p>
+<p>/ (root directory): 20GB, EXT4 file system.</p>
+<p>/home (user directory): remaining space, EXT4 file system.</p>
+<p>Swap (swap partition): 2GB (spare when memory is insufficient).</p>
+<p>User information: Set username (such as student) and password (need to remember).</p>
+<p>Installation is complete: Click &quot;Restart&quot;, remove the ISO image and press Enter.</p>
+<p>System initialization</p>
+<p>After logging in, follow the prompts to skip online account binding and privacy settings.</p>
+<p>Adjust taskbar icons: right-click to hide infrequently used applications and add &quot;Terminal&quot; to favorites.</p>
+<h3>Phase 4: Virtual machine optimization and snapshot management</h3>
+<p>Install VMware Tools</p>
+<p>Select &quot;Virtual Machine&quot; → &quot;Install VMware Tools&quot; on the VMware menu bar.</p>
+<p>Open the Ubuntu terminal (press ctrl+alt+T at the same time on the main interface) and execute the following command:</p>
+<p>There are three lines of three commands here. After entering each one, press Enter to execute the command.</p>
+<figure><img src="../assets/images/manual-01-vm/016.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-01-vm/017.png" alt="manual image" loading="lazy"></figure>
+<p>After the reboot command, the virtual machine will restart. The virtual machine window will automatically adapt to the screen resolution and support dragging and dropping files with the physical machine.</p>
+<p>2. Create a snapshot</p>
+<p>Click &quot;Snapshot&quot; → &quot;Take Snapshot&quot; on the VMware menu bar.</p>
+<figure><img src="../assets/images/manual-01-vm/018.png" alt="manual image" loading="lazy"></figure>
+<p>Name the snapshot Ubuntu20.04_Clean and note &quot;Initial clean system state&quot;.</p>
+<figure><img src="../assets/images/manual-01-vm/019.png" alt="manual image" loading="lazy"></figure>
+<h2>4. Experimental verification and testing</h2>
+<p>Network connectivity test</p>
+<p>Open the Ubuntu terminal and execute:</p>
+<figure><img src="../assets/images/manual-01-vm/020.png" alt="manual image" loading="lazy"></figure>
+<p>Observe whether the reply packet can be received normally.</p>
+<figure><img src="../assets/images/manual-01-vm/021.png" alt="manual image" loading="lazy"></figure>
+<p>Snapshot recovery test</p>
+<p>Right-click the virtual machine in VMware and select &quot;Snapshot&quot; → &quot;Restore to Snapshot Ubuntu20.04_Clean&quot;.</p>
+<p>Confirm that the system is restored to its initial state.</p>
+<figure><img src="../assets/images/manual-01-vm/022.png" alt="manual image" loading="lazy"></figure>
+<h2>5. Experiment summary and expansion</h2>
+<p>Review of core knowledge points</p>
+<p>Virtual machines simulate hardware through software to achieve operating system isolation.</p>
+<p>The snapshot function can quickly save/restore the system state and is suitable for development and testing scenarios.</p>
+<p>Expansion tasks (optional)</p>
+<p>Install Python3.10 version in the virtual machine (can use the Internet).</p>
+<h2>Organizing link information</h2>
+<p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
+<p class="step">1. VMware Workstation 16 installation tutorial (webpage title: [Virtual Machine] VMware 16 nanny-level installation tutorial-CSDN blog)</p>
+<p>Original link: https://leigongbiji.blog.csdn.net/article/details/130641288</p>
+<p>Class purpose: Assist in completing VMware installation, authorization, restart and first boot check on Windows hosts.</p>
+<p>• Suitable as a graphic reference for virtual machine software installation, focusing on the installation wizard, license agreement, installation location, enhanced keyboard driver and restart confirmation.</p>
+<p>• Classroom operations are subject to the steps in this manual; the content on the web page is used for reference when encountering differences in the installation interface.</p>
+<p>• After installation, you need to confirm that VMware can create new virtual machines normally and record the software version.</p>
+<p class="step">2. Install and configure Ubuntu in VMware (Webpage title: Install and configure Ubuntu in VMware (2024 latest version, super detailed)_vmware install ubuntu-CSDN blog)</p>
+<p>Original link: https://blog.csdn.net/air_729/article/details/143105854</p>
+<p>Class purpose: Assist in completing Ubuntu image download, virtual machine creation, system installation and domestic image source configuration.</p>
+<p>• The web page is expanded according to the process of creating a virtual machine in VMware, selecting the Ubuntu image, configuring CPU/memory/disk, and starting the installation.</p>
+<p>• It is recommended to use Ubuntu 20.04 LTS in the classroom; if the web page example versions are different, only refer to the operation path and do not directly replace the course version.</p>
+<p>• After installation, it is necessary to verify that the system can enter the desktop and the terminal is available, and it is recommended to retain the initial snapshot.</p>
 
       </div>
     </article>

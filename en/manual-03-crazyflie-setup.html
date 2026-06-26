@@ -41,15 +41,173 @@
         <div class="language-switch"><span>English</span><a href="../zh/manual-03-crazyflie-setup.html">中文</a></div>
         
 <h1>Experiment 3: Initial Crazyflie Configuration and Operation</h1>
-<p class="subtitle">初次配置与驱动 Crazyflie 无人机</p>
-<h2>Purpose</h2>
-<p>Prepare the Crazyflie software and hardware connection path for safe first operation.</p>
-<h2>Preparation</h2>
-<ul><li>Ubuntu/ROS environment from the previous manuals.</li><li>Crazyflie aircraft, battery, USB cable, and Crazyradio.</li><li>cflib, Crazyflie client, and required Python dependencies.</li></ul>
-<h2>Procedure</h2>
-<ol><li>Install the Crazyflie client and required libraries.</li><li>Configure USB permissions and radio connection settings.</li><li>Connect to the aircraft and run conservative first-control tests.</li></ol>
-<h2>Verification</h2>
-<ul><li>Crazyflie client starts correctly.</li><li>USB and radio connection can detect the aircraft.</li><li>A short scripted test can be explained and stopped safely.</li></ul>
+<p>Experiment Manual 3 - Initial configuration and driving of Crazyflie drone</p>
+<p>Experimental goals</p>
+<p>Configure the crazyfile-client software on the Linux virtual machine.</p>
+<p>Get to know the structure of the crazyfile drone.</p>
+<p>Use wired and wireless methods to connect the client of the virtual machine to the drone.</p>
+<p>Use the example program to test fly the drone.</p>
+<p>Experiment preparation</p>
+<p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS. And you need to have the Linux system operating experience accumulated in the previous experiments.</p>
+<p>Experimental steps</p>
+<p>Experiment 1: Copy the cfclient software installation package to the workspace folder of the virtual machine to perform the installation steps</p>
+<p>Directly use the graphical operation method to drag the software package into the file interface of the Linux virtual machine from the file interface of the host windows.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy"></figure>
+<p>Double-click the compressed package and click extract to extract it to the file directory.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy"></figure>
+<p>At this point click the green extract button</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy"></figure>
+<p>Click to enter the decompressed directory, right-click on a blank space on the interface and select open in terminal to call out the terminal.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy"></figure>
+<p>Then, first we install some necessary dependencies. First, copy and paste the following command directly into the terminal:</p>
+<pre><code>sudo apt-get install python3 python3-pip python3-pyqt5 python3-pyqt5.qtsvg</code></pre>
+<p>Press the Enter key to enter the command, and then you may be asked to enter the user password to obtain permissions (the content and number of passwords entered during this process are not visible), and enter Y to continue the installation process.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/005.png" alt="manual image" loading="lazy"></figure>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/006.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the following commands to install other dependencies:</p>
+<pre><code>sudo apt install libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0</code></pre>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the following command to configure the software source downloaded by pip3:</p>
+<p>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy"></figure>
+<p>Then enter the following command to update the software tool:</p>
+<p>pip3 install --upgrade pip setuptools wheel</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy"></figure>
+<p>Finally, enter the following command to complete the overall software dependency installation:</p>
+<p>pip3 install -e .</p>
+<p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 2: Understand the basic structure of crazyfile drone</p>
+<p>For specific basic drone cognition tutorials, please refer to this official website: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>
+<p>First, let’s get to know the basic components of a drone. Its basic parts are as follows:</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy"></figure>
+<p>Figure 1 Crazyflie drone parts</p>
+<p>The Crazyflie 2. The chip board is as shown below. The chip board has four LED lights (M1, M2, M3, M4) used to display the drone status and error debugging. In the picture below, there are four colored dots with corresponding labels ①②③④. The M1 light is on the upper right, with red and green lights; the M2 light is on the lower right, with only blue lights; the M3 light is on the lower left, with only blue lights; the M4 light is on the upper left, with red and green lights.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy"></figure>
+<p>Figure 2 Pay attention to the direction of the front direction and the four LED lights</p>
+<p>Connect the Crazyflie 2.X chip board to the power supply with a USB cable. Pay attention to the LED lights M1 and M4. If M4 flashes green light 5 times quickly, the test passes.</p>
+<p>How to understand the meaning of LED lights</p>
+<p>Crazyflie 2.X If all good: blue LED lights M2 and M3 (the two lights below) will be blue (not flashing), and M1 will flash red light [2 times/second]</p>
+<p>If Crazyflie 2.</p>
+<p>Radio connected: M4 flashes red and/or green</p>
+<p>Low battery: M1 will be red (not flashing)</p>
+<p>Charging: M3 will flash blue light, while M2 will have blue light (not flashing)</p>
+<p>Bootloader Mode: Both M2 and M3 flash blue lights, about 1 time/second</p>
+<p>Self-test fails: If the M1 light flashes red 5 times quickly, and pauses for a period of time, and then flashes red light 5 times quickly, and then pauses for a period of time, and repeats this, it means that the self-test has failed. Note that self-test is different from the test before assembly (M4 will flash green light 5 times quickly, the test passes. If M1 light flashes red light 5 times quickly, it fails)</p>
+<p>Experiment 3: Connecting the drone using wired and wireless methods</p>
+<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, you can refer to the tutorial on the official website:</p>
+<p>USB permissions | Bitcraze</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy"></figure>
+<p>The specific operation is to enter the following commands in the terminal in the original directory:</p>
+<pre><code>sudo groupadd plugdev</code></pre>
+<pre><code>sudo usermod -a -G plugdev $USER</code></pre>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy"></figure>
+<p>Note that the following command is long, so ensure the integrity of the command when copying and pasting:</p>
+<p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
+<pre><code># Crazyradio (normal operation)</code></pre>
+<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;7777&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
+<pre><code># Bootloader</code></pre>
+<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;0101&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
+<pre><code># Crazyflie (over USB)</code></pre>
+<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
+<p>EOF</p>
+<p>Then enter the following command:</p>
+<pre><code>sudo udevadm control --reload-rules</code></pre>
+<pre><code>sudo udevadm trigger</code></pre>
+<p>After completing the above operations, enter the sudo reboot command to restart the virtual machine to apply the changes to the USB permissions.</p>
+<p>Next, connect the drone to the computer using a UAB cable, and the following window will pop up to connect the USB device to the virtual machine.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy"></figure>
+<p>Then click the scan button. The drone is detected as shown below. Select the option of usb://0 and click connect.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/016.png" alt="manual image" loading="lazy"></figure>
+<p>During the connection process, ensure that the drone is placed flat on the table so that it can initialize positioning devices such as gyroscopes. The appearance of the following interface indicates a successful wired connection. At this time, when you pick up the drone, you can see the changes in the attitude interface.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/017.png" alt="manual image" loading="lazy"></figure>
+<p>Next, we check the wireless address on the drone, remember this address, select copy, and paste it into the address column of the main interface. We will use crazyradio to connect to the drone wirelessly.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/018.png" alt="manual image" loading="lazy"></figure>
+<p>Remove the USB cable from the drone, plug it into crazyradio, and use the cfclient client to scan to the device. Make sure that the address in the address below is the wireless connection address of the drone you just viewed, and then click connect.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy"></figure>
+<p>Also during the connection process, ensure that the drone is still and flat, so that it can initialize the attitude. The following interface will appear. Hold the drone in your hand, and if the attitude interface changes accordingly, the wireless connection is successful.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy"></figure>
+<p>Experiment 4: Use a python script to make the drone take off autonomously</p>
+<p>Core components</p>
+<p>Flow Deck: The Flow Deck is a lidar ranging sensor board used to measure the height and distance of the Crazyflie drone from the ground. It can help drones achieve altitude positioning and stable hovering.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy"></figure>
+<p>Make sure that the previous operation has allowed you to use crazyradio to connect to the drone wirelessly.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy"></figure>
+<p>And after scanning crazyradio, remember its radio address, as shown in the picture: //0/80/2M</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy"></figure>
+<p>At the same time, put the python script to be run into the workspace folder, double-click the test.py script file to edit, modify the URI address on line 14 to be consistent with the current crazyradio address, click the save button after modification and exit.</p>
+<figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy"></figure>
+<p>Then install the last required dependency and enter the following command in the terminal:</p>
+<p>pip3 install cflib</p>
+<p>Then enter the python3 test.py command in the terminal to run the script. After the script starts running, it waits for a period of initialization and sends instructions to the drone wirelessly. After receiving the instructions, the drone performs corresponding flight movements.</p>
+<p>In addition, the official experimental tutorial website is: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
+<p>The content of the test.py script is:</p>
+<pre><code>import logging</code></pre>
+<pre><code>import time</code></pre>
+<pre><code>import cflib.crtp</code></pre>
+<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
+<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
+<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
+<pre><code># Only output errors from the logging framework</code></pre>
+<p>logging.basicConfig(level=logging.ERROR)</p>
+<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
+<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
+<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
+<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
+<pre><code># We take off when the commander is created</code></pre>
+<pre><code>with MotionCommander(scf) as mc:</code></pre>
+<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
+<p>time.sleep(1)</p>
+<pre><code># There is a set of functions that move a specific distance</code></pre>
+<pre><code># We can move in all directions</code></pre>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
+<p>mc.forward(0.5)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
+<p>mc.up(0.2)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
+<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
+<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
+<p>mc.down(0.2)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
+<p>mc.left(0.2, velocity=0.6)</p>
+<pre><code># Wait a bit</code></pre>
+<p>time.sleep(1)</p>
+<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
+<p>mc.forward(0.5)</p>
+<pre><code># We land when the MotionCommander goes out of scope</code></pre>
+<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
+<h2>Organizing link information</h2>
+<p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
+<p class="step">1. Tsinghua University PyPI mirror source</p>
+<p>Original link: https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<p>Classroom use: Used to improve the speed and stability of pip downloading Python dependencies.</p>
+<p>• The purpose in the manual is to set the pip index-url so that cflib, GUI client and related dependencies download faster.</p>
+<p>• Commonly used commands are: pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<p>• The link itself is the software package index entry, not the tutorial page; only keep the purpose description for offline materials.</p>
+<p class="step">2. Getting started with the STEM drone bundle | Bitcraze</p>
+<p>Original link: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
+<p>Class use: Learn about the Crazyflie kit components, charging, connections, and first flight process.</p>
+<p>• Corresponds to hardware identification, Crazyradio connection, client startup and basic test flight in the classroom.</p>
+<p>• Focus on batteries, paddles, expansion boards, wireless connectivity and safety checks.</p>
+<p>• Classroom practice is still subject to the device number, firmware status and site safety requirements provided by the teacher.</p>
+<p class="step">3. Getting started with Bitcraze Crazyflie 2.x (Webpage title: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze)</p>
+<p>Original link: https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</p>
+<p>Classroom Purpose: Supplementary Crazyflie 2.x connection, firmware, client, and pre-flight check instructions.</p>
+<p>• Suitable for checking Crazyflie 2.0/2.1 series hardware and client operation logic.</p>
+<p>• It is recommended to focus on the connection process, client status feedback, firmware update reminders and flight safety tips.</p>
+<p>• If the classroom device has been pre-configured, it is not recommended that students update the firmware themselves.</p>
+<p class="step">4. Bitcraze USB permission configuration (webpage title: USB permissions | Bitcraze)</p>
+<p>Original link: https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/</p>
+<p>Classroom Purpose: Solve the problem that ordinary users in Linux virtual machines or hosts cannot access Crazyradio USB devices.</p>
+<p>• When Crazyradio cannot be discovered by a Python script or client, prioritize checking USB connections, virtual machine USB routing, and permission rules.</p>
+<p>• Under Linux, it is usually necessary to add udev rules and replug and unplug the device or restart related services.</p>
+<p>• If permissions have been configured by the teaching assistant in class, students only need to follow the troubleshooting checklist to confirm that the device can be recognized.</p>
 
       </div>
     </article>
