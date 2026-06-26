@@ -54,9 +54,9 @@
 <p>Use cflib programming to connect to drones wirelessly</p>
 <p>Use the touch command in the workspace terminal to create a python file, as shown in the figure below.</p>
 <pre><code>touch connect_log_param.py</code></pre>
-<figure><img src="../assets/images/manual-09-cflib/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-09-cflib/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Click the created file directly on the graphical interface to directly edit it graphically. If you have some spare time, you can also choose your own editor.</p>
-<figure><img src="../assets/images/manual-09-cflib/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-09-cflib/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>For a python program, we first import the standard python library in lines 1 and 2, and then import the cflib library in lines 4 to 6. This section of the experiment will also mainly introduce you to some usages of the cflib library. In this section of the experiment, we will understand how to use the python language to call the cflib library and use the wireless module crazyradio to connect to the drone.</p>
 <p>In line 11 we define a function called simple_connect. The main content of the function is to output the characters &quot;Yeah, I&#x27;m connected! :D&quot; to the terminal, then the program keeps sleeping for 3 seconds, and then outputs the characters &quot;Now I will disconnect :&#x27;(&quot;.</p>
 <p>On line 17, we start our python main program. First, on line 19, we call the cflib library function to initialize the drone equipment. Then, on line 21, we will create a synchronous Crazyflie instance with a specified link_uri and create it through a wireless connection. Starting from line 21, the main program we set will be executed here. If there are no looping program statements to keep the program executing, the synchronous Crazyflie instance will be automatically destroyed after the statements are executed in sequence, the wireless connection will be disconnected, and the program will end.</p>
@@ -216,7 +216,7 @@
 <p>logconf.stop()</p>
 <p>Executing the code again, you can see that the terminal is constantly outputting its flight parameters while the drone is flying.</p>
 <p>Wandering back and forth</p>
-<figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then redefine and add a function named move_box_limit and place it in the main function. The same reference program is as follows:</p>
 <pre><code>import logging</code></pre>
 <pre><code>import sys</code></pre>

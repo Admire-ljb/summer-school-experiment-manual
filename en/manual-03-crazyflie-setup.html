@@ -52,13 +52,13 @@
 <p>Experimental steps</p>
 <p>Experiment 1: Copy the cfclient software installation package to the workspace folder of the virtual machine to perform the installation steps</p>
 <p>Directly use the graphical operation method to drag the software package into the file interface of the Linux virtual machine from the file interface of the host windows.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Double-click the compressed package and click extract to extract it to the file directory.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At this point click the green extract button</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Click to enter the decompressed directory, right-click on a blank space on the interface and select open in terminal to call out the terminal.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then, first we install some necessary dependencies. First, copy and paste the following command directly into the terminal:</p>
 <pre><code>sudo apt-get install python3 python3-pip python3-pyqt5 python3-pyqt5.qtsvg</code></pre>
 <p>Press the Enter key to enter the command, and then you may be asked to enter the user password to obtain permissions (the content and number of passwords entered during this process are not visible), and enter Y to continue the installation process.</p>
@@ -83,7 +83,7 @@
 <figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 1 Crazyflie drone parts</p>
 <p>The Crazyflie 2. The chip board is as shown below. The chip board has four LED lights (M1, M2, M3, M4) used to display the drone status and error debugging. In the picture below, there are four colored dots with corresponding labels ①②③④. The M1 light is on the upper right, with red and green lights; the M2 light is on the lower right, with only blue lights; the M3 light is on the lower left, with only blue lights; the M4 light is on the upper left, with red and green lights.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 2 Pay attention to the direction of the front direction and the four LED lights</p>
 <p>Connect the Crazyflie 2.X chip board to the power supply with a USB cable. Pay attention to the LED lights M1 and M4. If M4 flashes green light 5 times quickly, the test passes.</p>
 <p>How to understand the meaning of LED lights</p>
@@ -97,7 +97,7 @@
 <p>Experiment 3: Connecting the drone using wired and wireless methods</p>
 <p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, you can refer to the tutorial on the official website:</p>
 <p>USB permissions | Bitcraze</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The specific operation is to enter the following commands in the terminal in the original directory:</p>
 <pre><code>sudo groupadd plugdev</code></pre>
 <pre><code>sudo usermod -a -G plugdev $USER</code></pre>
@@ -116,17 +116,17 @@
 <pre><code>sudo udevadm trigger</code></pre>
 <p>After completing the above operations, enter the sudo reboot command to restart the virtual machine to apply the changes to the USB permissions.</p>
 <p>Next, connect the drone to the computer using a UAB cable, and the following window will pop up to connect the USB device to the virtual machine.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then click the scan button. The drone is detected as shown below. Select the option of usb://0 and click connect.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/016.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/016.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>During the connection process, ensure that the drone is placed flat on the table so that it can initialize positioning devices such as gyroscopes. The appearance of the following interface indicates a successful wired connection. At this time, when you pick up the drone, you can see the changes in the attitude interface.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/017.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/017.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Next, we check the wireless address on the drone, remember this address, select copy, and paste it into the address column of the main interface. We will use crazyradio to connect to the drone wirelessly.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/018.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Remove the USB cable from the drone, plug it into crazyradio, and use the cfclient client to scan to the device. Make sure that the address in the address below is the wireless connection address of the drone you just viewed, and then click connect.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Also during the connection process, ensure that the drone is still and flat, so that it can initialize the attitude. The following interface will appear. Hold the drone in your hand, and if the attitude interface changes accordingly, the wireless connection is successful.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Experiment 4: Use a python script to make the drone take off autonomously</p>
 <p>Core components</p>
 <p>Flow Deck: The Flow Deck is a lidar ranging sensor board used to measure the height and distance of the Crazyflie drone from the ground. It can help drones achieve altitude positioning and stable hovering.</p>
@@ -134,7 +134,7 @@
 <p>Make sure that the previous operation has allowed you to use crazyradio to connect to the drone wirelessly.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>And after scanning crazyradio, remember its radio address, as shown in the picture: //0/80/2M</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<figure><img src="../assets/images-en/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At the same time, put the python script to be run into the workspace folder, double-click the test.py script file to edit, modify the URI address on line 14 to be consistent with the current crazyradio address, click the save button after modification and exit.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then install the last required dependency and enter the following command in the terminal:</p>

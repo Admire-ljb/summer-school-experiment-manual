@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import html
+import hashlib
 import json
 import os
 import re
@@ -10,6 +11,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from io import BytesIO
@@ -17,9 +19,11 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 try:
-    from PIL import Image, ImageOps
+    from PIL import Image, ImageDraw, ImageFont, ImageOps
 except ImportError:
     Image = None
+    ImageDraw = None
+    ImageFont = None
     ImageOps = None
 
 
@@ -27,9 +31,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT.parent / "\u5b9e\u9a8c\u624b\u518c"
 ASSET_DIR = ROOT / "assets"
 IMAGE_DIR = ASSET_DIR / "images"
+IMAGE_EN_DIR = ASSET_DIR / "images-en"
 TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
+IMAGE_OCR_CACHE = ROOT / "tools" / "image-ocr-cache.json"
 MAX_IMAGE_WIDTH = 1440
 MAX_IMAGE_HEIGHT = 1200
+OCR_MAX_IMAGE_SIDE = 800
 
 NS = {
     "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
@@ -84,12 +91,13 @@ MANUALS = [
 
 
 def clean_output() -> None:
-    for path in [ROOT / "zh", ROOT / "en", IMAGE_DIR]:
+    for path in [ROOT / "zh", ROOT / "en", IMAGE_DIR, IMAGE_EN_DIR]:
         if path.exists():
             shutil.rmtree(path)
     (ROOT / "zh").mkdir(parents=True, exist_ok=True)
     (ROOT / "en").mkdir(parents=True, exist_ok=True)
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+    IMAGE_EN_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def relationship_map(zf: zipfile.ZipFile) -> dict[str, str]:
@@ -150,6 +158,315 @@ def copy_image(zf: zipfile.ZipFile, rels: dict[str, str], rid: str, manual: Manu
     out_path = out_dir / f"{index:03d}{suffix}"
     out_path.write_bytes(optimize_image_bytes(zf.read(source_name), suffix))
     return f"../assets/images/{manual.slug}/{out_path.name}"
+
+
+def image_path_from_src(src: str) -> Path:
+    return ROOT / src.removeprefix("../")
+
+
+def image_src_from_en_path(path: Path) -> str:
+    return "../" + path.relative_to(ROOT).as_posix()
+
+
+def all_image_sources(extracted: dict[str, tuple[Manual, list[Block], dict[str, int]]]) -> set[str]:
+    sources: set[str] = set()
+    for _manual, blocks, _stats in extracted.values():
+        for block in blocks:
+            if isinstance(block, ParagraphBlock):
+                sources.update(block.images)
+    return sources
+
+
+def load_image_ocr_cache() -> dict[str, list[dict[str, object]]]:
+    if not IMAGE_OCR_CACHE.exists():
+        return {}
+    return json.loads(IMAGE_OCR_CACHE.read_text(encoding="utf-8"))
+
+
+def save_image_ocr_cache(cache: dict[str, list[dict[str, object]]]) -> None:
+    IMAGE_OCR_CACHE.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+
+
+def image_digest(path: Path) -> str:
+    return hashlib.sha1(path.read_bytes()).hexdigest()
+
+
+_OCR_ENGINE = None
+_OCR_UNAVAILABLE = False
+
+
+def get_ocr_engine():
+    global _OCR_ENGINE, _OCR_UNAVAILABLE
+    if _OCR_UNAVAILABLE:
+        return None
+    if _OCR_ENGINE is not None:
+        return _OCR_ENGINE
+    try:
+        from rapidocr_onnxruntime import RapidOCR
+    except ImportError:
+        _OCR_UNAVAILABLE = True
+        print("rapidocr-onnxruntime is not installed; English image text replacement skipped.")
+        return None
+    _OCR_ENGINE = RapidOCR()
+    return _OCR_ENGINE
+
+
+def ocr_image(path: Path, cache: dict[str, list[dict[str, object]]]) -> list[dict[str, object]]:
+    if Image is None:
+        return []
+    digest = image_digest(path)
+    if digest in cache:
+        return cache[digest]
+    engine = get_ocr_engine()
+    if engine is None:
+        cache[digest] = []
+        return []
+    with Image.open(path) as opened:
+        image = opened.convert("RGB")
+        width, height = image.size
+        scale = min(1.0, OCR_MAX_IMAGE_SIDE / max(width, height))
+        if scale < 1.0:
+            image = image.resize((int(width * scale), int(height * scale)), Image.Resampling.LANCZOS)
+        try:
+            import numpy as np
+            result, _elapsed = engine(np.array(image))
+        except Exception:
+            result, _elapsed = engine(str(path))
+            scale = 1.0
+    items: list[dict[str, object]] = []
+    for box, text, score in result or []:
+        if score < 0.5 or not has_cjk(text):
+            continue
+        mapped_box = [[float(x) / scale, float(y) / scale] for x, y in box]
+        items.append({"box": mapped_box, "text": text.strip(), "score": float(score)})
+    cache[digest] = items
+    return items
+
+
+def collect_image_ocr(extracted: dict[str, tuple[Manual, list[Block], dict[str, int]]]) -> dict[str, list[dict[str, object]]]:
+    cache = load_image_ocr_cache()
+    image_ocr: dict[str, list[dict[str, object]]] = {}
+    sources = sorted(all_image_sources(extracted))
+    for index, src in enumerate(sources, 1):
+        path = image_path_from_src(src)
+        items = ocr_image(path, cache)
+        if items:
+            image_ocr[src] = items
+        save_image_ocr_cache(cache)
+        if os.environ.get("VERBOSE_OCR") or index % 20 == 0 or index == len(sources):
+            print(f"OCR checked {index}/{len(sources)} images...", flush=True)
+    save_image_ocr_cache(cache)
+    print(f"OCR found Chinese text in {len(image_ocr)} images.")
+    return image_ocr
+
+
+def collect_image_translation_texts(image_ocr: dict[str, list[dict[str, object]]]) -> set[str]:
+    return {str(item["text"]).strip() for items in image_ocr.values() for item in items if str(item["text"]).strip()}
+
+
+def dominant_color(image) -> tuple[int, int, int]:
+    rgb = image.convert("RGB")
+    rgb.thumbnail((80, 80))
+    pixels = list(rgb.get_flattened_data() if hasattr(rgb, "get_flattened_data") else rgb.getdata())
+    if not pixels:
+        return (255, 255, 255)
+    quantized = Counter((r // 16 * 16, g // 16 * 16, b // 16 * 16) for r, g, b in pixels)
+    r, g, b = quantized.most_common(1)[0][0]
+    return (min(255, r + 8), min(255, g + 8), min(255, b + 8))
+
+
+def average_luminance(image) -> float:
+    rgb = image.convert("RGB")
+    rgb.thumbnail((80, 80))
+    pixels = list(rgb.get_flattened_data() if hasattr(rgb, "get_flattened_data") else rgb.getdata())
+    if not pixels:
+        return 255
+    return sum(luminance(pixel) for pixel in pixels) / len(pixels)
+
+
+def luminance(color: tuple[int, int, int]) -> float:
+    r, g, b = color
+    return 0.299 * r + 0.587 * g + 0.114 * b
+
+
+def english_font(size: int):
+    if ImageFont is None:
+        return None
+    for font_path in [
+        Path("C:/Windows/Fonts/arial.ttf"),
+        Path("C:/Windows/Fonts/calibri.ttf"),
+        Path("C:/Windows/Fonts/segoeui.ttf"),
+    ]:
+        if font_path.exists():
+            return ImageFont.truetype(str(font_path), size)
+    return ImageFont.load_default()
+
+
+def text_bbox(draw, text: str, font) -> tuple[int, int]:
+    box = draw.textbbox((0, 0), text, font=font)
+    return box[2] - box[0], box[3] - box[1]
+
+
+def wrap_translation(text: str, draw, font, max_width: int) -> list[str]:
+    words = re.split(r"\s+", text.strip())
+    lines: list[str] = []
+    current = ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if not current or text_bbox(draw, candidate, font)[0] <= max_width:
+            current = candidate
+            continue
+        lines.append(current)
+        current = word
+    if current:
+        lines.append(current)
+    return lines or [text]
+
+
+def clean_image_translation(text: str) -> str:
+    cleaned = re.sub(r"�+", "", text)
+    cleaned = cleaned.replace("○", "").replace("●", "").replace("（", "(").replace("）", ")")
+    cleaned = cleaned.replace("<Previous step", "Back").replace("Previous step", "Back")
+    cleaned = cleaned.replace("Next(N)>", "Next").replace("Next (N)>", "Next").replace("Next step", "Next")
+    cleaned = cleaned.replace("help", "Help")
+    cleaned = cleaned.replace("Please enter the number in your mouth to select", "Please enter the number at the prompt to select")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    if len(cleaned) > 180:
+        cleaned = cleaned[:177].rstrip() + "..."
+    return cleaned or "English"
+
+
+def draw_translated_text(image, item: dict[str, object], cache: dict[str, str]) -> None:
+    if ImageDraw is None:
+        return
+    source = str(item["text"]).strip()
+    translated = clean_image_translation(cache.get(source, source))
+    box = item["box"]
+    xs = [point[0] for point in box]  # type: ignore[index]
+    ys = [point[1] for point in box]  # type: ignore[index]
+    x1, y1, x2, y2 = int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))
+    height = max(8, y2 - y1)
+    width = max(12, x2 - x1)
+    pad = max(2, int(height * 0.16))
+    x1 = max(0, x1 - pad)
+    y1 = max(0, y1 - pad)
+    x2 = min(image.width - 1, x2 + pad)
+    y2 = min(image.height - 1, y2 + pad)
+    if height < 28 and width < 150:
+        target_w = min(image.width - x1 - 2, max(width + pad * 2, min(width + 44, image.width - x1 - 2)))
+        target_h = min(image.height - y1 - 2, max(height + pad * 2, 22))
+    else:
+        grow = 1.35 if len(translated) <= max(12, len(source) * 2) else 2.25
+        target_w = min(image.width - x1 - 2, max(width, int(width * grow), min(width + 180, image.width - x1 - 2)))
+        target_h = min(image.height - y1 - 2, max(height, int(height * 2.2)))
+    x2 = min(image.width - 1, x1 + target_w)
+    y2 = min(image.height - 1, y1 + target_h)
+    draw = ImageDraw.Draw(image)
+    bg = dominant_color(image.crop((x1, y1, max(x2, x1 + 1), max(y2, y1 + 1))))
+    fg = (0, 0, 0) if luminance(bg) > 145 else (255, 255, 255)
+    max_width = max(10, x2 - x1 - 6)
+    max_height = max(8, y2 - y1 - 4)
+    size = min(24, max(7, int(height * 0.82)))
+    lines: list[str] = [translated]
+    line_height = size + 2
+    while size >= 6:
+        font = english_font(size)
+        lines = wrap_translation(translated, draw, font, max_width)
+        line_height = text_bbox(draw, "Ag", font)[1] + 3
+        if line_height * len(lines) <= max_height:
+            break
+        size -= 1
+    font = english_font(size)
+    line_height = text_bbox(draw, "Ag", font)[1] + 3
+    draw.rectangle((x1, y1, x2, y2), fill=bg)
+    yy = y1 + 2
+    for line in lines[: max(1, max_height // max(1, line_height))]:
+        draw.text((x1 + 3, yy), line, fill=fg, font=font)
+        yy += line_height
+
+
+def should_use_translation_panel(image, items: list[dict[str, object]]) -> bool:
+    if not items:
+        return False
+    dark_dense_terminal = average_luminance(image) < 95 and len(items) >= 4
+    wide_dense_ui = image.width > image.height * 1.35 and len(items) >= 18
+    very_dense = len(items) >= 28
+    return dark_dense_terminal or wide_dense_ui or very_dense
+
+
+def draw_translation_panel(image, items: list[dict[str, object]], cache: dict[str, str]) -> None:
+    if ImageDraw is None:
+        return
+    bg = dominant_color(image)
+    if average_luminance(image) < 95:
+        bg = (48, 5, 31)
+    else:
+        bg = (250, 250, 250)
+    fg = (255, 255, 255) if luminance(bg) < 145 else (28, 28, 28)
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((0, 0, image.width, image.height), fill=bg)
+    ordered = sorted(items, key=lambda item: (min(point[1] for point in item["box"]), min(point[0] for point in item["box"])))  # type: ignore[index]
+    lines: list[str] = []
+    seen: set[str] = set()
+    for item in ordered:
+        source = str(item["text"]).strip()
+        translated = clean_image_translation(cache.get(source, source))
+        if translated.lower() in seen:
+            continue
+        seen.add(translated.lower())
+        lines.append(translated)
+    margin = max(14, image.width // 60)
+    font_size = max(11, min(22, image.width // 64))
+    font = english_font(font_size)
+    columns = 2 if image.width > 1000 and len(lines) > 18 else 1
+    column_gap = margin * 2 if columns > 1 else 0
+    max_width = (image.width - margin * 2 - column_gap) // columns
+    wrapped: list[str] = []
+    line_groups = [wrap_translation(line, draw, font, max_width) for line in lines]
+    wrapped = [line for group in line_groups for line in group]
+    while font_size > 8:
+        font = english_font(font_size)
+        line_height = text_bbox(draw, "Ag", font)[1] + 5
+        lines_per_column = max(1, (image.height - margin * 2) // line_height)
+        if len(wrapped) <= lines_per_column * columns:
+            break
+        font_size -= 1
+        font = english_font(font_size)
+        line_groups = [wrap_translation(line, draw, font, max_width) for line in lines]
+        wrapped = [line for group in line_groups for line in group]
+    line_height = text_bbox(draw, "Ag", font)[1] + 5
+    lines_per_column = max(1, (image.height - margin * 2) // line_height)
+    for index, line in enumerate(wrapped[: lines_per_column * columns]):
+        column = index // lines_per_column
+        row = index % lines_per_column
+        x = margin + column * (max_width + column_gap)
+        y = margin + row * line_height
+        draw.text((x, y), line, fill=fg, font=font)
+
+
+def build_english_images(image_ocr: dict[str, list[dict[str, object]]], cache: dict[str, str]) -> dict[str, str]:
+    if Image is None:
+        return {}
+    image_map: dict[str, str] = {}
+    for src, items in sorted(image_ocr.items()):
+        source_path = image_path_from_src(src)
+        relative = source_path.relative_to(IMAGE_DIR)
+        out_path = IMAGE_EN_DIR / relative
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with Image.open(source_path) as opened:
+            image = opened.convert("RGB")
+        if should_use_translation_panel(image, items):
+            draw_translation_panel(image, items, cache)
+        else:
+            for item in items:
+                draw_translated_text(image, item, cache)
+        suffix = out_path.suffix.lower()
+        if suffix in {".jpg", ".jpeg"}:
+            image.save(out_path, format="JPEG", quality=90, optimize=True, progressive=True)
+        else:
+            image.save(out_path, format="PNG", optimize=True)
+        image_map[src] = image_src_from_en_path(out_path)
+    return image_map
 
 
 def has_cjk(text: str) -> bool:
@@ -239,7 +556,7 @@ def english_text(text: str, cache: dict[str, str]) -> str:
     return cache.get(text, text)
 
 
-def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, cache: dict[str, str]) -> str:
+def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, cache: dict[str, str], image_map: dict[str, str] | None = None) -> str:
     stripped = text.strip()
     blocks: list[str] = []
     if stripped:
@@ -256,8 +573,9 @@ def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, 
         else:
             blocks.append(f"<p>{escaped}</p>")
     for src in images:
+        display_src = image_map.get(src, src) if lang == "en" and image_map else src
         alt = english_text(stripped[:80], cache) if lang == "en" else stripped[:80]
-        blocks.append(f'<figure><img src="{html.escape(src)}" alt="{html.escape(alt or "manual image")}" loading="lazy" decoding="async"></figure>')
+        blocks.append(f'<figure><img src="{html.escape(display_src)}" alt="{html.escape(alt or "manual image")}" loading="lazy" decoding="async"></figure>')
     return "\n".join(blocks)
 
 
@@ -333,11 +651,11 @@ def collect_translation_texts(blocks: list[Block]) -> set[str]:
     return texts
 
 
-def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str]) -> str:
+def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str], image_map: dict[str, str] | None = None) -> str:
     rendered: list[str] = []
     for block in blocks:
         if isinstance(block, ParagraphBlock):
-            html_block = render_paragraph(block.text, block.style, block.images, lang, cache)
+            html_block = render_paragraph(block.text, block.style, block.images, lang, cache, image_map)
         else:
             html_block = render_table(block.rows, lang, cache)
         if html_block:
@@ -424,10 +742,10 @@ def write_index(lang: str) -> None:
         title = "Palm-sized UAV Experiment Manual"
     (ROOT / lang / "index.html").write_text(layout(lang, title, body), encoding="utf-8")
 
-def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str]) -> str:
+def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], image_map: dict[str, str]) -> str:
     return f"""
 <h1>Experiment {manual.number}: {html.escape(manual.en_title)}</h1>
-{render_blocks(blocks, "en", cache)}
+{render_blocks(blocks, "en", cache, image_map)}
 """
 
 
@@ -441,12 +759,15 @@ def write_pages() -> dict[str, dict[str, int]]:
         manifest[manual.slug] = stats
         translation_texts.update(collect_translation_texts(blocks))
 
+    image_ocr = collect_image_ocr(extracted)
+    translation_texts.update(collect_image_translation_texts(image_ocr))
     cache = ensure_translations(translation_texts)
+    image_map = build_english_images(image_ocr, cache)
 
     for manual, blocks, _stats in extracted.values():
         zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
-        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, english_body(manual, blocks, cache), manual.slug), encoding="utf-8")
+        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, english_body(manual, blocks, cache, image_map), manual.slug), encoding="utf-8")
     return manifest
 
 
