@@ -1,17 +1,16 @@
 # Palm-sized UAV Experiment Manual
 
-ReadTheDocs-style bilingual documentation generated from `D:/暑期学校/实验手册`.
+Bilingual experiment manual for palm-sized UAV summer school labs.
 
-- Organized by experiment number rather than by date.
-- `zh/` contains the extracted Chinese source pages, including text, tables, links, commands, and figures.
-- `en/` contains objective English experiment-document pages with language switches back to the Chinese source pages.
+- `zh/` contains Chinese experiment pages, including text, tables, links, commands, and figures.
+- `en/` contains English experiment pages with language switches back to the Chinese pages.
 - `.github/workflows/pages.yml` deploys the static site with GitHub Pages Actions.
 
 ## Local preview
 
 Open `index.html` in a browser, or serve this directory with any static file server.
 
-## Regenerate
+## Maintenance
 
 ```bash
 python tools/build_objective_docs.py

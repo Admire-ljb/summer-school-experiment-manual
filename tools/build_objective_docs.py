@@ -220,9 +220,7 @@ def write_index(lang: str) -> None:
     if lang == "zh":
         body = (
             "<h1>\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c</h1>"
-            "<p>\u672c\u6587\u6863\u4f7f\u7528 <code>D:/\u6691\u671f\u5b66\u6821/\u5b9e\u9a8c\u624b\u518c</code> "
-            "\u4e2d\u7684\u5b9e\u9a8c\u624b\u518c\u7d20\u6750\u751f\u6210\uff0c\u6309\u5b9e\u9a8c\u7f16\u53f7\u7ec4\u7ec7\uff0c\u4e0d\u6309\u65e5\u671f\u5206\u7ec4\u3002"
-            "\u9875\u9762\u91c7\u7528\u7c7b\u4f3c ReadTheDocs \u7684\u5de6\u4fa7\u5bfc\u822a\u3001\u6b63\u6587\u9605\u8bfb\u533a\u548c\u4e2d\u82f1\u6587\u5207\u6362\u7ed3\u6784\u3002</p>"
+            "<p>\u672c\u624b\u518c\u9762\u5411\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u8bfe\u7a0b\uff0c\u5185\u5bb9\u5305\u62ec\u73af\u5883\u914d\u7f6e\u3001\u4f20\u611f\u5668\u4f7f\u7528\u3001\u8def\u5f84\u89c4\u5212\u3001cflib \u7f16\u7a0b\u548c\u7efc\u5408\u9879\u76ee\u4efb\u52a1\u3002</p>"
             "<div class=\"admonition warning\"><p class=\"admonition-title\">\u5b89\u5168\u8bf4\u660e</p>"
             "<p>\u6d89\u53ca\u771f\u5b9e\u98de\u884c\u7684\u5b9e\u9a8c\u5fc5\u987b\u5728\u6559\u5e08\u6216\u52a9\u6559\u786e\u8ba4\u573a\u5730\u3001\u8bbe\u5907\u3001\u7535\u6c60\u548c\u6025\u505c\u6d41\u7a0b\u540e\u8fdb\u884c\u3002</p></div>"
             "<h2>\u5b9e\u9a8c\u76ee\u5f55</h2><div class=\"toctree-wrapper\">"
@@ -232,7 +230,7 @@ def write_index(lang: str) -> None:
         body += "</div>"
         title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c"
     else:
-        body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This documentation site is generated only from the source material in <code>D:/\u6691\u671f\u5b66\u6821/\u5b9e\u9a8c\u624b\u518c</code>. It is organized by experiment number rather than by date. The layout follows a ReadTheDocs-style documentation format with navigation, content pages, and bilingual switching.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
+        body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
         for manual in MANUALS:
             body += f'<a class="doc-card" href="{manual.slug}.html"><span>Experiment {manual.number}</span><strong>{html.escape(manual.en_title)}</strong><em>{html.escape(manual.zh_title)}</em></a>\n'
         body += "</div>"
@@ -246,7 +244,6 @@ def english_body(manual: Manual, stats: dict[str, int]) -> str:
     return f"""
 <h1>Experiment {manual.number}: {html.escape(manual.en_title)}</h1>
 <p class="subtitle">{html.escape(manual.zh_title)}</p>
-<div class="admonition note"><p class="admonition-title">Source-based English document</p><p>This page is an objective English document derived from the corresponding Word manual in the local source folder. The Chinese page keeps the extracted original text, tables, links, commands, and figures.</p></div>
 <h2>Purpose</h2>
 <p>{html.escape(manual.purpose)}</p>
 <h2>Preparation</h2>
@@ -255,8 +252,6 @@ def english_body(manual: Manual, stats: dict[str, int]) -> str:
 <ol>{proc}</ol>
 <h2>Verification</h2>
 <ul>{verify}</ul>
-<h2>Source Material</h2>
-<p>The extracted Chinese companion page contains {stats['paragraphs']} text/image blocks, {stats['tables']} tables, and {stats['images']} images. Source file names are retained in <code>docs-manifest.json</code> for reproducibility.</p>
 """
 
 
@@ -291,18 +286,17 @@ def write_root_files(manifest: dict[str, dict[str, int]]) -> None:
     (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2), encoding="utf-8")
     (ROOT / "README.md").write_text("""# Palm-sized UAV Experiment Manual
 
-ReadTheDocs-style bilingual documentation generated from `D:/\u6691\u671f\u5b66\u6821/\u5b9e\u9a8c\u624b\u518c`.
+Bilingual experiment manual for palm-sized UAV summer school labs.
 
-- Organized by experiment number rather than by date.
-- `zh/` contains the extracted Chinese source pages, including text, tables, links, commands, and figures.
-- `en/` contains objective English experiment-document pages with language switches back to the Chinese source pages.
+- `zh/` contains Chinese experiment pages, including text, tables, links, commands, and figures.
+- `en/` contains English experiment pages with language switches back to the Chinese pages.
 - `.github/workflows/pages.yml` deploys the static site with GitHub Pages Actions.
 
 ## Local preview
 
 Open `index.html` in a browser, or serve this directory with any static file server.
 
-## Regenerate
+## Maintenance
 
 ```bash
 python tools/build_objective_docs.py
