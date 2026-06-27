@@ -41,52 +41,54 @@
         <div class="language-switch"><a href="../zh/manual-12-position-commander.html">中文</a><span>English</span></div>
         
 <h1>Experiment 12: PositionCommander</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>This lesson aims to enable students to master the core usage of the PositionHlCommander class and achieve precise path planning for drones.</p>
-<p>1. Understand the concept of spatial coordinate system</p>
+<h3>1. Understand the concept of spatial coordinate system</h3>
 <p>Understand the difference between the world coordinate system (absolute coordinates) and the body coordinate system (relative coordinates) during drone flight.</p>
 <p>Master the origin (0,0,0) setting logic of Crazyflie combined with Flow deck v2 when powered on.</p>
 <p>2. Master the basic usage of PositionHlCommander class</p>
 <p>Learn to use take_off() and land() to implement automatic take-off and landing, and understand the role of default parameters (height, speed).</p>
 <p>Core skills: Master the go_to(x, y, z) command to fly the drone to a specific absolute coordinate point in space.</p>
 <p>Advanced skills: Master relative position control instructions such as forward(), back(), left(), right(), etc., and understand their mixed use with absolute coordinate control.</p>
-<p>3.Write combined flight routines</p>
+<h3>3. Write a combination flight routine</h3>
 <p>You can use the above instructions comprehensively to write Python scripts to drive the drone to fly in specified geometric shapes (such as squares, rectangles or three-dimensional step trajectories).</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>The virtual machine system of the client connected to the drone has been configured previously. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
 <p>Hardware equipment needed in this experiment:</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>Experimental steps</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>3. Experimental steps</h2>
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
 <p>First, let’s get to know the member functions and usage of the PositionHlCommander class:</p>
 <p>The source code of this class can be viewed in the position_hl_commander.py file attached to this course as a reference.</p>
 <p>Before writing the flight code, we need to &quot;get to know&quot; our commander - PositionHlCommander. This class encapsulates a series of instructions that allow us to tell the drone where to go just like directing traffic.</p>
 <p>Here are the core functions we&#x27;ll use frequently in this lesson:</p>
-<p class="step">1. Initialization and take-off: PositionHlCommander (constructor)</p>
+<h3>1. Initialization and take-off: PositionHlCommander (constructor)</h3>
 <p>We usually use this class with the with statement, so that we can achieve &quot;automatic takeoff and automatic landing&quot;, which is very safe and convenient.</p>
-<p>Code example:</p>
+<h3>Code example</h3>
 <figure><img src="../assets/images/manual-12-position-commander/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Key parameters:</p>
+<h3>Key parameters</h3>
 <p>x, y, z (floating point number): Set the starting coordinates of the drone. Usually keep the default value of 0.0, 0.0, 0.0, that is, take the starting position of the drone as the origin (important!!!).</p>
 <p>default_height (floating point number): Default flight height (unit: meters). The drone will automatically hover at this height after taking off. The recommended setting is 0.3 to 0.5 meters.</p>
 <p>default_velocity (floating point number): Default flight speed (unit: meters/second). It is recommended to set it to 0.3 for beginners and increase it to 0.5 for those who are proficient.</p>
 <p>default_landing_height (floating point number): Landing height. This parameter needs to be adjusted if you want to take off on the table but land on the floor, or vice versa. Defaults to 0.0 (ground).</p>
-<p class="step">2. Absolute coordinate flight: go_to(x, y, z, velocity)</p>
+<h3>2. Absolute coordinate flight: go_to(x, y, z, velocity)</h3>
 <p>This is the core function to implement path planning. You tell the drone a specific coordinate point (X, Y, Z), and it will fly straight there.</p>
 <p>Function prototype: pc.go_to(x, y, z=None, velocity=None)</p>
 <figure><img src="../assets/images/manual-12-position-commander/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Detailed explanation of parameters:</p>
+<h3>Parameter details</h3>
 <p>x, y (required): X and Y coordinates of the target point (meters).</p>
 <p>z (optional): target height. If left blank, keep the default height.</p>
 <p>velocity (optional): The flight speed for this section of the journey. If left blank, the default speed is used.</p>
-<p>hint:</p>
+<h3>Tip</h3>
 <p>This function is blocking, which means that the code will not continue until the drone flies to its destination.</p>
 <p>The UAV always keeps its nose facing the positive direction of the X-axis (Yaw = 0) during flight and will not turn its head.</p>
-<p class="step">3. Relative coordinate movement (axial movement)</p>
+<h3>3. Relative coordinate movement (axial movement)</h3>
 <p>In order to simplify programming, PositionHlCommander provides a set of &quot;front, back, left, and right&quot; shortcut instructions.</p>
 <p>Note: The &quot;front, back, left, and right&quot; here are relative to the coordinate axis, not relative to the drone&#x27;s nose (because the nose is always facing the positive X-axis).</p>
 <p>forward(distance) / back(distance)</p>
@@ -101,10 +103,10 @@
 <p>up(distance) / down(distance)</p>
 <p>Function: Vertically rise or fall a specified distance along the Z axis.</p>
 <figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Important note! ! !</p>
+<h3>Important notes</h3>
 <p>The initial position of the drone called by the positioncommander class is the position when the drone is powered on.</p>
 <p>That is, every time you run the code with the positioncommander class, the drone must be placed at the take-off position, and then powered on after it is stable. At this time, the coordinates are positioned at (0, 0, 0), and then run the program. And because the positioning will deviate every time you fly and land, you must strictly follow this process every time you fly, and power on the drone stationary at the take-off position. That is, if the drone lands normally and smoothly, you must power on again and perform this step before running the next program. Otherwise, the positioning of the drone will be disordered and the drone will explode when taking off. Be careful!</p>
-<p>Experiment 1: From Square to Cube</p>
+<h3>Experiment 1: From square to cube</h3>
 <p>The following example program is given. The effect achieved by this program is that the drone takes off. On the plane with the z-axis coordinate of 0.5, it traverses four coordinate points in sequence, and the flight trajectory is a square. You can name the python script position_commander_demo.py</p>
 <pre><code>import time
 import cflib.crtp
@@ -133,11 +135,11 @@ if __name__ == &#x27;__main__&#x27;:
 cflib.crtp.init_drivers()
 simple_sequence()</code></pre>
 <p>Now, modify the program so that the drone&#x27;s flight trajectory traverses eight points of a three-dimensional rectangle in the air. Note that the height of the rectangle is 0.5m, that is, set the maximum height of the z-axis to 1m.</p>
-<p>Experiment 2: Use coordinate axes to achieve patterned three-dimensional flight</p>
+<h3>Experiment 2: Use coordinate axes to realize pattern three-dimensional flight</h3>
 <p>Let the drone&#x27;s flight trajectory present a standard five-pointed star on the xy plane, and then let the five-pointed star stand up to present a standard five-pointed star on the xz or yz plane. Would it be more troublesome to implement such a request using the previous motioncommander? If implemented using coordinates, would it only require a few lines of code?</p>
 <p>The flight trajectory is shown in the figure below:</p>
 <figure><img src="../assets/images/manual-12-position-commander/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Experiment 3: Use the concept of coordinates to explore the map</p>
+<h3>Experiment 3: Explore maps using the concept of coordinates</h3>
 <p>The map of this lesson follows the design of the previous lesson. Next, let the drone take off from area A according to the obstacle map environment shown in the figure below. During the entire process, the flying height of the drone should not exceed 0.4m. Explore the entire map, that is, fly all the way without hitting the wall until it lands in area B.</p>
 <p>Please note that the focus of the PositionCommander learned today is to control the UAV to fly within a coordinate system. Note that the initial placement of the UAV determines the establishment position of the coordinate system. Be sure to pay attention to the placement of the initial UAV position and the orientation of the front of the UAV. The size of each partition is 35cm*45cm. In other words, when viewed from top to bottom in this picture, the length of each partition is 35cm. If we use coordinates to understand and plan this path, will the path planning problem be simpler? The drone knows where it is and where to go next. Please note that the initial take-off position of the drone is as far away from the wall as possible, otherwise it may be affected by airflow with a high probability.</p>
 <figure><img src="../assets/images/manual-12-position-commander/007.png" alt="manual image" loading="lazy" decoding="async"></figure>

@@ -39,13 +39,13 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>cflib 库编程</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-09-cflib.html">English</a></div>
-        <h1>实验 9: cflib 库编程</h1><p class="subtitle">cflib Programming</p><p>实验目标</p>
+        <h1>实验 9: cflib 库编程</h1><p class="subtitle">cflib Programming</p><h2>一、实验目标</h2>
 <p>学习通过 python脚本连接到Crazyflie。</p>
 <p>学习cflib库的编程基础。</p>
 <p>学习使用无线连接的方式在终端中监控飞行数据。</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>实验四已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
-<p>实验步骤</p>
+<h2>三、实验步骤</h2>
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
 <p>使用cflib编程以无线的方式连接到无人机</p>
@@ -147,16 +147,16 @@ time.sleep(1)</code></pre>
 <figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行，详细的类函数，有余力的同学可以进入该网址查看：github.com</p>
 <p>该python程序主要实现的功能为在无人机初始化的过程中检测当前无人机是否安装了flowdeck模块，该模块帮助无人机定位自身高度和检测飞行速度。</p>
-<p>起飞功能</p>
+<h3>起飞功能</h3>
 <p>将已有的程序按照如下图所示的程序进行编写。（之前的param_deck_flow函数可以保留），然后运行该程序，无人机将会起飞悬停3秒后降落。第21至23行则会控制该飞行流程，第14行设置了默认起飞高度。可以适当改变这些参数来观察效果。</p>
 <figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>前进、转弯和后退</p>
+<h3>前进、转弯和后退</h3>
 <p>我们再在主函数前添加以下函数，将程序最后一行要调用的函数替换为该函数。（例如将刚才在上图42行调用的take_off_simple函数替换为现在的move_linear_simple函数）。该函数的作用为无人机起飞之后，悬停一秒，前进0.5米，再悬停一秒，后退0.5米，再悬停一秒，随后降落。我们通过motioncommander类实体化一个对象mc，通过调用mc的成员函数forward和back实现无人机的前进后退。</p>
 <figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再进一步地，我们将函数的内容替换为如下：</p>
 <figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>观察无人机的运行情况，是否又回到了起飞的原地附近。</p>
-<p>记录飞行数据</p>
+<h3>记录飞行数据</h3>
 <p>根据我们学习到的在终端中打印出无人机在实时运行时的飞行数据，参照如下代码（take_off_simple(scf)函数和param_deck_flow(name, value_str)函数可以保留，也可以如下所示无内容）：</p>
 <pre><code>import logging
 import sys
@@ -212,7 +212,7 @@ logconf.start()
 move_linear_simple(scf)
 logconf.stop()</code></pre>
 <p>再执行该代码，可以看到无人机在飞行过程中，终端也在不断地输出其飞行参数。</p>
-<p>来回游荡</p>
+<h3>来回游荡</h3>
 <figure><img src="../assets/images/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再新定义加入一个名字为move_box_limit的函数，放在主函数中，同样地参考程序如下：</p>
 <pre><code>import logging

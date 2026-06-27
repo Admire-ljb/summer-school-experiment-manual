@@ -71,6 +71,16 @@ class TableBlock:
     rows: tuple[tuple[str, ...], ...]
 
 
+@dataclass(frozen=True)
+class HeadingInfo:
+    level: int
+    zh_text: str
+    en_source: str | None = None
+    en_prefix: str = ""
+    en_suffix: str = ""
+    en_text: str | None = None
+
+
 Block = ParagraphBlock | TableBlock
 
 
@@ -579,16 +589,224 @@ def is_source_manual_heading(text: str) -> bool:
     return re.match(r"^实验手册\s*\d+\s*[—–-]+", text.strip()) is not None
 
 
+SECTION_HEADINGS = {
+    "实验目标": ("一、实验目标", "1. Experimental goals"),
+    "实验准备": ("二、实验准备", "2. Experimental preparation"),
+    "实验步骤": ("三、实验步骤", "3. Experimental steps"),
+    "实验验证与测试": ("四、实验验证与测试", "4. Experimental verification and testing"),
+    "实验总结与拓展": ("五、实验总结与拓展", "5. Experiment summary and extension"),
+    "链接资料整理": ("链接资料整理", "Reference links"),
+}
+
+
+CHINESE_DIGITS = {
+    "零": 0,
+    "一": 1,
+    "二": 2,
+    "三": 3,
+    "四": 4,
+    "五": 5,
+    "六": 6,
+    "七": 7,
+    "八": 8,
+    "九": 9,
+}
+
+
+STANDALONE_H2 = {
+    "实验内容",
+    "复习",
+    "创意板块",
+    "竞速板块",
+    "最终综合展示评价说明",
+}
+
+
+STANDALONE_H3 = {
+    "硬件要求",
+    "软件资源（可从官网下载，为节省时间由助教拷贝）",
+    "工具准备",
+    "下载与安装",
+    "验证安装",
+    "新建虚拟机向导",
+    "命名与存储",
+    "硬件配置",
+    "加载ISO镜像",
+    "启动虚拟机",
+    "系统安装流程",
+    "系统初始化",
+    "安装VMware Tools",
+    "网络连通性测试",
+    "快照恢复测试",
+    "核心知识点回顾",
+    "拓展任务（选做）",
+    "如何读懂LED灯的含义",
+    "程序执行流程",
+    "核心部件",
+    "起飞功能",
+    "前进、转弯和后退",
+    "记录飞行数据",
+    "来回游荡",
+    "重要注意事项！！！",
+    "代码范例",
+    "关键参数",
+    "参数详解",
+    "提示",
+    "两种方式",
+}
+
+
+HEADING_TRANSLATIONS = {
+    "阶段综合实践说明": "Stage integrated practice instructions",
+    "实践任务": "Practice tasks",
+    "综合项目展示任务说明": "Integrated project demonstration task description",
+    "任务内容": "Task content",
+    "创意板块": "Creative task section",
+    "竞速板块": "Speed task section",
+    "题目说明": "Task description",
+    "展示流程": "Demonstration procedure",
+    "评价标准细则": "Detailed evaluation criteria",
+    "展示评价说明": "Demonstration evaluation instructions",
+    "展示建议": "Demonstration suggestions",
+    "最终综合展示评价说明": "Final integrated demonstration evaluation",
+    "实验内容": "Experiment content",
+    "复习": "Review",
+    "程序执行流程": "Program execution flow",
+    "核心部件": "Core components",
+    "重要注意事项！！！": "Important notes",
+    "代码范例": "Code example",
+    "关键参数": "Key parameters",
+    "参数详解": "Parameter details",
+    "提示": "Tip",
+    "两种方式": "Two methods",
+    "花样飞行": "Pattern flight",
+    "巡航飞行": "Cruise flight",
+}
+
+
+def normalized_section_heading(text: str) -> str | None:
+    stripped = text.strip().rstrip(":：")
+    stripped = re.sub(r"^[一二三四五六七八九十]+[、.．]\s*", "", stripped)
+    stripped = re.sub(r"^\d+[.)、.．]\s*", "", stripped)
+    return stripped if stripped in SECTION_HEADINGS else None
+
+
+def chinese_number_to_int(text: str) -> int | None:
+    if not text:
+        return None
+    if text == "十":
+        return 10
+    if "十" in text:
+        left, _, right = text.partition("十")
+        tens = CHINESE_DIGITS.get(left, 1) if left else 1
+        ones = CHINESE_DIGITS.get(right, 0) if right else 0
+        return tens * 10 + ones
+    return CHINESE_DIGITS.get(text)
+
+
+def heading_translation(source: str, cache: dict[str, str]) -> str:
+    return HEADING_TRANSLATIONS.get(source, english_text(source, cache))
+
+
+def is_reference_line(text: str) -> bool:
+    return any(marker in text for marker in ("网页标题", "课堂用途", "原始链接", "http://", "https://"))
+
+
+def is_numbered_subheading(body: str, original: str) -> bool:
+    if is_reference_line(body) or len(body) > 55:
+        return False
+    if re.match(r"^\d+[.)、.．]\S", original):
+        return len(body) <= 28 or any(word in body for word in ("题目", "展示", "评价", "建议", "算法", "初始化", "坐标", "移动"))
+    if original.rstrip().endswith((":", "：")):
+        return True
+    return any(word in body for word in ("题目", "展示", "评价", "建议", "算法", "初始化", "坐标", "移动"))
+
+
+def structural_heading(text: str, style: str = "") -> HeadingInfo | None:
+    stripped = text.strip()
+    if not stripped or is_source_manual_heading(stripped) or is_code_like(stripped):
+        return None
+
+    section_heading = normalized_section_heading(stripped)
+    if section_heading:
+        zh, en = SECTION_HEADINGS[section_heading]
+        return HeadingInfo(level=2, zh_text=zh, en_text=en)
+
+    compact = stripped.rstrip(":：").strip()
+    if compact in STANDALONE_H2:
+        return HeadingInfo(level=2, zh_text=compact, en_source=compact)
+    if compact in STANDALONE_H3:
+        return HeadingInfo(level=3, zh_text=compact, en_source=compact)
+
+    match = re.match(r"^([一二三四五六七八九十]+)[、.．]\s*(.+)$", compact)
+    if match:
+        number_text, body = match.groups()
+        number = chinese_number_to_int(number_text)
+        if number is not None and len(body) <= 55 and not is_reference_line(body):
+            return HeadingInfo(level=2, zh_text=f"{number_text}、{body}", en_source=body, en_prefix=f"{number}. ")
+
+    match = re.match(r"^实验([一二三四五六七八九十]+)(（[^）]+）)?[：:]\s*(.+)$", stripped)
+    if match:
+        number_text, qualifier, body = match.groups()
+        number = chinese_number_to_int(number_text)
+        if number is not None:
+            en_suffix = " (optional extension)" if qualifier and ("拓展" in qualifier or "选做" in qualifier) else ""
+            return HeadingInfo(level=3, zh_text=f"实验{number_text}{qualifier or ''}：{body}", en_source=body, en_prefix=f"Experiment {number}{en_suffix}: ")
+
+    match = re.match(r"^实验[：:]\s*(.+)$", stripped)
+    if match:
+        body = match.group(1).strip()
+        return HeadingInfo(level=3, zh_text=f"实验：{body}", en_source=body, en_prefix="Experiment: ")
+
+    match = re.match(r"^题目([一二三四五六七八九十]+)[：:]\s*(.+)$", stripped)
+    if match:
+        number_text, body = match.groups()
+        number = chinese_number_to_int(number_text)
+        if number is not None:
+            return HeadingInfo(level=3, zh_text=f"题目{number_text}：{body}", en_source=body, en_prefix=f"Task {number}: ")
+
+    match = re.match(r"^阶段(\d+)[：:]\s*(.+)$", stripped)
+    if match:
+        number, body = match.groups()
+        return HeadingInfo(level=3, zh_text=f"阶段{number}：{body}", en_source=body, en_prefix=f"Stage {number}: ")
+
+    match = re.match(r"^(\d+)[.)、.．]\s*(.+)$", compact)
+    if match:
+        number, body = match.groups()
+        if is_numbered_subheading(body, stripped):
+            return HeadingInfo(level=3, zh_text=f"{number}. {body}", en_source=body, en_prefix=f"{number}. ")
+
+    if style.lower().startswith("heading"):
+        return HeadingInfo(level=3, zh_text=stripped, en_source=stripped)
+    return None
+
+
+def render_heading(heading: HeadingInfo, lang: str, cache: dict[str, str]) -> str:
+    if lang == "zh":
+        return heading.zh_text
+    if heading.en_text is not None:
+        return heading.en_text
+    source = heading.en_source or heading.zh_text
+    return f"{heading.en_prefix}{heading_translation(source, cache)}{heading.en_suffix}".strip()
+
+
+def bullet_item_text(text: str) -> str | None:
+    match = re.match(r"^\s*[*•]\s+(.+)$", text.strip())
+    return match.group(1).strip() if match else None
+
+
 def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, cache: dict[str, str], image_map: dict[str, str] | None = None) -> str:
     stripped = text.strip()
     blocks: list[str] = []
     if stripped and not is_source_manual_heading(stripped):
-        rendered = english_text(stripped, cache) if lang == "en" else stripped
+        heading = structural_heading(stripped, style)
+        if heading:
+            rendered = render_heading(heading, lang, cache)
+        else:
+            rendered = english_text(stripped, cache) if lang == "en" else stripped
         escaped = html.escape(rendered)
-        if stripped in {"\u4e00\u3001\u5b9e\u9a8c\u76ee\u6807", "\u4e8c\u3001\u5b9e\u9a8c\u51c6\u5907", "\u4e09\u3001\u5b9e\u9a8c\u6b65\u9aa4", "\u56db\u3001\u5b9e\u9a8c\u9a8c\u8bc1\u4e0e\u6d4b\u8bd5", "\u4e94\u3001\u5b9e\u9a8c\u603b\u7ed3\u4e0e\u62d3\u5c55", "\u94fe\u63a5\u8d44\u6599\u6574\u7406"}:
-            blocks.append(f"<h2>{escaped}</h2>")
-        elif re.match(r"^\u9636\u6bb5\s*\d+", stripped) or style.lower().startswith("heading"):
-            blocks.append(f"<h3>{escaped}</h3>")
+        if heading:
+            blocks.append(f"<h{heading.level}>{escaped}</h{heading.level}>")
         elif is_code_like(stripped):
             blocks.append(f"<pre><code>{escaped}</code></pre>")
         elif re.match(r"^[0-9]+[.)]\s", stripped):
@@ -664,6 +882,17 @@ def collect_translation_texts(blocks: list[Block]) -> set[str]:
         if isinstance(block, ParagraphBlock):
             if is_code_block(block):
                 continue
+            heading = structural_heading(block.text, block.style)
+            if heading:
+                if heading.en_source and heading.en_source not in HEADING_TRANSLATIONS and should_translate(heading.en_source):
+                    texts.add(heading.en_source.strip())
+                if block.images and should_translate(block.text[:80]):
+                    texts.add(block.text[:80].strip())
+                continue
+            bullet_text = bullet_item_text(block.text)
+            if bullet_text and should_translate(bullet_text):
+                texts.add(bullet_text.strip())
+                continue
             if should_translate(block.text):
                 texts.add(block.text.strip())
             if block.images and should_translate(block.text[:80]):
@@ -687,6 +916,20 @@ def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str], image_m
                 code_lines.append(blocks[index].text.strip())  # type: ignore[union-attr]
                 index += 1
             rendered.append(f"<pre><code>{html.escape(chr(10).join(code_lines))}</code></pre>")
+            continue
+        if isinstance(block, ParagraphBlock) and bullet_item_text(block.text) and not block.images:
+            items: list[str] = []
+            while index < len(blocks):
+                current = blocks[index]
+                if not isinstance(current, ParagraphBlock) or current.images:
+                    break
+                item_text = bullet_item_text(current.text)
+                if not item_text:
+                    break
+                item = english_text(item_text, cache) if lang == "en" else item_text
+                items.append(f"<li>{html.escape(item)}</li>")
+                index += 1
+            rendered.append("<ul>\n" + "\n".join(items) + "\n</ul>")
             continue
         if isinstance(block, ParagraphBlock):
             html_block = render_paragraph(block.text, block.style, block.images, lang, cache, image_map)

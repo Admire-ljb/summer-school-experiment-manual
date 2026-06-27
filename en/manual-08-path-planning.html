@@ -41,14 +41,14 @@
         <div class="language-switch"><a href="../zh/manual-08-path-planning.html">中文</a><span>English</span></div>
         
 <h1>Experiment 8: Path-planning Simulation</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>Learn how to transfer files from a physical host to a virtual machine</p>
 <p>Successfully run and compile a project using ROS.</p>
 <p>Understand the role of path planning by running several classic path planning algorithms.</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS.</p>
-<p>Experimental steps</p>
-<p>Experiment 1: Transfer the code project to be run to the virtual machine and decompress it</p>
+<h2>3. Experimental steps</h2>
+<h3>Experiment 1: Transfer the code project to be run to the virtual machine and decompress it</h3>
 <p>First, we create a folder named workspace in the user directory of the virtual machine.</p>
 <p>Click the user directory icon in the upper left corner, right-click on the blank space, select new folder, and name the new folder workspace.</p>
 <figure><img src="../assets/images/manual-08-path-planning/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -68,7 +68,7 @@
 <figure><img src="../assets/images-en/manual-08-path-planning/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>As shown in the figure below, we can enter the pwd command in the terminal to view the path of the file directory where the terminal is currently located, that is, which folder the terminal is accessing. Enter the ls command again to see what files are in the current folder directory. These are the two ways to access files graphically and from the command line in the Linux system. You can see that the number and names of files displayed in the graphical interface and the terminal are the same, because both are accessing the same folder.</p>
 <figure><img src="../assets/images-en/manual-08-path-planning/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Experiment 2: Configuring the project running environment and compiling the code</p>
+<h3>Experiment 2: Configure project running environment and compile code</h3>
 <p>After entering the directory, first install the necessary dependencies to run the program, and enter the following command in the terminal (you may be asked to enter the user password to obtain permissions):</p>
 <pre><code>sudo apt install libeigen3-dev</code></pre>
 <figure><img src="../assets/images/manual-08-path-planning/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -110,14 +110,14 @@
 <p>catkin_make -DCMAKE_CXX_STANDARD=14</p>
 <p>Wait for the compilation to complete. All preparations have been completed and you can run the program.</p>
 <figure><img src="../assets/images/manual-08-path-planning/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Experiment 3: Running the classic path planning program</p>
+<h3>Experiment 3: Run the classic path planner</h3>
 <p>Right-click the blank space of the current terminal and select new window to quickly create a new terminal in the directory.</p>
 <figure><img src="../assets/images/manual-08-path-planning/025.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Enter the following commands in both terminals:</p>
 <pre><code>source devel/setup.bash</code></pre>
 <p>This command is used to import relevant environment variables before running the ros program each time, so that ros can find the program you want to run.</p>
 <figure><img src="../assets/images/manual-08-path-planning/026.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>1.A_star algorithm</p>
+<h3>1. A_star algorithm</h3>
 <p>Enter the following command in the first terminal:</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
 <p>Enter the second terminal:</p>
@@ -127,7 +127,7 @@
 <p>Use the mouse wheel or computer touchpad to zoom in and out to see the entire environment. At this time, click the 3D Nav Goal option in the menu bar above, click on any point on the map to post an end point information to the drone, and then you can view the red path for the drone to reach the end point calculated by the A_star path planning algorithm.</p>
 <figure><img src="../assets/images-en/manual-08-path-planning/028.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <figure><img src="../assets/images-en/manual-08-path-planning/029.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>2.RRT algorithm</p>
+<h3>2. RRT algorithm</h3>
 <p>For the two terminals running above, click on the terminal respectively, use the ctrl plus c command to interrupt the running program, and then perform the following steps:</p>
 <p>Enter the following command in the first terminal:</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
@@ -136,7 +136,7 @@
 <p>You can see the map environment in the simulated rviz interface.</p>
 <p>Publish the end point in the same way, and you can see the effect of path planning by the rrt algorithm.</p>
 <figure><img src="../assets/images-en/manual-08-path-planning/030.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>3.RRT_star algorithm</p>
+<h3>3. RRT_star algorithm</h3>
 <p>In the same process, for the two terminals running above, click the mouse on the terminal respectively, use the ctrl plus c command to interrupt the running program, and then perform the following steps:</p>
 <p>Enter the following command in the first terminal:</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>

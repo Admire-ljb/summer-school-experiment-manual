@@ -41,13 +41,13 @@
         <div class="language-switch"><a href="../zh/manual-09-cflib.html">中文</a><span>English</span></div>
         
 <h1>Experiment 9: cflib Programming</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>Learn to connect to Crazyflie via a python script.</p>
 <p>Learn the basics of programming with the cflib library.</p>
 <p>Learn to use wireless connections to monitor flight data in the terminal.</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>Experiment 4 has configured the virtual machine system of the client connected to the drone. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
-<p>Experimental steps</p>
+<h2>3. Experimental steps</h2>
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
 <p>Use cflib programming to connect to drones wirelessly</p>
@@ -149,16 +149,16 @@ time.sleep(1)</code></pre>
 <figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>As you can see, we imported the motioncommander module in cflib on line 10. We will call the function of this module to make the drone fly. For detailed class functions, students who have spare capacity can go to this website to view: github.com</p>
 <p>The main function of this python program is to detect whether the flowdeck module is installed on the current drone during the initialization process of the drone. This module helps the drone locate its own height and detect flight speed.</p>
-<p>Take-off function</p>
+<h3>Take-off function</h3>
 <p>Write the existing program as shown in the figure below. (The previous param_deck_flow function can be retained), then run the program, the drone will take off and hover for 3 seconds before landing. Lines 21 to 23 will control the flight process, and line 14 sets the default takeoff altitude. These parameters can be changed appropriately to observe the effect.</p>
 <figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Forward, turn and reverse</p>
+<h3>Forward, turn and reverse</h3>
 <p>We then add the following function before the main function and replace the function to be called in the last line of the program with this function. (For example, replace the take_off_simple function just called in line 42 of the figure above with the current move_linear_simple function). The function of this function is that after the drone takes off, it hovers for one second, moves forward 0.5 meters, hovers for another second, retreats 0.5 meters, hovers for another second, and then lands. We materialize an object mc through the motioncommander class, and realize the forward and backward movement of the drone by calling the member functions forward and back of mc.</p>
 <figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Going a step further, we replace the content of the function with the following:</p>
 <figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Observe the operation of the drone to see if it returns to the place where it took off.</p>
-<p>Record flight data</p>
+<h3>Record flight data</h3>
 <p>According to what we have learned about printing the flight data of the drone in real-time operation in the terminal, refer to the following code (the take_off_simple(scf) function and the param_deck_flow(name, value_str) function can be retained or have no content as shown below):</p>
 <pre><code>import logging
 import sys
@@ -214,7 +214,7 @@ logconf.start()
 move_linear_simple(scf)
 logconf.stop()</code></pre>
 <p>Executing the code again, you can see that the terminal is constantly outputting its flight parameters while the drone is flying.</p>
-<p>Wandering back and forth</p>
+<h3>Wandering back and forth</h3>
 <figure><img src="../assets/images-en/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then redefine and add a function named move_box_limit and place it in the main function. The same reference program is as follows:</p>
 <pre><code>import logging

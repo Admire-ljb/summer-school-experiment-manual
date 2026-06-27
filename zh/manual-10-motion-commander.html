@@ -39,16 +39,16 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>Motion Commander 进阶编程</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-10-motion-commander.html">English</a></div>
-        <h1>实验 10: Motion Commander 进阶编程</h1><p class="subtitle">Advanced Motion Commander Programming</p><p>实验目标</p>
+        <h1>实验 10: Motion Commander 进阶编程</h1><p class="subtitle">Advanced Motion Commander Programming</p><h2>一、实验目标</h2>
 <p>学习Motion Commander类下的各种子函数以控制无人机</p>
 <p>组合上述学到的子函数，让无人机做出一些花样飞行动作</p>
 <p>熟悉开发流程，为阶段综合实践做准备</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>之前实验已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
-<p>实验内容</p>
+<h2>实验内容</h2>
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
-<p>一.深度认识motion commander</p>
+<h2>一、深度认识motion commander</h2>
 <p>首先我们先复习一下之前用到过的Motion Commander类代码。</p>
 <p>这里可以参考我们在第四节课用到的test.py中的内容，该python代码实现了简单的控制无人机的部分动作。</p>
 <pre><code>import logging
@@ -115,11 +115,11 @@ print(&#x27;Landing!&#x27;)</code></pre>
 <p>最后再带大家认识move_distance子函数的用法，可以看到前面很多函数的定义都用到了该函数，该函数一共可传入四个值，前三个值分别代表了无人机在立体空间xyz轴上的位移距离，最后一个值代表了速度，使用该函数可以让无人机在立体空间中向任意方向移动。</p>
 <figure><img src="../assets/images/manual-10-motion-commander/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>更多的子函数可以再进一步查看motion_commander.py</p>
-<p>二．来做一些花样飞行</p>
+<h2>二、来做一些花样飞行</h2>
 <p>1.用上面学到的motion commander的用法，让无人机飞出一个8字形的轨迹。提示一下具体的流程，首先无人机自动升空到0.3m，稍微让他飞高一些上升到0.4m的高度，稳定一下姿态，再调用motion commander相关的子函数让无人机飞出一个8字形的轨迹后降落，怎样调用子函数使得整个飞行逻辑更简洁？</p>
 <p>2.同样地，用上面学到的命令，使得无人机飞出一个三角形的轨迹，尽可能地飞出一个等边三角形的轨迹。</p>
 <p>3.让无人机升空后，原地左转三圈再右转三圈后降落，该如何编写代码？</p>
-<p>三．为阶段综合实践做准备</p>
+<h2>三、为阶段综合实践做准备</h2>
 <p>下面介绍阶段综合实践的一部分内容，同学们只需要用前面学到的知识就能完成该任务。任务地图如下，总区域为一个1.5*1.5m的矩形，其中无人机的垂直投影在运行过程中不得落入红色区域，也不能超出该矩形区域范围。蓝色区域代表高30cm的障碍物，黄色箭头所指的方向代表正北方向。任务要求无人机从A区域任意位置起飞，起飞时正方向面对北方，起飞高度默认0.3m，编辑代码使无人机最终在B区域内任意位置降落。其中飞过蓝色障碍时，无人机高度至少为0.5m。</p>
 <figure><img src="../assets/images/manual-10-motion-commander/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>相关区域大小已经给出，大家有余力可以先练习该项目；正式阶段综合实践时可能会加入更多要求，但都会控制在大家力所能及的范围内。</p>

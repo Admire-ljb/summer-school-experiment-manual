@@ -39,27 +39,29 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>自主建图+复习</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-07-autonomous-mapping-review.html">English</a></div>
-        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p><p>实验目标</p>
+        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p><h2>一、实验目标</h2>
 <p>在前序实验中，同学们已经体验了操控无人机进行建图。本节课将进一步编写预定代码，让无人机自主飞行，并对复杂地图环境进行建模。</p>
 <p>同时，本节课也会帮助大家回顾前三天学习内容，为综合项目展示任务做准备。</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
 <p>本实验中需要用到的硬件设备：</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>实验步骤</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>三、实验步骤</h2>
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
-<p>实验：自主建图</p>
+<h3>实验：自主建图</h3>
 <p>首先附上该实验的代码auto_multiranger_pointcloud.py。</p>
 <p>在该代码的中间部分实例化了一个motioncommander，同学们在这图示的128到137行的位置进行代码的修改，利用之前学到的motioncommander的编程知识编写出自己的控制无人机自主飞行的代码。</p>
 <p>注意，要想无人机建图的点云质量较高，建议放慢无人机的速度，给到0.2m/s的速度或者更低，注意无人机头部前方的朝向位置，每经过一些拐点，无人机的转向的方向和角度都是需要考虑的地方。</p>
 <figure><img src="../assets/images/manual-07-autonomous-mapping-review/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>本节课的实验场地如下，尝试用该程序让无人机自主飞行建立这个地图的清晰的点云图。</p>
 <figure><img src="../assets/images/manual-07-autonomous-mapping-review/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>复习</p>
+<h2>复习</h2>
 <p>各位同学，本次暑期学校的前三天实践已经进入综合整理阶段。本节课不再新增大量实验，而是鼓励大家复习之前学习到的内容，针对还不熟悉的环节查漏补缺，为后续综合项目展示做好准备。</p>
 <p>本节课也会把前三天使用到的实验手册和代码打包整理好，供大家继续调试和复盘。同学们可以回忆本次暑期学校已经学习到的内容，例如：</p>
 <p>如何在windows电脑上运行linux虚拟机？</p>

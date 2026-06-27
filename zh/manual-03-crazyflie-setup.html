@@ -39,15 +39,15 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>初次配置与驱动 Crazyflie 无人机</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-03-crazyflie-setup.html">English</a></div>
-        <h1>实验 3: 初次配置与驱动 Crazyflie 无人机</h1><p class="subtitle">Initial Crazyflie Configuration and Operation</p><p>实验目标</p>
+        <h1>实验 3: 初次配置与驱动 Crazyflie 无人机</h1><p class="subtitle">Initial Crazyflie Configuration and Operation</p><h2>一、实验目标</h2>
 <p>在Linux虚拟机上配置crazyfile-client软件。</p>
 <p>认识crazyfile无人机的结构。</p>
 <p>分别使用有线和无线的方式将虚拟机的客户端与无人机相连接。</p>
 <p>使用实例程序试飞一下无人机。</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>实验2已经配置好ROS的Ubuntu20.04虚拟机。并且需要具备前几门实验已经积累的linux系统操作经验。</p>
-<p>实验步骤</p>
-<p>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</p>
+<h2>三、实验步骤</h2>
+<h3>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</h3>
 <p>直接用图形化操作的方法，在主机windows的文件界面将软件包拖动进linux虚拟机的文件界面即可。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再双击该压缩包，点击extract解压至该文件目录下。</p>
@@ -74,7 +74,7 @@
 <pre><code>pip3 install -e .</code></pre>
 <p>无报错安装完成之后，重启虚拟机，输入cfclient命令，出现如下界面则代表环境配置安装成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>实验二：认识crazyfile无人机的基础结构</p>
+<h3>实验二：认识crazyfile无人机的基础结构</h3>
 <p>具体的无人机基础认知教程可参考该官方网址：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>
 <p>首先来认识一下无人机的基础组成部分，其基础的零件构成如下：</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -83,7 +83,7 @@
 <figure><img src="../assets/images/manual-03-crazyflie-setup/012.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 2 注意front direction的指向，以及四个LED灯</p>
 <p>将Crazyflie 2.X芯片板用USB线连上电源。注意观察LED灯M1和M4， 如果M4会快速闪5次绿灯，则测试通过。</p>
-<p>如何读懂LED灯的含义</p>
+<h3>如何读懂LED灯的含义</h3>
 <p>Crazyflie 2.X如果all good：蓝色LED灯M2和M3(下方的两个灯)会是蓝的(不是闪)，并且M1会闪烁[2次/秒]红灯</p>
 <p>Crazyflie 2.X如果all good，但是传感器还没被校准：蓝色LED灯M2和M3(下方的两个灯)会是蓝的(不是闪)，并且M1闪烁[0.5次/秒]红灯，即每2秒闪烁1次.</p>
 <p>无线电通讯Radio connected：M4闪烁红and/or绿</p>
@@ -91,7 +91,7 @@
 <p>充电中：M3会闪烁蓝灯，同时M2是蓝灯(不是闪)</p>
 <p>Bootloader Mode: M2和M3都闪烁蓝灯，约1次/秒</p>
 <p>self-test失败：如果M1灯是快速闪5次红灯，并且停顿一段时间，再次重复短闪快速闪5次红灯，再停顿一段时间，如此重复，说明self-test是失败的。注意self-test与组装之前的测试(M4会快速闪5次绿灯，则测试通过。如果M1灯快速闪5次红灯，则失败)是不一样的</p>
-<p>实验三：使用有线和无线的方式连接无人机</p>
+<h3>实验三：使用有线和无线的方式连接无人机</h3>
 <p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以再参考官方网址的教程：</p>
 <p>USB permissions | Bitcraze</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -124,8 +124,8 @@ sudo udevadm trigger</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同样在连接的过程中保证无人机静止平放，使其能初始化姿态，出现如下界面，手上拿着无人机，姿态界面出现相应的变化，则以无线的方式连接成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>实验四：使用python脚本让无人机自主起飞</p>
-<p>核心部件</p>
+<h3>实验四：使用python脚本让无人机自主起飞</h3>
+<h3>核心部件</h3>
 <p>Flow Deck： Flow Deck 是一款激光雷达测距传感器板，用于测量Crazyflie无人机的高度和距离地面的距离。它可以帮助无人机进行高度定位和稳定悬停。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>确保前面的操作已经可以使用crazyradio以无线的方式连接到无人机，</p>
@@ -184,27 +184,35 @@ print(&#x27;Landing!&#x27;)</code></pre>
 <p class="step">1. 清华大学 PyPI 镜像源</p>
 <p>原始链接：https://pypi.tuna.tsinghua.edu.cn/simple</p>
 <p>课堂用途：用于提高 pip 下载 Python 依赖的速度和稳定性。</p>
-<p>• 手册中的用途是设置 pip index-url，让 cflib、GUI 客户端和相关依赖更快下载。</p>
-<p>• 常用命令为：pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
-<p>• 该链接本身是软件包索引入口，不是教程页面；离线材料保留用途说明即可。</p>
+<ul>
+<li>手册中的用途是设置 pip index-url，让 cflib、GUI 客户端和相关依赖更快下载。</li>
+<li>常用命令为：pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</li>
+<li>该链接本身是软件包索引入口，不是教程页面；离线材料保留用途说明即可。</li>
+</ul>
 <p class="step">2. Bitcraze STEM drone bundle 入门（网页标题：Getting started with the STEM drone bundle | Bitcraze）</p>
 <p>原始链接：https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
 <p>课堂用途：了解 Crazyflie 套件组成、充电、连接和首次飞行流程。</p>
-<p>• 对应课堂中的硬件识别、Crazyradio 连接、客户端启动和基础试飞。</p>
-<p>• 重点关注电池、桨叶、扩展板、无线连接和安全检查。</p>
-<p>• 课堂实操仍以教师提供的设备编号、固件状态和场地安全要求为准。</p>
+<ul>
+<li>对应课堂中的硬件识别、Crazyradio 连接、客户端启动和基础试飞。</li>
+<li>重点关注电池、桨叶、扩展板、无线连接和安全检查。</li>
+<li>课堂实操仍以教师提供的设备编号、固件状态和场地安全要求为准。</li>
+</ul>
 <p class="step">3. Bitcraze Crazyflie 2.x 入门（网页标题：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze）</p>
 <p>原始链接：https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</p>
 <p>课堂用途：补充 Crazyflie 2.x 的连接、固件、客户端和飞行前检查说明。</p>
-<p>• 适合用于核对 Crazyflie 2.0/2.1 系列硬件和客户端操作逻辑。</p>
-<p>• 建议重点看连接流程、客户端状态反馈、固件更新提醒和飞行安全提示。</p>
-<p>• 如果课堂设备已经预配置，不建议学生自行更新固件。</p>
+<ul>
+<li>适合用于核对 Crazyflie 2.0/2.1 系列硬件和客户端操作逻辑。</li>
+<li>建议重点看连接流程、客户端状态反馈、固件更新提醒和飞行安全提示。</li>
+<li>如果课堂设备已经预配置，不建议学生自行更新固件。</li>
+</ul>
 <p class="step">4. Bitcraze USB 权限配置（网页标题：USB permissions | Bitcraze）</p>
 <p>原始链接：https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/</p>
 <p>课堂用途：解决 Linux 虚拟机或主机中普通用户无法访问 Crazyradio USB 设备的问题。</p>
-<p>• 当 Python 脚本或客户端无法发现 Crazyradio 时，优先检查 USB 连接、虚拟机 USB 转接和权限规则。</p>
-<p>• Linux 下通常需要添加 udev 规则，并重新插拔设备或重启相关服务。</p>
-<p>• 课堂中若已由助教配置好权限，学生只需按排障清单确认设备可识别。</p>
+<ul>
+<li>当 Python 脚本或客户端无法发现 Crazyradio 时，优先检查 USB 连接、虚拟机 USB 转接和权限规则。</li>
+<li>Linux 下通常需要添加 udev 规则，并重新插拔设备或重启相关服务。</li>
+<li>课堂中若已由助教配置好权限，学生只需按排障清单确认设备可识别。</li>
+</ul>
       </div>
     </article>
   </main>

@@ -41,17 +41,19 @@
         <div class="language-switch"><a href="../zh/manual-04-multiranger.html">中文</a><span>English</span></div>
         
 <h1>Experiment 4: Multi-ranger Sensor Experiment</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>Learn the principles of the new sensor multiranger.</p>
 <p>Learn the programming methods related to the multiranger sensor in the cflib library.</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>The virtual machine system of the client connected to the drone has been configured previously. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
 <p>Hardware equipment needed in this experiment:</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>Experimental steps</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>3. Experimental steps</h2>
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
 <p>The Multiranger Deck features multiple ultrasonic sensors to detect obstacles around the Crazyflie. This helps the drone avoid collisions indoors or in environments with obstacles. The installation method is shown in the figure below:</p>
@@ -61,7 +63,7 @@
 <p>Figure 2 shows multi-ranger installed on it</p>
 <figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The official tutorial URL for this module: Multi-ranger deck | Bitcraze</p>
-<p>Experiment 1: Understand the role of multi-ranger</p>
+<h3>Experiment 1: Understand the role of multi-ranger</h3>
 <p>The multi-ranging deck enables the drone to detect surrounding objects. This is achieved by measuring the distance of objects in the following 5 directions: front/back/left/right/up, with a detection distance of up to 4 meters.</p>
 <p>To get the most out of your multi-rangefinder, it should be paired with the Flow deck V2, which will measure movement along the ground and distance to the ground. It allows Crazyflie to sense the space around it and react when something is approaching, such as avoiding obstacles. It also allows starting to deal with environment awareness problems such as Simultaneous Localization and Mapping (SLAM) algorithms.</p>
 <p>Next, in the programming library cflib that controls drone flight, the multiranger class implements the call to this module. For the specific implementation of this library, see the file multiranger.py.</p>
@@ -104,7 +106,7 @@ print(&quot;multiranger.front:&quot;+str(multiranger.front))
 time.sleep(0.1)
 print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>Now, you can check the distance from the obstacle in front of the drone returned by the multiranger module through the cflib library function call. Now, based on the content of multiranger.py that you have viewed previously, call the properties of the multiranger class to check the distance from the obstacle in the other five directions (back, left, right, up, down), and output it in the terminal.</p>
-<p>Experiment 2: &quot;Push&quot; Drone</p>
+<h3>Experiment 2: &quot;Push&quot; Drones</h3>
 <p>Now use the multiranger module combined with the flow deck module to achieve some interesting effects.</p>
 <p>Create a python file named multiranger_push.py in the workspace folder of the virtual machine, and copy and paste the following code into multiranger_push.py. The running effect of this code is that the drone will automatically generate a hover at the default height. If it detects an obstacle within 0.2 meters, it will fly in the opposite direction and automatically avoid the obstacle. If you approach it manually, it will be like pushing it away. If your hand is close to the top of the drone, it will also react and slowly lower its altitude to land.</p>
 <p>Try changing some parameters slightly to make the drone more sensitive? Let it start reacting at a distance of 0.3 meters or 0.4 meters.</p>
@@ -171,20 +173,24 @@ motion_commander.start_linear_motion(
 velocity_x, velocity_y, 0)
 time.sleep(0.1)
 print(&#x27;Demo terminated!&#x27;)</code></pre>
-<h2>Organizing link information</h2>
+<h2>Reference links</h2>
 <p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
 <p class="step">1. Bitcraze cflib User Guide (Webpage title: User guides | Bitcraze)</p>
 <p>Original link: https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</p>
 <p>Classroom purposes: Query cflib examples, connection methods, log reading and control interfaces.</p>
-<p>• This document is suitable as an API reference entry for Python control scripts.</p>
-<p>• Class-related highlights include SyncCrazyflie, MotionCommander, logging configuration, parameter reading, and sample program structures.</p>
-<p>• It is recommended to run through the scripts provided in the classroom first, and then return to the official examples to find alternative control methods.</p>
+<ul>
+<li>This document is suitable as an API reference entry for Python control scripts.</li>
+<li>Class-related highlights include SyncCrazyflie, MotionCommander, logging configuration, parameter reading, and sample program structures.</li>
+<li>It is recommended to run through the scripts provided in the class first, and then return to the official examples to find alternative control methods.</li>
+</ul>
 <p class="step">2. Bitcraze Multi-ranger deck product description (webpage title: Multi-ranger deck | Bitcraze)</p>
 <p>Original link: https://www.bitcraze.io/products/multi-ranger-deck/</p>
 <p>Classroom purpose: Understand the ranging direction, applicable scenarios and hardware limitations of the multiranger expansion board.</p>
-<p>• Multiranger is used to sense close obstacles in the front, back, left, right, upward and other directions.</p>
-<p>• Use it in the classroom to achieve obstacle avoidance, wall flying, distance-triggered actions and mapping data collection.</p>
-<p>• The actual effect will be affected by reflective surfaces, obstacle materials, flight speed and attitude stability.</p>
+<ul>
+<li>The multiranger is used to sense close obstacles in the front, back, left, right, upward and other directions.</li>
+<li>Use it in the classroom to achieve obstacle avoidance, wall flying, distance-triggered actions and mapping data collection.</li>
+<li>The actual effect will be affected by reflective surfaces, obstacle materials, flight speed and attitude stability.</li>
+</ul>
 
       </div>
     </article>

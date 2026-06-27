@@ -39,17 +39,19 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>multiranger</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-04-multiranger.html">English</a></div>
-        <h1>实验 4: multiranger</h1><p class="subtitle">Multi-ranger Sensor Experiment</p><p>实验目标</p>
+        <h1>实验 4: multiranger</h1><p class="subtitle">Multi-ranger Sensor Experiment</p><h2>一、实验目标</h2>
 <p>学习新的传感器multiranger的原理。</p>
 <p>学习cflib库中multiranger传感器相关的编程方法。</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
 <p>本实验中需要用到的硬件设备：</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>实验步骤</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>三、实验步骤</h2>
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
 <p>Multiranger Deck 具有多个超声波传感器，用于检测Crazyflie周围的障碍物。这有助于无人机在室内或有障碍物的环境中避免碰撞。安装方法如下图所示：</p>
@@ -59,7 +61,7 @@
 <p>图 示2 multi -ranger 安装在上面</p>
 <figure><img src="../assets/images/manual-04-multiranger/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>该模块的官方教程网址：Multi-ranger deck | Bitcraze</p>
-<p>实验一：认识multi-ranger的作用</p>
+<h3>实验一：认识multi-ranger的作用</h3>
 <p>多测距甲板使得无人机能够检测周围的物体。这是通过在以下5个方向上测量物体的距离来实现的：前/后/左/右/上，检测距离最高达4米。</p>
 <p>为了最大限度地利用您的多测距仪，它应该与Flow deck V2配对，后者将测量沿地面的运动和到地面的距离。它使Crazyflie能够感知周围的空间，并在有东西靠近时做出反应，例如避开障碍物。它还允许开始处理环境感知问题，如同步定位和映射（SLAM）算法。</p>
 <p>接下来，在控制无人机飞行的编程库cflib中，由multiranger类来实现对该模块的调用，该库的具体实现见multiranger.py这个文件。</p>
@@ -102,7 +104,7 @@ print(&quot;multiranger.front:&quot;+str(multiranger.front))
 time.sleep(0.1)
 print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>现在，大家能通过cflib的库函数调用查看到了multiranger模块返回的无人机前方离障碍物的距离，现在根据前面查看到的multiranger.py的内容，调用multiranger类的属性，查看其它五个方向（back、left、right、up、down）离障碍物的距离,在终端中输出。</p>
-<p>实验二：“推动“无人机</p>
+<h3>实验二：“推动“无人机</h3>
 <p>现在用multiranger模块结合flow deck模块，实现一些有趣的效果。</p>
 <p>在虚拟机的workspace文件夹下创建一个python文件命名为multiranger_push.py，将如下代码复制粘贴至multiranger_push.py。该代码的运行效果为，无人机将会自动生成至默认高度悬停，如果检测到四周有障碍物的距离小于0.2米，则会往反方向飞行自动避障，如果人为去接近它，则像是在推动驱赶它。如果手靠近无人机上方，则它也会有反应，慢慢降低高度至降落。</p>
 <p>尝试稍微再改变一些参数，让无人机更敏感一些？在0.3米或0.4米的距离就让它开始反应。</p>
@@ -174,15 +176,19 @@ print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p class="step">1. Bitcraze cflib 用户指南（网页标题：User guides | Bitcraze）</p>
 <p>原始链接：https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</p>
 <p>课堂用途：查询 cflib 示例、连接方式、日志读取和控制接口。</p>
-<p>• 该文档适合作为 Python 控制脚本的 API 参考入口。</p>
-<p>• 与课堂相关的重点包括 SyncCrazyflie、MotionCommander、日志配置、参数读取和示例程序结构。</p>
-<p>• 建议先跑通课堂提供的脚本，再回到官方示例查找可替换的控制方式。</p>
+<ul>
+<li>该文档适合作为 Python 控制脚本的 API 参考入口。</li>
+<li>与课堂相关的重点包括 SyncCrazyflie、MotionCommander、日志配置、参数读取和示例程序结构。</li>
+<li>建议先跑通课堂提供的脚本，再回到官方示例查找可替换的控制方式。</li>
+</ul>
 <p class="step">2. Bitcraze Multi-ranger deck 产品说明（网页标题：Multi-ranger deck | Bitcraze）</p>
 <p>原始链接：https://www.bitcraze.io/products/multi-ranger-deck/</p>
 <p>课堂用途：了解 multiranger 扩展板的测距方向、适用场景和硬件限制。</p>
-<p>• multiranger 用于感知前、后、左、右、上等方向的近距离障碍物。</p>
-<p>• 课堂中用它实现避障、贴墙飞行、距离触发动作和建图数据采集。</p>
-<p>• 实际效果会受反光表面、障碍物材质、飞行速度和姿态稳定性影响。</p>
+<ul>
+<li>multiranger 用于感知前、后、左、右、上等方向的近距离障碍物。</li>
+<li>课堂中用它实现避障、贴墙飞行、距离触发动作和建图数据采集。</li>
+<li>实际效果会受反光表面、障碍物材质、飞行速度和姿态稳定性影响。</li>
+</ul>
       </div>
     </article>
   </main>

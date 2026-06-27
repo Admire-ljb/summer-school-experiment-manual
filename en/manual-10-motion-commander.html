@@ -41,16 +41,16 @@
         <div class="language-switch"><a href="../zh/manual-10-motion-commander.html">中文</a><span>English</span></div>
         
 <h1>Experiment 10: Advanced Motion Commander Programming</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>Learn various sub-functions under the Motion Commander class to control the drone</p>
 <p>Combine the sub-functions learned above to let the drone make some fancy flying movements</p>
 <p>Be familiar with the development process and prepare for comprehensive practice in stages</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>The virtual machine system of the client connected to the drone has been configured in the previous experiment. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
-<p>Experiment content</p>
+<h2>Experiment content</h2>
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
-<p>1. Deep understanding of motion commander</p>
+<h2>1. Deep understanding of motion commander</h2>
 <p>First, let&#x27;s review the Motion Commander class code we used before.</p>
 <p>Here you can refer to the content in test.py we used in the fourth lesson. This python code implements some simple actions to control the drone.</p>
 <pre><code>import logging
@@ -117,11 +117,11 @@ print(&#x27;Landing!&#x27;)</code></pre>
 <p>Finally, I will introduce you to the usage of the move_distance sub-function. You can see that this function is used in the definition of many previous functions. This function can pass in a total of four values. The first three values ​​represent the displacement distance of the drone on the xyz axis of the three-dimensional space. The last value represents the speed. Using this function, the drone can move in any direction in the three-dimensional space.</p>
 <figure><img src="../assets/images/manual-10-motion-commander/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>For more sub-functions, you can check motion_commander.py further.</p>
-<p>two. Let&#x27;s do some flying tricks</p>
+<h2>2. Let&#x27;s do some flying tricks</h2>
 <p>1. Use the motion commander method learned above to make the drone fly a figure-8 trajectory. Let me remind you of the specific process. First, the drone automatically lifts off to 0.3m, then lets it fly a little higher to a height of 0.4m, stabilizes the attitude, and then calls the sub-function related to the motion commander to make the drone fly a figure-8 trajectory and then land. How to call the sub-function to make the entire flight logic more concise?</p>
 <p>2. Similarly, use the commands learned above to make the drone fly a triangular trajectory and try to fly an equilateral triangle trajectory as much as possible.</p>
 <p>3. After the drone takes off, how to write the code to make it turn left three times and then right three times before landing?</p>
-<p>three. Prepare for phased comprehensive practice</p>
+<h2>3. Prepare for phased comprehensive practice</h2>
 <p>The following introduces part of the comprehensive practice in the stage. Students only need to use the knowledge they have learned previously to complete the task. The mission map is as follows. The total area is a 1.5*1.5m rectangle. The vertical projection of the drone must not fall into the red area during operation, nor can it exceed the rectangular area. The blue area represents an obstacle with a height of 30cm, and the direction pointed by the yellow arrow represents the due north direction. The task requires the drone to take off from any location in area A. When taking off, face the north in the positive direction. The default take-off height is 0.3m. Edit the code to make the drone land anywhere in area B. When flying over blue obstacles, the height of the drone must be at least 0.5m.</p>
 <figure><img src="../assets/images/manual-10-motion-commander/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The size of the relevant area has been given. If you have spare capacity, you can practice the project first; more requirements may be added during the comprehensive practice in the formal stage, but they will be controlled within everyone&#x27;s ability.</p>

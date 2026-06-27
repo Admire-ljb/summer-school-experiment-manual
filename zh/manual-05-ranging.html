@@ -39,20 +39,22 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>测距进阶</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-05-ranging.html">English</a></div>
-        <h1>实验 5: 测距进阶</h1><p class="subtitle">Advanced Ranging Experiment</p><p>实验目标</p>
+        <h1>实验 5: 测距进阶</h1><p class="subtitle">Advanced Ranging Experiment</p><h2>一、实验目标</h2>
 <p>继续熟悉cflib库中multiranger传感器相关的编程方法。</p>
 <p>使用multiranger传感器实现更多有趣的飞行任务</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
 <p>本实验中需要用到的硬件设备：</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>实验步骤</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>三、实验步骤</h2>
 <p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>
 <p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
-<p>实验一：起飞前进，检测到障碍降落</p>
+<h3>实验一：起飞前进，检测到障碍降落</h3>
 <p>上节课的内容，大家学会了单独调用multiranger模块查看其参数，以及运行了一个现成的程序实现了“推动”无人机的效果。接下来同学们将跟着示例程序，自己从基础，一步一步地编程实现特定的功能。</p>
 <p>接下来给出一个可以运行的完整的示例程序，今天基于multiranger模块的相关编程，都可以以此为模板进行进一步的代码编写。</p>
 <pre><code>import logging
@@ -104,7 +106,7 @@ velocity_x, velocity_y, 0)
 time.sleep(0.1)
 print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>该代码实现了一个简单的功能，无人机起飞，稳定姿态1秒后以0.3m每秒的速度向前飞行，直到检测到无人机前方0.4m内有障碍物，则会停止前进并且降落。</p>
-<p>程序执行流程</p>
+<h3>程序执行流程</h3>
 <p>启动程序 → 连接无人机 → 解锁准备</p>
 <p>开始飞行 → 以0.3米/秒速度向前飞行</p>
 <p>持续检测 → 每0.1秒检查一次前方和上方</p>
@@ -113,11 +115,11 @@ print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>同学们需要理解该代码中必要的一些语句，首先对于is_close这个函数，该函数定义了一个变量值为0.3，该函数将会返回multiranger传感器在某个方向上是否在某个距离内检测到障碍物，调用方法可以参考代码内该函数被调用的位置以及传入的参数。MIN_DISTANCE定义的距离0.3则代表了该函数将会在multiranger传感器在某个方向上的0.3m内检测到障碍物之后返回确定的值。</p>
 <figure><img src="../assets/images/manual-05-ranging/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>同时，对于主程序中的while循环，一直在判断一个叫做keep_flying的标志位，该标志位为true时，while循环将会一直循环执行下面的语句（直到time.sleep（0.1）那一条语句）。当while语句结束，也就是keep_flying的标志位被置为false则跳出while循环，执行while循环之后的代码，也就是print语句，同时，motioncommander类也会因为被顺序执行完毕自动销毁，无人机会自动降落。这就是这个代码的原理。</p>
-<p>实验二：前后往返</p>
+<h3>实验二：前后往返</h3>
 <p>接下来，把motioncommander类里的代码内容换成如下内容：</p>
 <figure><img src="../assets/images/manual-05-ranging/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>在运行该代码之前，将无人机放在两堵墙之间，无人机的前方垂直于两堵墙。运行效果为无人机将会在两面墙之间来回“弹跳”，想一想这个过程中，代码里有哪些参数修改了之后，会对无人机的运行效果造成怎样的影响？同样地，我们保留了若无人机检测到上方有物体时，也会自动降落的功能，该代码运行时，若不手动停止或者上方检测到障碍物，无人机将会在两面墙之间一直来回“弹跳”，希望同学们可以理解这个代码的原理为后面做铺垫。</p>
-<p>实验三：在一个盒子里“弹跳”</p>
+<h3>实验三：在一个盒子里“弹跳”</h3>
 <p>运行下面完整的代码（也就是Bouncing_box.py）：</p>
 <p>注意，运行该代码前尽量将无人机放在运行场地中心的位置，该代码主要调用了flowdeck模块的功能实现视觉导航和定位，没有用到multiranger的功能。让无人机实现在一个正方形的区域内“弹跳”，即每次接触到这个看不见的正方形边界之后，无人机在x与y方向上的速度方向改变，达到一个“回头弹跳”的效果。</p>
 <p>因为使用的是flowdeck的功能，所以只在没有反光的场地上运行的效果最好，同样地会在这片看不见的正方形区域上无限弹跳，直到手动停止程序。BOX_LIMIT = 0.3则设置的是该正方形区域的大小，同学们可以适当修改这个值，注意起飞时最好放在场地中间。</p>
@@ -195,7 +197,7 @@ logconf.start()
 move_box_limit(scf)
 logconf.stop()</code></pre>
 <p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
-<p>实验四（拓展选做）：walk follow the wall</p>
+<h3>实验四（拓展选做）：walk follow the wall</h3>
 <p>将该节课附上的wall_following.py和multiranger_wall_following.py拷贝至虚拟机中。其中将multiranger_wall_following.py放在workspace目录下，在workspace目录下再新建一个名为wall_following的目录，将wall_following.py文件放入其中，以完成multiranger_wall_following.py文件运行所需要的依赖。</p>
 <p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
       </div>

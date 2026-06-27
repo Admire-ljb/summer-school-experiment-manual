@@ -39,14 +39,14 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>路径规划仿真</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-08-path-planning.html">English</a></div>
-        <h1>实验 8: 路径规划仿真</h1><p class="subtitle">Path-planning Simulation</p><p>实验目标</p>
+        <h1>实验 8: 路径规划仿真</h1><p class="subtitle">Path-planning Simulation</p><h2>一、实验目标</h2>
 <p>掌握从实体主机向虚拟机传送文件的方法</p>
 <p>成功运行编译一个使用了ROS的项目。</p>
 <p>通过运行几个经典的路径规划算法，理解路径规划的作用。</p>
-<p>实验准备</p>
+<h2>二、实验准备</h2>
 <p>实验2已经配置好ROS的Ubuntu20.04虚拟机。</p>
-<p>实验步骤</p>
-<p>实验一：将所要运行代码工程项目传输至虚拟机并解压</p>
+<h2>三、实验步骤</h2>
+<h3>实验一：将所要运行代码工程项目传输至虚拟机并解压</h3>
 <p>首先，我们在虚拟机的用户目录下创建一个名为workspace的文件夹。</p>
 <p>点击左上角的用户目录图标，鼠标右键点击空白处，选择new folder,将新文件夹命名为workspace。</p>
 <figure><img src="../assets/images/manual-08-path-planning/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -66,7 +66,7 @@
 <figure><img src="../assets/images/manual-08-path-planning/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>如下图所示，我们在终端中输入pwd命令可以查看该终端当前所处的文件目录的路径，也就是该终端正在访问哪个文件夹。再输入ls命令可以看到当前文件夹目录下有哪些文件，这就是在linux系统中以图形化和命令行访问文件的两种方式，可以看到后方图形化界面和终端中显示的文件数量和名称是一致的，因为两者都是在访问同一文件夹。</p>
 <figure><img src="../assets/images/manual-08-path-planning/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>实验二：配置工程运行环境和编译代码</p>
+<h3>实验二：配置工程运行环境和编译代码</h3>
 <p>进入目录后，首先安装运行程序所必要的依赖，在终端中输入如下命令（可能会要求输入用户密码以获取权限）：</p>
 <pre><code>sudo apt install libeigen3-dev</code></pre>
 <figure><img src="../assets/images/manual-08-path-planning/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -108,14 +108,14 @@
 <p>catkin_make -DCMAKE_CXX_STANDARD=14</p>
 <p>等待编译结束，至此完成所有准备工作，接下来可以运行程序了。</p>
 <figure><img src="../assets/images/manual-08-path-planning/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>实验三：运行经典路径规划程序</p>
+<h3>实验三：运行经典路径规划程序</h3>
 <p>在当前终端空白处点击鼠标右键，选择new window，能快速新建一个处于该目录的终端，</p>
 <figure><img src="../assets/images/manual-08-path-planning/025.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>两个终端中都输入如下命令：</p>
 <pre><code>source devel/setup.bash</code></pre>
 <p>该命令用于在每次运行ros程序前导入相关环境变量，可以让ros找到你所想运行的程序。</p>
 <figure><img src="../assets/images/manual-08-path-planning/026.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>1.A_star算法</p>
+<h3>1. A_star算法</h3>
 <p>第一个终端输入如下命令：</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
 <p>第二个终端输入：</p>
@@ -125,7 +125,7 @@
 <p>使用鼠标滚轮或者电脑触控板即可放缩视角看到环境的全貌，此时点击上方菜单栏中的3D Nav Goal选项，点击地图内任意一点给无人机发布一个终点信息，即可以查看到A_star路径规划算法计算出的无人机到达终点的红色路径。</p>
 <figure><img src="../assets/images/manual-08-path-planning/028.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <figure><img src="../assets/images/manual-08-path-planning/029.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>2.RRT算法</p>
+<h3>2. RRT算法</h3>
 <p>对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
 <p>第一个终端输入如下命令：</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>
@@ -134,7 +134,7 @@
 <p>即可在模拟的仿真rviz界面中看到地图环境，</p>
 <p>以同样的方法发布终点，可以看到rrt算法进行路径规划的效果。</p>
 <figure><img src="../assets/images/manual-08-path-planning/030.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>3.RRT_star算法</p>
+<h3>3. RRT_star算法</h3>
 <p>同样的流程，对上面正在运行的两个终端，分别鼠标点击终端，使用ctrl加上c的命令打断正在运行的程序，再执行如下步骤：</p>
 <p>第一个终端输入如下命令：</p>
 <pre><code>roslaunch plan_manage single_run_in_sim.launch</code></pre>

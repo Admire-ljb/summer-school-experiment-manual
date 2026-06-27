@@ -41,20 +41,22 @@
         <div class="language-switch"><a href="../zh/manual-05-ranging.html">中文</a><span>English</span></div>
         
 <h1>Experiment 5: Advanced Ranging Experiment</h1>
-<p>Experimental goals</p>
+<h2>1. Experimental goals</h2>
 <p>Continue to familiarize yourself with the programming methods related to the multiranger sensor in the cflib library.</p>
 <p>Use multiranger sensors to achieve more interesting flight missions</p>
-<p>Experiment preparation</p>
+<h2>2. Experimental preparation</h2>
 <p>The virtual machine system of the client connected to the drone has been configured previously. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
 <p>Hardware equipment needed in this experiment:</p>
-<p>* Crazyflie 2.0</p>
-<p>* Crazyradio PA</p>
-<p>* Flow deck</p>
-<p>* Multiranger deck</p>
-<p>Experimental steps</p>
+<ul>
+<li>Crazyflie 2.0</li>
+<li>Crazyradio PA</li>
+<li>Flow deck</li>
+<li>Multiranger deck</li>
+</ul>
+<h2>3. Experimental steps</h2>
 <p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
 <p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
-<p>Experiment 1: Take off and move forward, landing after detecting obstacles</p>
+<h3>Experiment 1: Take off and proceed, obstacle landing detected</h3>
 <p>In the last lesson, everyone learned to call the multiranger module individually to view its parameters, and ran a ready-made program to achieve the effect of &quot;pushing&quot; the drone. Next, students will follow the sample program and program to implement specific functions step by step from the basics.</p>
 <p>Next, a complete example program that can be run is given. Today&#x27;s related programming based on the multiranger module can use this as a template for further code writing.</p>
 <pre><code>import logging
@@ -106,7 +108,7 @@ velocity_x, velocity_y, 0)
 time.sleep(0.1)
 print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>This code implements a simple function. The drone takes off, stabilizes its attitude for 1 second and flies forward at a speed of 0.3m per second. Until an obstacle is detected within 0.4m in front of the drone, it will stop moving forward and land.</p>
-<p>Program execution flow</p>
+<h3>Program execution flow</h3>
 <p>Start the program → Connect the drone → Prepare to unlock</p>
 <p>Start flying → fly forward at a speed of 0.3 meters/second</p>
 <p>Continuous detection → Checks ahead and above every 0.1 seconds</p>
@@ -115,11 +117,11 @@ print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>Students need to understand some necessary statements in the code. First, for the is_close function, this function defines a variable value of 0.3. This function will return whether the multiranger sensor detects obstacles within a certain distance in a certain direction. The calling method can refer to the location where the function is called in the code and the parameters passed in. The distance 0.3 defined by MIN_DISTANCE means that the function will return a certain value after the multiranger sensor detects an obstacle within 0.3m in a certain direction.</p>
 <figure><img src="../assets/images/manual-05-ranging/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At the same time, for the while loop in the main program, a flag called keep_flying is always being judged. When the flag is true, the while loop will continue to execute the following statements (until the time.sleep (0.1) statement). When the while statement ends, that is, the keep_flying flag is set to false, the while loop will be jumped out, and the code after the while loop will be executed, which is the print statement. At the same time, the motioncommander class will be automatically destroyed after being executed sequentially, and the drone will automatically land. That&#x27;s how this code works.</p>
-<p>Experiment 2: Back and forth</p>
+<h3>Experiment 2: Back and forth</h3>
 <p>Next, replace the code content in the motioncommander class with the following content:</p>
 <figure><img src="../assets/images/manual-05-ranging/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Before running the code, place the drone between two walls with the front of the drone perpendicular to the walls. The operating effect is that the drone will &quot;bounce&quot; back and forth between the two walls. Think about this process, which parameters in the code are modified, and what impact will it have on the operating effect of the drone? Similarly, we have retained the function of automatically landing if the drone detects an object above. When this code is running, if it is not stopped manually or if an obstacle is detected above, the drone will continue to &quot;bounce&quot; back and forth between the two walls. We hope that students can understand the principle of this code and pave the way for the future.</p>
-<p>Experiment 3: &quot;Bounce&quot; in a box</p>
+<h3>Experiment 3: &quot;Bounce&quot; in a box</h3>
 <p>Run the complete code below (i.e. Bouncing_box.py):</p>
 <p>Note that before running this code, try to place the drone in the center of the operating site. This code mainly calls the function of the flowdeck module to achieve visual navigation and positioning, and does not use the function of multiranger. Let the drone &quot;bounce&quot; in a square area, that is, every time it comes into contact with the invisible square boundary, the speed of the drone in the x and y directions changes, achieving a &quot;bounce back&quot; effect.</p>
 <p>Because the flowdeck function is used, the best effect is only run on a non-reflective site. It will also bounce infinitely on this invisible square area until the program is manually stopped. BOX_LIMIT = 0.3 sets the size of the square area. Students can modify this value appropriately. Note that it is best to place it in the middle of the field when taking off.</p>
@@ -197,7 +199,7 @@ logconf.start()
 move_box_limit(scf)
 logconf.stop()</code></pre>
 <p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
-<p>Experiment 4 (optional expansion): walk follow the wall</p>
+<h3>Experiment 4 (optional extension): walk follow the wall</h3>
 <p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>
 <p>This code mainly implements the function of the drone walking along the wall to achieve the purpose of exploring along the wall. Students can use this to experience the concept of autonomous exploration by the drone and pave the way for subsequent courses.</p>
 
