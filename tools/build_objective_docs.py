@@ -710,10 +710,13 @@ def nav_html(lang: str, current_slug: str | None = None) -> str:
 
 
 def layout(lang: str, title: str, body: str, current_slug: str | None = None) -> str:
-    other = "en" if lang == "zh" else "zh"
-    other_label = "English" if lang == "zh" else "\u4e2d\u6587"
-    current_label = "\u4e2d\u6587" if lang == "zh" else "English"
-    other_href = f"../{other}/index.html" if current_slug is None else f"../{other}/{current_slug}.html"
+    zh_href = "index.html" if lang == "zh" else f"../zh/{'index.html' if current_slug is None else current_slug + '.html'}"
+    en_href = "index.html" if lang == "en" else f"../en/{'index.html' if current_slug is None else current_slug + '.html'}"
+    language_switch = (
+        f'<span>\u4e2d\u6587</span><a href="{en_href}">English</a>'
+        if lang == "zh"
+        else f'<a href="{zh_href}">\u4e2d\u6587</a><span>English</span>'
+    )
     project_title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c" if lang == "zh" else "Palm-sized UAV Experiment Manual"
     search = "\u641c\u7d22\u6587\u6863" if lang == "zh" else "Search docs"
     caption = "\u76ee\u5f55" if lang == "zh" else "Contents"
@@ -745,7 +748,7 @@ def layout(lang: str, title: str, body: str, current_slug: str | None = None) ->
     <article class="wy-nav-content">
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>{html.escape(title)}</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">{github}</a></div>
-        <div class="language-switch"><span>{current_label}</span><a href="{other_href}">{other_label}</a></div>
+        <div class="language-switch">{language_switch}</div>
         {body}
       </div>
     </article>
