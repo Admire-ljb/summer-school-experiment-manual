@@ -54,46 +54,46 @@
 <p>1. Deep understanding of motion commander</p>
 <p>First, let&#x27;s review the Motion Commander class code we used before.</p>
 <p>Here you can refer to the content in test.py we used in the fourth lesson. This python code implements some simple actions to control the drone.</p>
-<pre><code>import logging</code></pre>
-<pre><code>import time</code></pre>
-<pre><code>import cflib.crtp</code></pre>
-<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
-<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
-<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
-<pre><code># Only output errors from the logging framework</code></pre>
-<p>logging.basicConfig(level=logging.ERROR)</p>
-<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
-<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
-<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
-<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
-<pre><code># We take off when the commander is created</code></pre>
-<pre><code>with MotionCommander(scf) as mc:</code></pre>
-<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
-<p>time.sleep(1)</p>
-<pre><code># There is a set of functions that move a specific distance</code></pre>
-<pre><code># We can move in all directions</code></pre>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
-<p>mc.up(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
-<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
-<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
-<p>mc.down(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
-<p>mc.left(0.2, velocity=0.6)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># We land when the MotionCommander goes out of scope</code></pre>
-<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
+<pre><code>import logging
+import time
+import cflib.crtp
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+# Only output errors from the logging framework
+logging.basicConfig(level=logging.ERROR)
+if __name__ == &#x27;__main__&#x27;:
+# Initialize the low-level drivers (don&#x27;t list the debug drivers)
+cflib.crtp.init_drivers(enable_debug_driver=False)
+with SyncCrazyflie(URI) as scf:
+# We take off when the commander is created
+with MotionCommander(scf) as mc:
+print(&#x27;Taking off!&#x27;)
+time.sleep(1)
+# There is a set of functions that move a specific distance
+# We can move in all directions
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving up 0.2m&#x27;)
+mc.up(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Doing a 270deg circle&#x27;);
+mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
+print(&#x27;Moving down 0.2m&#x27;)
+mc.down(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
+mc.left(0.2, velocity=0.6)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# We land when the MotionCommander goes out of scope
+print(&#x27;Landing!&#x27;)</code></pre>
 <p>Let&#x27;s review the relevant content we have learned. Let&#x27;s focus on the core part of this code. Starting from line 17, we create a motion commander entity class mc. After this entity mc is created, it is responsible for controlling the movement of the drone. The moment it is created, it will automatically execute the drone take-off program, which takes off to a height of 0.3m by default. On line 18, we output taking off in the terminal, indicating that the drone has taken off, and stop the entire program for 1 second to allow the drone to stabilize its flight status. In the following code, you can see that we call a sub-function forward of the mc class to make the drone move forward 0.5m and then stop. Note that the hardware that this code is adapted to now is its own gyroscope and flowdeck module. The speed and altitude of the drone are provided by flowdeck, but its accuracy is limited, and the deviation may sometimes be slightly larger. In this case, ensure that the drone itself is in a normal state, and the parameters passed to the function can be adjusted to allow the drone to fly to the ideal position. For example, if 0.5 is entered but the actual drone travels 0.1m more, the parameters passed in can be reduced so that the drone can actually go to the appropriate position.</p>
 <figure><img src="../assets/images/manual-10-motion-commander/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Looking further down, all the places where the time.sleep(1) function is used are to keep the drone in its current state for 1 second to stabilize its attitude. On line 17, the mc class calls the sub-function of up. This statement causes the height of the drone to rise by 0.2m. It can be seen from here that the functions of many sub-functions of this class can be seen from the naming. Let’s look at another complicated one. The circle_right sub-function on line 31 passes in three parameters. The function of this sub-function is to make the drone fly to the right starting from the original position and flying an arc trajectory. The first parameter passed in, 0.5, represents the radius of the circle of 0.5m, the second parameter velocity represents the speed of 0.5m/s, and the third parameter angle_degrees represents the degree of the rotation arc. Assigning a value of 360 will cause the drone to complete a full circle. The subsequent code can also infer its effect from its naming.</p>

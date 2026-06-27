@@ -66,13 +66,13 @@
 <pre><code>sudo apt install libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再输入以下命令配置一下pip3下载的软件源：</p>
-<p>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再输入以下命令更新软件工具：</p>
 <p>pip3 install --upgrade pip setuptools wheel</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>最后输入以下命令进行总的软件依赖安装整理：</p>
-<p>pip3 install -e .</p>
+<pre><code>pip3 install -e .</code></pre>
 <p>无报错安装完成之后，重启虚拟机，输入cfclient命令，出现如下界面则代表环境配置安装成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>实验二：认识crazyfile无人机的基础结构</p>
@@ -97,8 +97,8 @@
 <p>USB permissions | Bitcraze</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>具体操作为在原目录的终端中依次输入以下命令：</p>
-<pre><code>sudo groupadd plugdev</code></pre>
-<pre><code>sudo usermod -a -G plugdev $USER</code></pre>
+<pre><code>sudo groupadd plugdev
+sudo usermod -a -G plugdev $USER</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>注意以下命令较长，复制粘贴的时候保证命令完整性：</p>
 <p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
@@ -110,8 +110,8 @@
 <p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
 <p>EOF</p>
 <p>再输入以下命令：</p>
-<pre><code>sudo udevadm control --reload-rules</code></pre>
-<pre><code>sudo udevadm trigger</code></pre>
+<pre><code>sudo udevadm control --reload-rules
+sudo udevadm trigger</code></pre>
 <p>进行完以上操作后，输入sudo reboot的命令让虚拟机重启，以应用对usb权限的改动。</p>
 <p>接下来再将无人机使用uab线连接到电脑上，弹出如下窗口使得该usb设备连接到虚拟机上。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -136,50 +136,50 @@
 <p>同时将要运行的python脚本放入workspace文件夹下，双击test.py脚本文件进行编辑，修改第14行的URI地址，与当前crazyradio的地址一致，修改完之后点击save按钮后退出。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再安装最后一个所需的依赖，在终端中输入如下命令：</p>
-<p>pip3 install cflib</p>
+<pre><code>pip3 install cflib</code></pre>
 <p>然后在终端中输入python3 test.py命令运行该脚本，脚本开始运行后，先等待一段时间的初始化，通过无线的方式向无人机发送指令，无人机接收到指令后进行相印的飞行动作。</p>
 <p>补充，实验官方教程网址为：https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
 <p>test.py脚本内容为：</p>
-<pre><code>import logging</code></pre>
-<pre><code>import time</code></pre>
-<pre><code>import cflib.crtp</code></pre>
-<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
-<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
-<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
-<pre><code># Only output errors from the logging framework</code></pre>
-<p>logging.basicConfig(level=logging.ERROR)</p>
-<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
-<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
-<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
-<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
-<pre><code># We take off when the commander is created</code></pre>
-<pre><code>with MotionCommander(scf) as mc:</code></pre>
-<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
-<p>time.sleep(1)</p>
-<pre><code># There is a set of functions that move a specific distance</code></pre>
-<pre><code># We can move in all directions</code></pre>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
-<p>mc.up(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
-<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
-<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
-<p>mc.down(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
-<p>mc.left(0.2, velocity=0.6)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># We land when the MotionCommander goes out of scope</code></pre>
-<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
+<pre><code>import logging
+import time
+import cflib.crtp
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+# Only output errors from the logging framework
+logging.basicConfig(level=logging.ERROR)
+if __name__ == &#x27;__main__&#x27;:
+# Initialize the low-level drivers (don&#x27;t list the debug drivers)
+cflib.crtp.init_drivers(enable_debug_driver=False)
+with SyncCrazyflie(URI) as scf:
+# We take off when the commander is created
+with MotionCommander(scf) as mc:
+print(&#x27;Taking off!&#x27;)
+time.sleep(1)
+# There is a set of functions that move a specific distance
+# We can move in all directions
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving up 0.2m&#x27;)
+mc.up(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Doing a 270deg circle&#x27;);
+mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
+print(&#x27;Moving down 0.2m&#x27;)
+mc.down(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
+mc.left(0.2, velocity=0.6)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# We land when the MotionCommander goes out of scope
+print(&#x27;Landing!&#x27;)</code></pre>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <p class="step">1. 清华大学 PyPI 镜像源</p>

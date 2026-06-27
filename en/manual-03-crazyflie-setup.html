@@ -68,13 +68,13 @@
 <pre><code>sudo apt install libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then enter the following command to configure the software source downloaded by pip3:</p>
-<p>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</p>
+<pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then enter the following command to update the software tool:</p>
 <p>pip3 install --upgrade pip setuptools wheel</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Finally, enter the following command to complete the overall software dependency installation:</p>
-<p>pip3 install -e .</p>
+<pre><code>pip3 install -e .</code></pre>
 <p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Experiment 2: Understand the basic structure of crazyfile drone</p>
@@ -99,8 +99,8 @@
 <p>USB permissions | Bitcraze</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The specific operation is to enter the following commands in the terminal in the original directory:</p>
-<pre><code>sudo groupadd plugdev</code></pre>
-<pre><code>sudo usermod -a -G plugdev $USER</code></pre>
+<pre><code>sudo groupadd plugdev
+sudo usermod -a -G plugdev $USER</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Note that the following command is long, so ensure the integrity of the command when copying and pasting:</p>
 <p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
@@ -112,8 +112,8 @@
 <p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
 <p>EOF</p>
 <p>Then enter the following command:</p>
-<pre><code>sudo udevadm control --reload-rules</code></pre>
-<pre><code>sudo udevadm trigger</code></pre>
+<pre><code>sudo udevadm control --reload-rules
+sudo udevadm trigger</code></pre>
 <p>After completing the above operations, enter the sudo reboot command to restart the virtual machine to apply the changes to the USB permissions.</p>
 <p>Next, connect the drone to the computer using a UAB cable, and the following window will pop up to connect the USB device to the virtual machine.</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/015.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -138,50 +138,50 @@
 <p>At the same time, put the python script to be run into the workspace folder, double-click the test.py script file to edit, modify the URI address on line 14 to be consistent with the current crazyradio address, click the save button after modification and exit.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then install the last required dependency and enter the following command in the terminal:</p>
-<p>pip3 install cflib</p>
+<pre><code>pip3 install cflib</code></pre>
 <p>Then enter the python3 test.py command in the terminal to run the script. After the script starts running, it waits for a period of initialization and sends instructions to the drone wirelessly. After receiving the instructions, the drone performs corresponding flight movements.</p>
 <p>In addition, the official experimental tutorial website is: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
 <p>The content of the test.py script is:</p>
-<pre><code>import logging</code></pre>
-<pre><code>import time</code></pre>
-<pre><code>import cflib.crtp</code></pre>
-<pre><code>from cflib.crazyflie.syncCrazyflie import SyncCrazyflie</code></pre>
-<pre><code>from cflib.positioning.motion_commander import MotionCommander</code></pre>
-<p>URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI</p>
-<pre><code># Only output errors from the logging framework</code></pre>
-<p>logging.basicConfig(level=logging.ERROR)</p>
-<pre><code>if __name__ == &#x27;__main__&#x27;:</code></pre>
-<pre><code># Initialize the low-level drivers (don&#x27;t list the debug drivers)</code></pre>
-<p>cflib.crtp.init_drivers(enable_debug_driver=False)</p>
-<pre><code>with SyncCrazyflie(URI) as scf:</code></pre>
-<pre><code># We take off when the commander is created</code></pre>
-<pre><code>with MotionCommander(scf) as mc:</code></pre>
-<pre><code>print(&#x27;Taking off!&#x27;)</code></pre>
-<p>time.sleep(1)</p>
-<pre><code># There is a set of functions that move a specific distance</code></pre>
-<pre><code># We can move in all directions</code></pre>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving up 0.2m&#x27;)</code></pre>
-<p>mc.up(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Doing a 270deg circle&#x27;);</code></pre>
-<p>mc.circle_right(0.5, velocity=0.5, angle_degrees=270)</p>
-<pre><code>print(&#x27;Moving down 0.2m&#x27;)</code></pre>
-<p>mc.down(0.2)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)</code></pre>
-<p>mc.left(0.2, velocity=0.6)</p>
-<pre><code># Wait a bit</code></pre>
-<p>time.sleep(1)</p>
-<pre><code>print(&#x27;Moving forward 0.5m&#x27;)</code></pre>
-<p>mc.forward(0.5)</p>
-<pre><code># We land when the MotionCommander goes out of scope</code></pre>
-<pre><code>print(&#x27;Landing!&#x27;)</code></pre>
+<pre><code>import logging
+import time
+import cflib.crtp
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+# Only output errors from the logging framework
+logging.basicConfig(level=logging.ERROR)
+if __name__ == &#x27;__main__&#x27;:
+# Initialize the low-level drivers (don&#x27;t list the debug drivers)
+cflib.crtp.init_drivers(enable_debug_driver=False)
+with SyncCrazyflie(URI) as scf:
+# We take off when the commander is created
+with MotionCommander(scf) as mc:
+print(&#x27;Taking off!&#x27;)
+time.sleep(1)
+# There is a set of functions that move a specific distance
+# We can move in all directions
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving up 0.2m&#x27;)
+mc.up(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Doing a 270deg circle&#x27;);
+mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
+print(&#x27;Moving down 0.2m&#x27;)
+mc.down(0.2)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
+mc.left(0.2, velocity=0.6)
+# Wait a bit
+time.sleep(1)
+print(&#x27;Moving forward 0.5m&#x27;)
+mc.forward(0.5)
+# We land when the MotionCommander goes out of scope
+print(&#x27;Landing!&#x27;)</code></pre>
 <h2>Organizing link information</h2>
 <p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
 <p class="step">1. Tsinghua University PyPI mirror source</p>

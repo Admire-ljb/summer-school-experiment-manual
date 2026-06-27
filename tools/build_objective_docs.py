@@ -486,6 +486,19 @@ def is_code_like(text: str) -> bool:
     return False
 
 
+def is_code_style(style: str) -> bool:
+    return style.strip().lower() in {"html", "code", "sourcecode", "source code"}
+
+
+def is_code_block(block: Block) -> bool:
+    return (
+        isinstance(block, ParagraphBlock)
+        and bool(block.text.strip())
+        and not block.images
+        and (is_code_style(block.style) or is_code_like(block.text))
+    )
+
+
 def load_translation_cache() -> dict[str, str]:
     if not TRANSLATION_CACHE.exists():
         return {}
@@ -639,6 +652,8 @@ def collect_translation_texts(blocks: list[Block]) -> set[str]:
     texts: set[str] = set()
     for block in blocks:
         if isinstance(block, ParagraphBlock):
+            if is_code_block(block):
+                continue
             if should_translate(block.text):
                 texts.add(block.text.strip())
             if block.images and should_translate(block.text[:80]):
@@ -653,13 +668,23 @@ def collect_translation_texts(blocks: list[Block]) -> set[str]:
 
 def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str], image_map: dict[str, str] | None = None) -> str:
     rendered: list[str] = []
-    for block in blocks:
+    index = 0
+    while index < len(blocks):
+        block = blocks[index]
+        if is_code_block(block):
+            code_lines: list[str] = []
+            while index < len(blocks) and is_code_block(blocks[index]):
+                code_lines.append(blocks[index].text.strip())  # type: ignore[union-attr]
+                index += 1
+            rendered.append(f"<pre><code>{html.escape(chr(10).join(code_lines))}</code></pre>")
+            continue
         if isinstance(block, ParagraphBlock):
             html_block = render_paragraph(block.text, block.style, block.images, lang, cache, image_map)
         else:
             html_block = render_table(block.rows, lang, cache)
         if html_block:
             rendered.append(html_block)
+        index += 1
     return "\n".join(rendered)
 
 
