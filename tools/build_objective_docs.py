@@ -575,10 +575,14 @@ def english_text(text: str, cache: dict[str, str]) -> str:
     return cache.get(text, text)
 
 
+def is_source_manual_heading(text: str) -> bool:
+    return re.match(r"^实验手册\s*\d+\s*[—–-]+", text.strip()) is not None
+
+
 def render_paragraph(text: str, style: str, images: tuple[str, ...], lang: str, cache: dict[str, str], image_map: dict[str, str] | None = None) -> str:
     stripped = text.strip()
     blocks: list[str] = []
-    if stripped:
+    if stripped and not is_source_manual_heading(stripped):
         rendered = english_text(stripped, cache) if lang == "en" else stripped
         escaped = html.escape(rendered)
         if stripped in {"\u4e00\u3001\u5b9e\u9a8c\u76ee\u6807", "\u4e8c\u3001\u5b9e\u9a8c\u51c6\u5907", "\u4e09\u3001\u5b9e\u9a8c\u6b65\u9aa4", "\u56db\u3001\u5b9e\u9a8c\u9a8c\u8bc1\u4e0e\u6d4b\u8bd5", "\u4e94\u3001\u5b9e\u9a8c\u603b\u7ed3\u4e0e\u62d3\u5c55", "\u94fe\u63a5\u8d44\u6599\u6574\u7406"}:
