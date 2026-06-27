@@ -32,6 +32,7 @@ SOURCE_DIR = ROOT.parent / "\u5b9e\u9a8c\u624b\u518c"
 ASSET_DIR = ROOT / "assets"
 IMAGE_DIR = ASSET_DIR / "images"
 IMAGE_EN_DIR = ASSET_DIR / "images-en"
+IMAGE_EN_CURATED_DIR = ASSET_DIR / "images-en-curated"
 TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
 IMAGE_OCR_CACHE = ROOT / "tools" / "image-ocr-cache.json"
 MAX_IMAGE_WIDTH = 1440
@@ -452,7 +453,12 @@ def build_english_images(image_ocr: dict[str, list[dict[str, object]]], cache: d
         source_path = image_path_from_src(src)
         relative = source_path.relative_to(IMAGE_DIR)
         out_path = IMAGE_EN_DIR / relative
+        curated_path = IMAGE_EN_CURATED_DIR / relative
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        if curated_path.exists():
+            shutil.copyfile(curated_path, out_path)
+            image_map[src] = image_src_from_en_path(out_path)
+            continue
         with Image.open(source_path) as opened:
             image = opened.convert("RGB")
         if should_use_translation_panel(image, items):
