@@ -41,14 +41,20 @@
         <div class="language-switch"><span>中文</span><a href="../en/manual-12-position-commander.html">English</a></div>
         <h1>实验 12: PositionCommander</h1><p class="subtitle">PositionCommander</p><h2>一、实验目标</h2>
 <p>本节课旨在让同学们掌握 PositionHlCommander 类的核心用法，实现无人机的精准路径规划。</p>
-<h3>1. 理解空间坐标系概念</h3>
+<ol class="numbered-list" start="1">
+<li>理解空间坐标系概念</li>
+</ol>
 <p>理解无人机飞行中的**世界坐标系（绝对坐标）与机体坐标系（相对坐标）**的区别。</p>
 <p>掌握 Crazyflie 结合 Flow deck v2 上电启动时的原点 (0,0,0) 设定逻辑。</p>
-<p>2.掌握 PositionHlCommander 类的基本用法</p>
+<ol class="numbered-list" start="2">
+<li>掌握 PositionHlCommander 类的基本用法</li>
+</ol>
 <p>学会使用 take_off() 和 land() 实现自动起降，理解默认参数（高度、速度）的作用。</p>
 <p>核心技能：掌握 go_to(x, y, z) 指令，实现让无人机飞往空间中特定的绝对坐标点。</p>
 <p>进阶技能：掌握 forward(), back(), left(), right() 等相对位置控制指令，理解其与绝对坐标控制的混合使用。</p>
-<h3>3. 编写组合飞行例程</h3>
+<ol class="numbered-list" start="3">
+<li>编写组合飞行例程</li>
+</ol>
 <p>能够综合运用上述指令，编写 Python 脚本驱动无人机完成指定的几何图形（如正方形、长方形或立体台阶轨迹）飞行。</p>
 <h2>二、实验准备</h2>
 <p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
