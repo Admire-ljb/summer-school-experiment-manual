@@ -30,11 +30,16 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT.parent / "\u5b9e\u9a8c\u624b\u518c"
 ASSET_DIR = ROOT / "assets"
+ASSET_SOURCE_DIR = ASSET_DIR / "source"
 IMAGE_DIR = ASSET_DIR / "images"
 IMAGE_EN_DIR = ASSET_DIR / "images-en"
 IMAGE_EN_CURATED_DIR = ASSET_DIR / "images-en-curated"
 TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
 IMAGE_OCR_CACHE = ROOT / "tools" / "image-ocr-cache.json"
+FINAL_TEST_SLUG = "manual-13-project-demo"
+FINAL_TEST_IMAGE_NAME = "final-comprehensive-test.png"
+FINAL_TEST_ZH_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-zh.png"
+FINAL_TEST_EN_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-en.png"
 MAX_IMAGE_WIDTH = 1440
 MAX_IMAGE_HEIGHT = 1200
 OCR_MAX_IMAGE_SIDE = 800
@@ -109,6 +114,18 @@ def clean_output() -> None:
     (ROOT / "en").mkdir(parents=True, exist_ok=True)
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     IMAGE_EN_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def copy_final_test_images() -> None:
+    for source, image_root in [
+        (FINAL_TEST_ZH_SOURCE, IMAGE_DIR),
+        (FINAL_TEST_EN_SOURCE, IMAGE_EN_DIR),
+    ]:
+        if not source.exists():
+            raise FileNotFoundError(f"Missing final test image source: {source}")
+        out_dir = image_root / FINAL_TEST_SLUG
+        out_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, out_dir / FINAL_TEST_IMAGE_NAME)
 
 
 def relationship_map(zf: zipfile.ZipFile) -> dict[str, str]:
@@ -1081,6 +1098,68 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
+def final_test_image_src(lang: str) -> str:
+    image_root = "images-en" if lang == "en" else "images"
+    return f"../assets/{image_root}/{FINAL_TEST_SLUG}/{FINAL_TEST_IMAGE_NAME}"
+
+
+def final_project_demo_body(manual: Manual, lang: str) -> str:
+    if lang == "zh":
+        image_src = final_test_image_src("zh")
+        return f"""
+<h1>实验 {manual.number}: {html.escape(manual.zh_title)}</h1>
+<p class="subtitle">{html.escape(manual.en_title)}</p>
+<h2>最后综合测试</h2>
+<p>本实验最终评价仅设置一项综合测试任务。无人机以 0.3 m/s 的固定速度飞行，从 A 区域内任意位置起飞，飞行过程中需要经过 B 点和 C 点，经过 B、C 的顺序不限，最终降落回 A 区域内。</p>
+<figure class="wide-figure"><img src="{html.escape(image_src)}" alt="最后综合测试地图与评分规则" loading="lazy" decoding="async"></figure>
+<h3>场地约束</h3>
+<ul>
+<li>挡板位置不一定固定，教师可根据测试批次调整挡板布置，现场以实际摆放为准。</li>
+<li>奖励点和起止点是固定的：R1、R2、R3、R4 的位置固定；起止区域固定为 A 区域。</li>
+<li>程序不应只硬编码图中挡板坐标，应结合传感器数据、现场观测或规划策略完成避障与路径调整。</li>
+</ul>
+<h3>评分规则</h3>
+<ul>
+<li>最终成绩：S = v &times; t - Reward + Punish，成绩值越小越优。</li>
+<li>Reward：R1、R2、R3 的奖励值均为 2 m，R4 的奖励值为 5 m。</li>
+<li>Punish：最终降落在 A 区时位置不规范，惩罚 0.35 m；未经过 B 点或 C 点，单点惩罚 10 m；最终未回归 A 区，惩罚 20 m。</li>
+<li>可使用传感器包括光流测速测高模块和水平测距传感器。</li>
+</ul>
+<h3>展示要求</h3>
+<ul>
+<li>展示前应向教师说明代码逻辑、速度设置、传感器使用方式和急停方案。</li>
+<li>飞行过程中需保持一名同学负责终端控制和急停，另一名同学记录完整飞行过程。</li>
+<li>若无人机接触挡板、姿态明显异常或进入不安全状态，应立即终止程序。</li>
+</ul>
+"""
+    image_src = final_test_image_src("en")
+    return f"""
+<h1>Experiment {manual.number}: {html.escape(manual.en_title)}</h1>
+<h2>Final Comprehensive Test</h2>
+<p>The final assessment contains one comprehensive task only. The drone flies at a constant speed of 0.3 m/s, takes off from any position inside Area A, passes through points B and C in any order, and finally lands back inside Area A.</p>
+<figure class="wide-figure"><img src="{html.escape(image_src)}" alt="Final comprehensive test map and scoring rules" loading="lazy" decoding="async"></figure>
+<h3>Arena Constraints</h3>
+<ul>
+<li>Baffle positions are not necessarily fixed; the instructor may adjust the baffle layout between test runs, and the on-site setup is authoritative.</li>
+<li>The reward points and start/end points are fixed: R1, R2, R3, and R4 keep their positions, and the start/end area is fixed as Area A.</li>
+<li>The program should not only hard-code the baffle coordinates shown in the diagram. It should use sensor data, on-site observation, or planning logic to avoid obstacles and adjust the route.</li>
+</ul>
+<h3>Scoring Rules</h3>
+<ul>
+<li>Final score: S = v &times; t - Reward + Punish. A lower score is better.</li>
+<li>Reward: R1, R2, and R3 are worth 2 m each; R4 is worth 5 m.</li>
+<li>Punish: a non-standard final landing in Area A adds 0.35 m; missing point B or C adds 10 m per point; failing to return to Area A adds 20 m.</li>
+<li>Available sensors include the Flow deck for velocity and height measurement and the horizontal range sensor.</li>
+</ul>
+<h3>Demonstration Requirements</h3>
+<ul>
+<li>Before the demonstration, explain the code logic, speed setting, sensor usage, and emergency-stop plan to the instructor.</li>
+<li>During flight, one student should monitor the terminal and emergency stop, while another student records the full flight process.</li>
+<li>If the drone touches a baffle, shows abnormal attitude, or enters an unsafe state, stop the program immediately.</li>
+</ul>
+"""
+
+
 def write_pages() -> dict[str, dict[str, int]]:
     manifest: dict[str, dict[str, int]] = {}
     extracted: dict[str, tuple[Manual, list[Block], dict[str, int]]] = {}
@@ -1095,11 +1174,17 @@ def write_pages() -> dict[str, dict[str, int]]:
     translation_texts.update(collect_image_translation_texts(image_ocr))
     cache = ensure_translations(translation_texts)
     image_map = build_english_images(image_ocr, cache)
+    copy_final_test_images()
 
     for manual, blocks, _stats in extracted.values():
-        zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
+        if manual.slug == FINAL_TEST_SLUG:
+            zh_body = final_project_demo_body(manual, "zh")
+            en_body = final_project_demo_body(manual, "en")
+        else:
+            zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
+            en_body = english_body(manual, blocks, cache, image_map)
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
-        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, english_body(manual, blocks, cache, image_map), manual.slug), encoding="utf-8")
+        (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, en_body, manual.slug), encoding="utf-8")
     return manifest
 
 

@@ -41,70 +41,28 @@
         <div class="language-switch"><a href="../zh/manual-13-project-demo.html">中文</a><span>English</span></div>
         
 <h1>Experiment 13: Integrated Project Demonstration</h1>
-<h2>1. Integrated project demonstration task description</h2>
-<p>This task is oriented to the experimental content of the first three days of this summer school, and is designed to allow students to comprehensively demonstrate environmental configuration, drone control, sensor application, path planning and team collaboration capabilities. The presentation task encourages everyone to use their creativity within safe boundaries and organize the previously completed experimental content into small projects that can be demonstrated, explained, and repeated.</p>
-<h2>2. Task content</h2>
-<p>This comprehensive project display is divided into two sections: creative tasks and racing tasks. Completing basic tasks can be regarded as meeting the display requirements; if the task completion effect is better, or if independent optimization ideas are reflected in path design, control strategy, sensor use, team collaboration, etc., higher feedback can be obtained in the display evaluation.</p>
-<h2>Creative task section</h2>
-<p>The display tasks in this section are expected to be completed by students based on the Crazyflie drone sensor application knowledge and corresponding software programming knowledge they have learned. There are no restrictions on which sensors or program modules to use. Students are encouraged to be creative based on the rules and complete the tasks with better strategies.</p>
-<h3>1. Task description</h3>
-<p>Now let’s explain the task requirements of the practical demonstration task of this section. First, the map environment of the mission is as follows, and the schematic intervals of each mission area have also been marked. Among them, the sizes of areas A, B, and C are the size of 2*2 baffles (the height of the rectangular baffle is 45cm and the width is 35cm. The baffles are placed vertically, that is, the actual size of area ABC is 70cm*70cm). The areas R1, R2, R3, and R4 are the size of 1*2 baffles, among which R1, R2, and R3 are located in areas A, B, and C respectively.</p>
-<p>The general mission requirements are as follows: the drone is placed anywhere in area A to take off, and needs to pass through points B and C and finally land in point A. The order of passing through points B and C is arbitrary, that is, the general requirements for passing points are:</p>
-<p>ABCA or ACBA</p>
-<p>Reward mechanism: The drone&#x27;s flight path will receive rewards if it passes through R2, R3, and R4.</p>
-<p>I hope students will consider the cost of the overall drone flight path: flight path length + reward</p>
-<figure><img src="../assets/images/manual-13-project-demo/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<h3>2. Demonstration procedure</h3>
-<p>In order to ensure the safety and stability of flight, the flight speed of the drone is limited to less than 0.3m per second and is constant throughout the entire process. Before each demonstration is ready to be shown to the teacher, the code details and flight speed and other parameters need to be shown to the teacher. After the teacher confirms, the code is run to allow the drone to take off. This demonstration can be counted as a valid score. During the teamwork during the demonstration, it is expected that one student will control the computer terminal and be responsible for takeoff and emergency stop, while the other student will be responsible for recording the entire process from takeoff to landing as a backup for the evaluation criteria. The teacher will be standing by to time the drone from the time it starts moving on the xy plane to the time it starts landing. The formula for calculating the final score is as follows:</p>
-<p>S: Final score (m), the smaller the better</p>
-<p>v: The constant speed (m/s) set by the drone throughout the mission process</p>
-<p>: The timing of the drone starting to move on the xy plane from the starting point to landing in the entire mission process (s)</p>
-<p>: In order to stabilize the attitude of the drone in the code, the total time (s) of time.sleep is called after each step of the drone&#x27;s movement. These times are determined when confirming the code with the teacher before taking off.</p>
-<p>Reward: The reward value of R2 and R3 is 1.4m, the reward value of R4 is 4.9m, and the reward value of R1 is 1.05m</p>
-<p>Punish: The position when finally landing in area A was irregular and the penalty was 0.35m.</p>
-<h3>3. Detailed evaluation criteria</h3>
-<p>The final display evaluation results of the creative section from low to high are: pass, good, and excellent.</p>
-<p>Completing the basic tasks (i.e. taking off from point A, passing through B and C and then returning to A) will result in a passing score in this section.</p>
-<p>During the entire flight, the height of the drone cannot exceed the height of the baffle, and it cannot collide with the baffle (extremely slight scratches do not count), otherwise the flight mission will be considered a failure.</p>
-<p>The evaluation criteria for the vertical projection of the drone are based on the positions of the four motors. If the vertical projection of the four motors is in a certain area, it is deemed that the projection is completely within this area. If the projection of one motor passes through a certain area, it is deemed to have passed through this area.</p>
-<p>If the vertical projection of the drone completely passes through areas B and C, it will be counted as having passed through areas B and C. When the drone lands, it will be considered as landing completely within area A. If the entire drone is only partially located in area A when landing in area A, a penalty of 0.35m will be imposed (the total score plus 0.35m). If the entire drone is not in area A at all when landing, the flight mission will be deemed a failure.</p>
-<p>For R2, R3, and R4 areas, if the vertical projection of the drone passes through this area during flight, you can get rewards in this area. When the drone lands, the part of the projection that is stationary on the ground and has two motors is in the R1 area, you can get rewards in this area.</p>
-<h3>4. Demonstration evaluation instructions</h3>
-<p>When the final results are settled, the top one-third group will receive an excellent rating, the middle one-third group will receive a good rating, and the bottom one-third group will receive a passing rating.</p>
-<p>Encourage technical creativity:</p>
-<p>A total of two valid results have been obtained and no penalty was imposed on these two results. The API used by the code to run the drone twice is not exactly the same (for example: motioncommander, multiranger, positioncommander).</p>
-<p>A total of two valid results have been obtained and no time penalty was imposed on these two results. The general operating logic used in the code for running the drone twice is completely different (for example: the use of conditional control statements while and if else).</p>
-<p>Other uses of technology that teachers believe reflect independent creativity.</p>
-<p>If one of the above conditions is met, the rating can be raised by one level when the final results are settled. If two conditions are met, the rating can be raised by two levels, capping it at an excellent rating.</p>
-<h3>5. Demonstration suggestions</h3>
-<p>It is recommended that the drone stay away from the baffle when taking off and set the take-off speed lower to facilitate stable take-off attitude and reduce the attitude after each take-off to a stable position.</p>
-<p>Make sure there is a student controlling the terminal at all times. If the drone starts scratching the bezel, please terminate the program as soon as possible to avoid damage to the drone hardware.</p>
-<p>Pay attention to the order during the test flight at the venue. Students are consciously courteous to avoid collision and impact of drones.</p>
-<p>If the above rules are unclear or unclear, consult the teacher to clarify the standards.</p>
-<h2>Speed task section</h2>
-<p>The display theme of this section is &quot;speed&quot;, and the fastest completion of the task is the best. However, students must pay attention to flight safety and try to ensure the safety and integrity of the drone hardware.</p>
-<h3>1. Task description</h3>
-<p>The map environment of this section is consistent with the map environment of the creative section. For detailed map size parameters, please refer to the description of the creative section module.</p>
-<p>The general mission requirements are as follows: the drone takes off from any starting point as shown in the figure and lands at the end point. The timing starts from the time when the drone takes off and leaves the ground, until the drone completely lands and remains stationary in the end area. Less time spent, better results. There is no flight height limit, but you must pay attention to flight safety! Pay attention to protect the drone hardware from damage!</p>
-<figure><img src="../assets/images-en/manual-13-project-demo/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<h3>2. Demonstration procedure</h3>
-<h3>Two methods</h3>
-<p>① When you are ready, find the teacher to help you time and log in the scores. They will help you time and log in the scores according to the above question requirements.</p>
-<p>② You can shoot a video to record the entire flight process yourself, and use the length of the video to judge the overall time spent logging in. However, you must pay attention to the video to clearly capture the entire process of the drone taking off and landing, when the drone started to take off, and the final landing position of the drone to see if it is in the final landing range.</p>
-<h3>3. Detailed evaluation criteria</h3>
-<p>The final criterion for judging whether the drone lands at the end point is that the position of at least two motors of the drone is within the end point area, including on the boundary. If the above criteria are not met, but at least one motor is located within the finish area or on the boundary, a 5-second penalty will be included in the score. Other landing situations will not be included in the score.</p>
-<h3>4. Demonstration evaluation instructions</h3>
-<p>The final results of the racing section are sorted by group and included in the comprehensive display evaluation together with the performance of the creative section.</p>
-<h3>5. Demonstration suggestions</h3>
-<p>Make sure there is a student controlling the terminal at all times. If the drone starts scratching the bezel, please terminate the program as soon as possible to avoid damage to the drone hardware.</p>
-<p>Pay attention to the order during the test flight at the venue. Students are consciously courteous to avoid collision and impact of drones.</p>
-<p>If the above rules are unclear or unclear, consult the teacher to clarify the standards.</p>
-<p>It is strongly recommended that students get a relatively basic score first, and then continue to optimize based on the results.</p>
-<h2>Final integrated demonstration evaluation</h2>
-<p>In principle, the display performance of the two sections (creative + racing) each accounts for 50%. The comprehensive evaluation index is calculated as follows:</p>
-<p>Comprehensive evaluation index = (creative section evaluation ranking + racing section ranking)/2</p>
-<p>In the creative section, those with excellent evaluations are ranked 1, those with good evaluations are ranked 2, and those who have completed the basic requirements are ranked 3.</p>
-<p>Ultimately, the smaller the comprehensive evaluation index of the group, the better the comprehensive project display evaluation.</p>
+<h2>Final Comprehensive Test</h2>
+<p>The final assessment contains one comprehensive task only. The drone flies at a constant speed of 0.3 m/s, takes off from any position inside Area A, passes through points B and C in any order, and finally lands back inside Area A.</p>
+<figure class="wide-figure"><img src="../assets/images-en/manual-13-project-demo/final-comprehensive-test.png" alt="Final comprehensive test map and scoring rules" loading="lazy" decoding="async"></figure>
+<h3>Arena Constraints</h3>
+<ul>
+<li>Baffle positions are not necessarily fixed; the instructor may adjust the baffle layout between test runs, and the on-site setup is authoritative.</li>
+<li>The reward points and start/end points are fixed: R1, R2, R3, and R4 keep their positions, and the start/end area is fixed as Area A.</li>
+<li>The program should not only hard-code the baffle coordinates shown in the diagram. It should use sensor data, on-site observation, or planning logic to avoid obstacles and adjust the route.</li>
+</ul>
+<h3>Scoring Rules</h3>
+<ul>
+<li>Final score: S = v &times; t - Reward + Punish. A lower score is better.</li>
+<li>Reward: R1, R2, and R3 are worth 2 m each; R4 is worth 5 m.</li>
+<li>Punish: a non-standard final landing in Area A adds 0.35 m; missing point B or C adds 10 m per point; failing to return to Area A adds 20 m.</li>
+<li>Available sensors include the Flow deck for velocity and height measurement and the horizontal range sensor.</li>
+</ul>
+<h3>Demonstration Requirements</h3>
+<ul>
+<li>Before the demonstration, explain the code logic, speed setting, sensor usage, and emergency-stop plan to the instructor.</li>
+<li>During flight, one student should monitor the terminal and emergency stop, while another student records the full flight process.</li>
+<li>If the drone touches a baffle, shows abnormal attitude, or enters an unsafe state, stop the program immediately.</li>
+</ul>
 
       </div>
     </article>
