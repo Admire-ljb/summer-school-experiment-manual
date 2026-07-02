@@ -51,11 +51,13 @@
 <h2>3. Experimental steps</h2>
 <h3>Experiment 1: Configure ROS1 operating environment on Ubuntu</h3>
 <p>First, I recommend a ROS learning website. Various ROS1/2 tutorials are shared in detail on this website, allowing students to independently explore the learning fun of ROS: Yuxiang ROS Robot https://fishros.com</p>
-<p>Here we will use an open source script to install and configure the ROS environment with one click. Using this script to configure the ROS system will be extremely convenient and suitable for beginners to quickly get started with ROS. At the same time, we also recommend some online teaching videos to students. Students who are willing to learn can refer to the videos to consolidate and expand their ROS learning:</p>
+<p>Here we use the FishROS one-click installation script from the Course Materials Package to configure the ROS environment. The script is located at <code>课程资料包/02_脚本与代码/04_fishros_install.sh</code>. Using this script to configure the ROS system is convenient for beginners. At the same time, we also recommend some online teaching videos to students. Students who are willing to learn can refer to the videos to consolidate and expand their ROS learning:</p>
 <pre><code>https://www.bilibili.com/video/BV1zt411G7Vn/?share_source=copy_web&amp;vd_source=55dbc55501d5dcce34712b0bbd70daa4</code></pre>
-<p>Open the virtual machine, enter the main interface and call out the terminal (after clicking the mouse on the desktop, press and hold the ctrl+alt+T keys at the same time, refer to the experiment manual of the first lesson.)</p>
-<p>Enter the following command in the terminal (you can right-click to select the following command, click copy, and then paste it into the terminal):</p>
-<p>wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>
+<p>First drag <code>课程资料包/02_脚本与代码/04_fishros_install.sh</code> into the virtual machine user directory or the <code>workspace</code> folder. Open the virtual machine, enter the main interface and call out the terminal (after clicking the mouse on the desktop, press and hold the ctrl+alt+T keys at the same time, refer to the experiment manual of the first lesson.)</p>
+<p>In the directory containing the script, enter the following commands to run it:</p>
+<pre><code>cp 04_fishros_install.sh fishros
+. fishros</code></pre>
+<p>The script file is included in the Course Materials Package, but installing ROS and system dependencies still requires network access inside the virtual machine.</p>
 <p>If you are required to enter a password to grant operation permission, enter the set user password. Note that the entered password will not be displayed explicitly. After inputting, directly press the Enter key.</p>
 <figure><img src="../assets/images/manual-02-ros/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At this step, we enter the number 1 and press the Enter key.</p>
@@ -64,7 +66,7 @@
 <figure><img src="../assets/images-en/manual-02-ros/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At this point enter the number 2 and press Enter.</p>
 <figure><img src="../assets/images-en/manual-02-ros/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>The next step is to let the script automatically help us select the source with the fastest download speed. Enter the number 1 and press Enter.</p>
+<p>The next step is to let the script automatically help us select the fastest software mirror. Enter the number 1 and press Enter.</p>
 <figure><img src="../assets/images-en/manual-02-ros/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>After waiting for a certain period of time, we reach this step. We choose to install ROS1, enter the number 3 and press the Enter key.</p>
 <figure><img src="../assets/images-en/manual-02-ros/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -137,9 +139,10 @@
 <li>Yuxiang ROS one-click installation script entrance</li>
 </ol>
 <p>Original link: http://fishros.com/install</p>
-<p>Classroom use: Used to download and run the ROS installation script through the command line.</p>
+<p>Classroom use: Used to run the ROS installation script from the Course Materials Package.</p>
 <ul>
-<li>The command in the manual is: wget http://fishros.com/install -O fishros &amp;&amp; . fishros</li>
+<li>Course Materials Package location: <code>课程资料包/02_脚本与代码/04_fishros_install.sh</code></li>
+<li>Run it with: <code>cp 04_fishros_install.sh fishros</code>, then <code>. fishros</code></li>
 <li>Before running the script, you need to confirm that the virtual machine is connected to the normal network. During execution, select ROS1 and desktop version according to the classroom requirements.</li>
 <li>The script will change the system software source and installation package. Please create a snapshot for the virtual machine after the installation is successful.</li>
 </ul>

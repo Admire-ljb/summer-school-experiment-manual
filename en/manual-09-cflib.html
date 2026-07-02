@@ -48,8 +48,8 @@
 <h2>2. Experimental preparation</h2>
 <p>Experiment 4 has configured the virtual machine system of the client connected to the drone. And you need to have the Linux system operating experience accumulated in the previous experiments. A little more basic python programming is needed.</p>
 <h2>3. Experimental steps</h2>
-<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>
-<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>
+<p>This experiment mainly runs Python scripts. The programming library reference is saved in the Course Materials Package at <code>课程资料包/01_网页快照/10_bitcraze_cflib_user_guides.html</code>.</p>
+<p>If you encounter difficulties during the experiment, open the package snapshot listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>
 <p>Use cflib programming to connect to drones wirelessly</p>
 <p>Use the touch command in the workspace terminal to create a python file, as shown in the figure below.</p>
 <pre><code>touch connect_log_param.py</code></pre>
@@ -147,7 +147,7 @@ scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27
 cb=param_deck_flow)
 time.sleep(1)</code></pre>
 <figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>As you can see, we imported the motioncommander module in cflib on line 10. We will call the function of this module to make the drone fly. For detailed class functions, students who have spare capacity can go to this website to view: github.com</p>
+<p>As you can see, we imported the motioncommander module in cflib on line 10. We will call this module to fly the drone. For detailed class functions, refer to the source archive in the Course Materials Package: <code>课程资料包/05_源码参考/crazyflie-lib-python-master.zip</code>.</p>
 <p>The main function of this python program is to detect whether the flowdeck module is installed on the current drone during the initialization process of the drone. This module helps the drone locate its own height and detect flight speed.</p>
 <h3>Take-off function</h3>
 <p>Write the existing program as shown in the figure below. (The previous param_deck_flow function can be retained), then run the program, the drone will take off and hover for 3 seconds before landing. Lines 21 to 23 will control the flight process, and line 14 sets the default takeoff altitude. These parameters can be changed appropriately to observe the effect.</p>

@@ -50,9 +50,9 @@
 <p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS. And you need to have the Linux system operating experience accumulated in the previous experiments.</p>
 <h2>3. Experimental steps</h2>
 <h3>Experiment 1: Copy the cfclient software installation package to the workspace folder of the virtual machine and proceed with the installation steps.</h3>
-<p>Directly use the graphical operation method to drag the software package into the file interface of the Linux virtual machine from the file interface of the host windows.</p>
+<p>The cfclient software package is located at <code>课程资料包/05_源码参考/crazyflie-clients-python-master.zip</code>. Directly use the graphical operation method to drag this archive into the file interface of the Linux virtual machine from the file interface of the host Windows.</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Double-click the compressed package and click extract to extract it to the file directory.</p>
+<p>Double-click <code>crazyflie-clients-python-master.zip</code> and click extract to extract it to the file directory.</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>At this point click the green extract button</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -66,7 +66,7 @@
 <p>Then enter the following commands to install other dependencies:</p>
 <pre><code>sudo apt install libxcb-cursor0 libxcb-xinerama0 libxkbcommon-x11-0</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Then enter the following command to configure the software source downloaded by pip3:</p>
+<p>Then enter the following command to configure the software source used by pip3:</p>
 <pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Then enter the following command to update the software tool:</p>
@@ -77,7 +77,7 @@
 <p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Experiment 2: Get to know the infrastructure of the crazyfile drone</h3>
-<p>For specific basic drone cognition tutorials, please refer to this official website: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>
+<p>For the basic Crazyflie tutorial, refer to the saved webpage snapshot in the Course Materials Package: <code>课程资料包/01_网页快照/08_bitcraze_crazyflie_2x.html</code>.</p>
 <p>First, let’s get to know the basic components of a drone. Its basic parts are as follows:</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 1 Crazyflie drone parts</p>
@@ -94,7 +94,8 @@
 <p>Bootloader Mode: Both M2 and M3 flash blue lights, about 1 time/second</p>
 <p>Self-test fails: If the M1 light flashes red 5 times quickly, and pauses for a period of time, and then flashes red light 5 times quickly, and then pauses for a period of time, and repeats this, it means that the self-test has failed. Note that self-test is different from the test before assembly (M4 will flash green light 5 times quickly, the test passes. If M1 light flashes red light 5 times quickly, it fails)</p>
 <h3>Experiment 3: Connect your drone using wired and wireless methods</h3>
-<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, you can refer to the tutorial on the official website:</p>
+<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, refer to the saved webpage snapshot in the Course Materials Package:</p>
+<p><code>课程资料包/01_网页快照/09_bitcraze_usb_permissions.html</code></p>
 <p>USB permissions | Bitcraze</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The specific operation is to enter the following commands in the terminal in the original directory:</p>
@@ -187,9 +188,9 @@ print(&#x27;Landing!&#x27;)</code></pre>
 <li>Tsinghua University PyPI mirror source</li>
 </ol>
 <p>Original link: https://pypi.tuna.tsinghua.edu.cn/simple</p>
-<p>Classroom use: Used to improve the speed and stability of pip downloading Python dependencies.</p>
+<p>Classroom use: Used to improve the speed and stability of pip access when installing Python dependencies.</p>
 <ul>
-<li>The purpose in the manual is to set the pip index-url so that cflib, GUI client and related dependencies can be downloaded faster.</li>
+<li>The purpose in the manual is to set the pip index-url so that cflib, the GUI client, and related dependencies use the Tsinghua mirror source during installation.</li>
 <li>Commonly used commands are: pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</li>
 <li>The link itself is the software package index entry, not the tutorial page; just keep the purpose description for offline materials.</li>
 </ul>
