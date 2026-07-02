@@ -49,13 +49,13 @@
 <h2>三、实验步骤</h2>
 <h3>实验一：在Ubuntu上配置ROS1运行环境</h3>
 <p>首先推荐一个ROS学习网站，各种ROS1/2的教程，该网站上都做了详细分享，可供同学们自主探索ROS的学习乐趣：鱼香ROS机器人https://fishros.com</p>
-<p>这里使用课程资料包中的 FishROS 一键安装脚本配置 ROS 环境。脚本位置为 <code>课程资料包/02_脚本与代码/04_fishros_install.sh</code>。利用该脚本配置ROS系统将会极为方便，适合初学者快速上手ROS。同时也向同学们推荐一些网络教学视频，学有余力的同学可以对照视频进行ROS学习的巩固和拓展：</p>
+<p>这里使用course-materials中的 FishROS 一键安装脚本配置 ROS 环境。脚本位置为 <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code>。利用该脚本配置ROS系统将会极为方便，适合初学者快速上手ROS。同时也向同学们推荐一些网络教学视频，学有余力的同学可以对照视频进行ROS学习的巩固和拓展：</p>
 <pre><code>https://www.bilibili.com/video/BV1zt411G7Vn/?share_source=copy_web&amp;vd_source=55dbc55501d5dcce34712b0bbd70daa4</code></pre>
-<p>先将 <code>课程资料包/02_脚本与代码/04_fishros_install.sh</code> 拖入虚拟机的用户目录或 <code>workspace</code> 文件夹中。打开虚拟机，进入主界面后呼出终端（鼠标点击一下桌面后，同时按住ctrl+alt+T键，参考第一节课的实验手册。）</p>
+<p>先将 <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code> 拖入虚拟机的用户目录或 <code>workspace</code> 文件夹中。打开虚拟机，进入主界面后呼出终端（鼠标点击一下桌面后，同时按住ctrl+alt+T键，参考第一节课的实验手册。）</p>
 <p>在脚本所在目录中输入如下命令运行脚本：</p>
 <pre><code>cp 04_fishros_install.sh fishros
 . fishros</code></pre>
-<p>该脚本本身已经放在课程资料包中，但安装 ROS 和系统依赖时仍需要虚拟机联网。</p>
+<p>该脚本本身已经放在course-materials中，但安装 ROS 和系统依赖时仍需要虚拟机联网。</p>
 <p>如要求输入密码赋予操作权限，则输入设定好的用户密码，注意输入的密码不显式显现，输入完毕直接按回车键。</p>
 <figure><img src="../assets/images/manual-02-ros/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>到这一步我们输入数字1后按回车键</p>
@@ -137,9 +137,9 @@
 <li>鱼香 ROS 一键安装脚本入口</li>
 </ol>
 <p>原始链接：http://fishros.com/install</p>
-<p>课堂用途：用于从课程资料包运行 ROS 安装脚本。</p>
+<p>课堂用途：用于从course-materials运行 ROS 安装脚本。</p>
 <ul>
-<li>课程资料包位置：<code>课程资料包/02_脚本与代码/04_fishros_install.sh</code></li>
+<li>course-materials位置：<code>course-materials/02_scripts_and_code/04_fishros_install.sh</code></li>
 <li>手册中的运行命令为：<code>cp 04_fishros_install.sh fishros</code>，然后执行 <code>. fishros</code></li>
 <li>运行脚本前需确认虚拟机联网正常，执行过程中按课堂要求选择 ROS1 和桌面版。</li>
 <li>脚本会改动系统软件源和安装包，请在安装成功后为虚拟机创建快照。</li>

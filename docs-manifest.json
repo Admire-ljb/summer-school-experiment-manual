@@ -10,8 +10,8 @@
       "purpose": "Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.",
       "preparation": [
         "Windows host computer with sufficient memory and disk space.",
-        "Course Materials Package: 04_虚拟机安装资源/VMware-workstation-full-16.2.5-20904516.exe.",
-        "Course Materials Package: 04_虚拟机安装资源/ubuntu-20.04.6-desktop-amd64.iso."
+        "Course Materials Package: course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe.",
+        "Course Materials Package: course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso."
       ],
       "procedure": [
         "Install VMware Workstation and verify that the new virtual-machine wizard is available.",
@@ -37,7 +37,7 @@
         "Terminal access and basic Linux command familiarity."
       ],
       "procedure": [
-        "Run the FishROS script from Course Materials Package: 02_脚本与代码/04_fishros_install.sh.",
+        "Run the FishROS script from Course Materials Package: course-materials/02_scripts_and_code/04_fishros_install.sh.",
         "Start roscore and run turtlesim-related commands.",
         "Use ROS tools to inspect nodes, topics, graphs, and message data."
       ],
@@ -57,7 +57,7 @@
       "preparation": [
         "Ubuntu/ROS environment from the previous manuals.",
         "Crazyflie aircraft, battery, USB cable, and Crazyradio.",
-        "Course Materials Package: 05_源码参考/crazyflie-clients-python-master.zip, cflib, and required Python dependencies."
+        "Course Materials Package: course-materials/05_source_references/crazyflie-clients-python-master.zip, cflib, and required Python dependencies."
       ],
       "procedure": [
         "Install the Crazyflie client and required libraries.",
@@ -170,7 +170,7 @@
       "source_name": "Day3_实验手册1-路径规划仿真.docx",
       "purpose": "Run path-planning simulation experiments and compare route-generation behavior.",
       "preparation": [
-        "Course Materials Package: 00_工程压缩包/uav_motion_planning.zip.",
+        "Course Materials Package: course-materials/00_project_archives/uav_motion_planning.zip.",
         "Ubuntu environment with required dependencies.",
         "Terminal access in the project directory."
       ],

@@ -48,7 +48,7 @@
 <p>实验2已经配置好ROS的Ubuntu20.04虚拟机。并且需要具备前几门实验已经积累的linux系统操作经验。</p>
 <h2>三、实验步骤</h2>
 <h3>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</h3>
-<p>cfclient 软件安装包位于 <code>课程资料包/05_源码参考/crazyflie-clients-python-master.zip</code>。直接用图形化操作的方法，在主机windows的文件界面将该压缩包拖动进linux虚拟机的文件界面即可。</p>
+<p>cfclient 软件安装包位于 <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>。直接用图形化操作的方法，在主机windows的文件界面将该压缩包拖动进linux虚拟机的文件界面即可。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>再双击 <code>crazyflie-clients-python-master.zip</code>，点击extract解压至该文件目录下。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -75,7 +75,7 @@
 <p>无报错安装完成之后，重启虚拟机，输入cfclient命令，出现如下界面则代表环境配置安装成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>实验二：认识crazyfile无人机的基础结构</h3>
-<p>具体的无人机基础认知教程可参考课程资料包中的网页快照：<code>课程资料包/01_网页快照/08_bitcraze_crazyflie_2x.html</code>。</p>
+<p>具体的无人机基础认知教程可参考course-materials中的网页快照：<code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>。</p>
 <p>首先来认识一下无人机的基础组成部分，其基础的零件构成如下：</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>图 1 Crazyflie无人机的零部件</p>
@@ -92,8 +92,8 @@
 <p>Bootloader Mode: M2和M3都闪烁蓝灯，约1次/秒</p>
 <p>self-test失败：如果M1灯是快速闪5次红灯，并且停顿一段时间，再次重复短闪快速闪5次红灯，再停顿一段时间，如此重复，说明self-test是失败的。注意self-test与组装之前的测试(M4会快速闪5次绿灯，则测试通过。如果M1灯快速闪5次红灯，则失败)是不一样的</p>
 <h3>实验三：使用有线和无线的方式连接无人机</h3>
-<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以参考课程资料包中的网页快照：</p>
-<p><code>课程资料包/01_网页快照/09_bitcraze_usb_permissions.html</code></p>
+<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以参考course-materials中的网页快照：</p>
+<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>
 <p>USB permissions | Bitcraze</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>具体操作为在原目录的终端中依次输入以下命令：</p>
@@ -138,7 +138,7 @@ sudo udevadm trigger</code></pre>
 <p>再安装最后一个所需的依赖，在终端中输入如下命令：</p>
 <pre><code>pip3 install cflib</code></pre>
 <p>然后在终端中输入python3 test.py命令运行该脚本，脚本开始运行后，先等待一段时间的初始化，通过无线的方式向无人机发送指令，无人机接收到指令后进行相印的飞行动作。</p>
-<p>补充，实验官方教程已保存到课程资料包：<code>课程资料包/01_网页快照/07_bitcraze_stem_drone_bundle.html</code>。</p>
+<p>补充，实验官方教程已保存到course-materials：<code>course-materials/01_web_snapshots/07_bitcraze_stem_drone_bundle.html</code>。</p>
 <p>test.py脚本内容为：</p>
 <pre><code>import logging
 import time

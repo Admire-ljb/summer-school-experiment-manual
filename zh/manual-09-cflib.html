@@ -46,7 +46,7 @@
 <h2>二、实验准备</h2>
 <p>实验四已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
 <h2>三、实验步骤</h2>
-<p>本次实验将主要进行python脚本的运行，编程库参考资料已保存到课程资料包：<code>课程资料包/01_网页快照/10_bitcraze_cflib_user_guides.html</code>。</p>
+<p>本次实验将主要进行python脚本的运行，编程库参考资料已保存到course-materials：<code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>。</p>
 <p>若在进行实验中遇到一些困难，也可打开上述资料包网页快照进行进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
 <p>使用cflib编程以无线的方式连接到无人机</p>
 <p>在workspace的终端下使用touch命令创建python文件，如下图所示。</p>
@@ -145,7 +145,7 @@ scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27
 cb=param_deck_flow)
 time.sleep(1)</code></pre>
 <figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行。详细的类函数可查看课程资料包中的源码：<code>课程资料包/05_源码参考/crazyflie-lib-python-master.zip</code>。</p>
+<p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行。详细的类函数可查看course-materials中的源码：<code>course-materials/05_source_references/crazyflie-lib-python-master.zip</code>。</p>
 <p>该python程序主要实现的功能为在无人机初始化的过程中检测当前无人机是否安装了flowdeck模块，该模块帮助无人机定位自身高度和检测飞行速度。</p>
 <h3>起飞功能</h3>
 <p>将已有的程序按照如下图所示的程序进行编写。（之前的param_deck_flow函数可以保留），然后运行该程序，无人机将会起飞悬停3秒后降落。第21至23行则会控制该飞行流程，第14行设置了默认起飞高度。可以适当改变这些参数来观察效果。</p>
