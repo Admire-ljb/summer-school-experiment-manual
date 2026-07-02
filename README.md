@@ -2,6 +2,7 @@
 
 Bilingual experiment manual for palm-sized UAV summer school labs.
 
+- The GitHub Pages root entry opens the English documentation by default.
 - `zh/` contains Chinese experiment pages, including text, tables, links, commands, and figures.
 - `en/` contains English experiment pages with language switches back to the Chinese pages.
 - `.github/workflows/pages.yml` deploys the static site with GitHub Pages Actions.

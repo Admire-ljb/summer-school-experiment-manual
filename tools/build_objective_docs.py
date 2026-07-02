@@ -1026,7 +1026,7 @@ def layout(lang: str, title: str, body: str, current_slug: str | None = None) ->
     language_switch = (
         f'<span>\u4e2d\u6587</span><a href="{en_href}">English</a>'
         if lang == "zh"
-        else f'<a href="{zh_href}">\u4e2d\u6587</a><span>English</span>'
+        else f'<a href="{zh_href}">Chinese</a><span>English</span>'
     )
     project_title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c" if lang == "zh" else "Palm-sized UAV Experiment Manual"
     search = "\u641c\u7d22\u6587\u6863" if lang == "zh" else "Search docs"
@@ -1275,13 +1275,14 @@ const toggle=document.getElementById('menu-toggle');if(toggle){toggle.addEventLi
 
 
 def write_root_files(manifest: dict[str, dict[str, int]]) -> None:
-    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=zh/index.html"><title>Palm-sized UAV Experiment Manual</title></head><body><p><a href="zh/index.html">\u4e2d\u6587</a> &middot; <a href="en/index.html">English</a></p></body></html>\n', encoding="utf-8")
+    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Experiment Manual</title></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
     (ROOT / ".nojekyll").write_text("", encoding="utf-8")
     (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2), encoding="utf-8")
     (ROOT / "README.md").write_text("""# Palm-sized UAV Experiment Manual
 
 Bilingual experiment manual for palm-sized UAV summer school labs.
 
+- The GitHub Pages root entry opens the English documentation by default.
 - `zh/` contains Chinese experiment pages, including text, tables, links, commands, and figures.
 - `en/` contains English experiment pages with language switches back to the Chinese pages.
 - `.github/workflows/pages.yml` deploys the static site with GitHub Pages Actions.
