@@ -1087,6 +1087,8 @@ def write_index(lang: str) -> None:
             "<p>\u672c\u624b\u518c\u9762\u5411\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u8bfe\u7a0b\uff0c\u5185\u5bb9\u5305\u62ec\u73af\u5883\u914d\u7f6e\u3001\u4f20\u611f\u5668\u4f7f\u7528\u3001\u8def\u5f84\u89c4\u5212\u3001cflib \u7f16\u7a0b\u548c\u7efc\u5408\u9879\u76ee\u4efb\u52a1\u3002</p>"
             "<div class=\"admonition warning\"><p class=\"admonition-title\">\u5b89\u5168\u8bf4\u660e</p>"
             "<p>\u6d89\u53ca\u771f\u5b9e\u98de\u884c\u7684\u5b9e\u9a8c\u5fc5\u987b\u5728\u6559\u5e08\u6216\u52a9\u6559\u786e\u8ba4\u573a\u5730\u3001\u8bbe\u5907\u3001\u7535\u6c60\u548c\u6025\u505c\u6d41\u7a0b\u540e\u8fdb\u884c\u3002</p></div>"
+            "<div class=\"admonition\"><p class=\"admonition-title\">\u8bfe\u7a0b\u8d44\u6599\u5305</p>"
+            "<p>\u8bfe\u7a0b\u8d44\u6599\u5305\u6587\u4ef6\u5939\u540d\u4e3a <code>course-materials</code>\uff0c\u53ef\u901a\u8fc7 <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">\u5317\u822a\u7f51\u76d8\u94fe\u63a5</a> \u4e0b\u8f7d\uff0c\u6709\u6548\u671f\u81f3 2028-11-11 10:31\u3002\u4e0b\u8f7d\u540e\u8bf7\u89e3\u538b\u4e3a <code>course-materials</code> \u6587\u4ef6\u5939\uff0c\u4ee5\u4fbf\u4e0e\u672c\u6587\u6863\u4e2d\u7684\u8def\u5f84\u4fdd\u6301\u4e00\u81f4\u3002</p></div>"
             "<h2>\u5b9e\u9a8c\u76ee\u5f55</h2><div class=\"toctree-wrapper\">"
         )
         for manual in MANUALS:
@@ -1094,7 +1096,7 @@ def write_index(lang: str) -> None:
         body += "</div>"
         title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c"
     else:
-        body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
+        body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><div class=\"admonition\"><p class=\"admonition-title\">Course Materials Package</p><p>Download the <code>course-materials</code> folder from the <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">BUAA cloud link</a>. The link is valid until November 11, 2028 at 10:31. After downloading, extract it as <code>course-materials</code> so the paths in this manual match the folder name.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
         for manual in MANUALS:
             body += f'<a class="doc-card" href="{manual.slug}.html"><span>Experiment {manual.number}</span><strong>{html.escape(manual.en_title)}</strong></a>\n'
         body += "</div>"
