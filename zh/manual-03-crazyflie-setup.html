@@ -67,11 +67,13 @@
 <p>再输入以下命令配置一下pip3使用的软件源：</p>
 <pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>再输入以下命令更新软件工具：</p>
-<p>pip3 install --upgrade pip setuptools wheel</p>
+<p>再输入以下命令更新 Python 打包工具。Ubuntu 20.04 的 Python 3.8 环境中，直接升级到最新 <code>setuptools</code> 可能与旧版 <code>importlib_metadata</code> 冲突，并在后续安装时出现 <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code>。因此这里固定 <code>setuptools</code> 到 71 以下，并补齐 <code>importlib_metadata</code> 和 <code>testresources</code>。</p>
+<pre><code>python3 -m pip install --user --upgrade pip wheel importlib_metadata testresources
+python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<div class="admonition warning"><p class="admonition-title">故障处理</p><p>如果已经执行过旧命令，并在 <code>pip3 install -e .</code> 时看到上述 <code>EntryPoints</code> 报错，先执行上面的两行工具修复命令，再回到 <code>crazyflie-clients-python</code> 目录继续执行下面的安装命令。</p></div>
 <p>最后输入以下命令进行总的软件依赖安装整理：</p>
-<pre><code>pip3 install -e .</code></pre>
+<pre><code>python3 -m pip install --user -e .</code></pre>
 <p>无报错安装完成之后，重启虚拟机，输入cfclient命令，出现如下界面则代表环境配置安装成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>实验二：认识crazyfile无人机的基础结构</h3>

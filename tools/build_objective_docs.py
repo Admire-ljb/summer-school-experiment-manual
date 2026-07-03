@@ -40,6 +40,8 @@ FINAL_TEST_SLUG = "manual-13-project-demo"
 FINAL_TEST_IMAGE_NAME = "final-comprehensive-test.png"
 FINAL_TEST_ZH_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-zh.png"
 FINAL_TEST_EN_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-en.png"
+CFCLIENT_TOOLCHAIN_IMAGE_SOURCE = ASSET_SOURCE_DIR / "manual-03-cfclient-python38-toolchain.png"
+CFCLIENT_TOOLCHAIN_IMAGE_NAME = "009.png"
 MAX_IMAGE_WIDTH = 1440
 MAX_IMAGE_HEIGHT = 1200
 OCR_MAX_IMAGE_SIDE = 800
@@ -126,6 +128,14 @@ def copy_final_test_images() -> None:
         out_dir = image_root / FINAL_TEST_SLUG
         out_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, out_dir / FINAL_TEST_IMAGE_NAME)
+
+
+def copy_cfclient_toolchain_image() -> None:
+    if not CFCLIENT_TOOLCHAIN_IMAGE_SOURCE.exists():
+        raise FileNotFoundError(f"Missing cfclient toolchain image source: {CFCLIENT_TOOLCHAIN_IMAGE_SOURCE}")
+    out_dir = IMAGE_DIR / "manual-03-crazyflie-setup"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(CFCLIENT_TOOLCHAIN_IMAGE_SOURCE, out_dir / CFCLIENT_TOOLCHAIN_IMAGE_NAME)
 
 
 def relationship_map(zf: zipfile.ZipFile) -> dict[str, str]:
@@ -1098,6 +1108,47 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
+def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
+    if manual.slug != "manual-03-crazyflie-setup":
+        return body
+    image = '<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>'
+    if lang == "zh":
+        old = (
+            "<p>再输入以下命令更新软件工具：</p>\n"
+            "<p>pip3 install --upgrade pip setuptools wheel</p>\n"
+            f"{image}\n"
+            "<p>最后输入以下命令进行总的软件依赖安装整理：</p>\n"
+            "<pre><code>pip3 install -e .</code></pre>"
+        )
+        new = (
+            "<p>再输入以下命令更新 Python 打包工具。Ubuntu 20.04 的 Python 3.8 环境中，直接升级到最新 <code>setuptools</code> 可能与旧版 <code>importlib_metadata</code> 冲突，并在后续安装时出现 <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code>。因此这里固定 <code>setuptools</code> 到 71 以下，并补齐 <code>importlib_metadata</code> 和 <code>testresources</code>。</p>\n"
+            "<pre><code>python3 -m pip install --user --upgrade pip wheel importlib_metadata testresources\n"
+            "python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre>\n"
+            f"{image}\n"
+            "<div class=\"admonition warning\"><p class=\"admonition-title\">故障处理</p><p>如果已经执行过旧命令，并在 <code>pip3 install -e .</code> 时看到上述 <code>EntryPoints</code> 报错，先执行上面的两行工具修复命令，再回到 <code>crazyflie-clients-python</code> 目录继续执行下面的安装命令。</p></div>\n"
+            "<p>最后输入以下命令进行总的软件依赖安装整理：</p>\n"
+            "<pre><code>python3 -m pip install --user -e .</code></pre>"
+        )
+        return body.replace(old, new)
+    old = (
+        "<p>Then enter the following command to update the software tool:</p>\n"
+        "<p>pip3 install --upgrade pip setuptools wheel</p>\n"
+        f"{image}\n"
+        "<p>Finally, enter the following command to complete the overall software dependency installation:</p>\n"
+        "<pre><code>pip3 install -e .</code></pre>"
+    )
+    new = (
+        "<p>Then update the Python packaging tools. In Ubuntu 20.04 with Python 3.8, upgrading directly to the newest <code>setuptools</code> can conflict with an older <code>importlib_metadata</code> package and later cause <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code>. Keep <code>setuptools</code> below 71 and install <code>importlib_metadata</code> and <code>testresources</code> explicitly.</p>\n"
+        "<pre><code>python3 -m pip install --user --upgrade pip wheel importlib_metadata testresources\n"
+        "python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre>\n"
+        f"{image}\n"
+        "<div class=\"admonition warning\"><p class=\"admonition-title\">Troubleshooting</p><p>If you already ran the old command and see the <code>EntryPoints</code> error during <code>pip3 install -e .</code>, run the two tool-fix commands above first. Then return to the <code>crazyflie-clients-python</code> directory and continue with the installation command below.</p></div>\n"
+        "<p>Finally, enter the following command to complete the overall software dependency installation:</p>\n"
+        "<pre><code>python3 -m pip install --user -e .</code></pre>"
+    )
+    return body.replace(old, new)
+
+
 def final_test_image_src(lang: str) -> str:
     image_root = "images-en" if lang == "en" else "images"
     return f"../assets/{image_root}/{FINAL_TEST_SLUG}/{FINAL_TEST_IMAGE_NAME}"
@@ -1175,6 +1226,7 @@ def write_pages() -> dict[str, dict[str, int]]:
     cache = ensure_translations(translation_texts)
     image_map = build_english_images(image_ocr, cache)
     copy_final_test_images()
+    copy_cfclient_toolchain_image()
 
     for manual, blocks, _stats in extracted.values():
         if manual.slug == FINAL_TEST_SLUG:
@@ -1183,6 +1235,8 @@ def write_pages() -> dict[str, dict[str, int]]:
         else:
             zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
             en_body = english_body(manual, blocks, cache, image_map)
+        zh_body = apply_manual_overrides(manual, "zh", zh_body)
+        en_body = apply_manual_overrides(manual, "en", en_body)
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
         (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, en_body, manual.slug), encoding="utf-8")
     return manifest

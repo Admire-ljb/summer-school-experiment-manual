@@ -69,11 +69,13 @@
 <p>Then enter the following command to configure the software source used by pip3:</p>
 <pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Then enter the following command to update the software tool:</p>
-<p>pip3 install --upgrade pip setuptools wheel</p>
+<p>Then update the Python packaging tools. In Ubuntu 20.04 with Python 3.8, upgrading directly to the newest <code>setuptools</code> can conflict with an older <code>importlib_metadata</code> package and later cause <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code>. Keep <code>setuptools</code> below 71 and install <code>importlib_metadata</code> and <code>testresources</code> explicitly.</p>
+<pre><code>python3 -m pip install --user --upgrade pip wheel importlib_metadata testresources
+python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<div class="admonition warning"><p class="admonition-title">Troubleshooting</p><p>If you already ran the old command and see the <code>EntryPoints</code> error during <code>pip3 install -e .</code>, run the two tool-fix commands above first. Then return to the <code>crazyflie-clients-python</code> directory and continue with the installation command below.</p></div>
 <p>Finally, enter the following command to complete the overall software dependency installation:</p>
-<pre><code>pip3 install -e .</code></pre>
+<pre><code>python3 -m pip install --user -e .</code></pre>
 <p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Experiment 2: Get to know the infrastructure of the crazyfile drone</h3>
