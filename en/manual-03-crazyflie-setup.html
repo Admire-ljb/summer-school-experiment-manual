@@ -129,6 +129,18 @@ sudo udevadm trigger</code></pre>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/019.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Also during the connection process, ensure that the drone is still and flat, so that it can initialize the attitude. The following interface will appear. Hold the drone in your hand, and if the attitude interface changes accordingly, the wireless connection is successful.</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<h3>Radio Planning for Multi-group Experiments</h3>
+<p>When several groups use Crazyradio in the same room, assign each group a fixed complete radio URI. The URI format is <code>radio://interface/channel/data-rate/address</code>, for example <code>radio://0/60/2M/E7E7E7E7A3</code>. The channel reduces same-frequency congestion, while the address prevents accidental connection to another group&apos;s drone. Changing only the address is not enough to fully avoid same-channel interference.</p>
+<table><tbody>
+<tr><th>Group</th><th>Recommended URI</th></tr>
+<tr><td>Group A</td><td><code>radio://0/40/2M/E7E7E7E7A1</code></td></tr>
+<tr><td>Group B</td><td><code>radio://0/50/2M/E7E7E7E7A2</code></td></tr>
+<tr><td>Group C</td><td><code>radio://0/60/2M/E7E7E7E7A3</code></td></tr>
+<tr><td>Group D</td><td><code>radio://0/70/2M/E7E7E7E7A4</code></td></tr>
+<tr><td>Group E</td><td><code>radio://0/80/2M/E7E7E7E7A5</code></td></tr>
+</tbody></table>
+<p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. After that, the cfclient address field and all Python scripts for that group should use the same complete URI.</p>
+<div class="admonition warning"><p class="admonition-title">Classroom note</p><p>For multi-group experiments in one room, keep channels well separated, for example by 10 channels. Label each drone and computer with its group, channel, address, and full URI. Before formal flight, test each group one by one and confirm that it does not scan or connect to another group&apos;s drone.</p></div>
 <h3>Experiment 4: Use python script to make drone take off autonomously</h3>
 <h3>Core components</h3>
 <p>Flow Deck: The Flow Deck is a lidar ranging sensor board used to measure the height and distance of the Crazyflie drone from the ground. It can help drones achieve altitude positioning and stable hovering.</p>
