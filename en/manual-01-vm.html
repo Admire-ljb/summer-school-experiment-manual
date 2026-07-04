@@ -54,6 +54,16 @@
 <h3>Tool preparation</h3>
 <p>Task Manager (check the number of CPU cores on the physical machine).</p>
 <p>A text editor (such as Notepad, used to record virtual machine configuration parameters).</p>
+<h3>Supplement for Mac Users</h3>
+<p>Intel Mac users can continue to use the amd64 Ubuntu 20.04 Desktop image in the main workflow. Replace VMware Workstation with a macOS virtualization tool such as VMware Fusion, UTM, or VirtualBox.</p>
+<p>Apple Silicon Macs (M1/M2/M3/M4) should not use the amd64 desktop image directly. Use an ARM64 Ubuntu virtual machine instead. ARM64 image URL:</p>
+<pre><code>https://cdimage.ubuntu.com/ubuntu/releases/20.04.5/release/ubuntu-20.04.5-live-server-arm64.iso</code></pre>
+<p>This image is Ubuntu Server and does not include a desktop environment by default. After creating and starting the virtual machine in VMware Fusion, complete the text-mode installer as follows: select English, keep the keyboard as English (US), use DHCP networking, keep the default mirror, select <code>Use an entire disk</code>, and create the username, host name, and password. OpenSSH is optional; leave other extra package selections empty. After installation, choose <code>Reboot Now</code>. If the installer asks you to remove the installation medium, disconnect the ISO in the virtual-machine settings and press Enter.</p>
+<p>After the first command-line login, install the desktop environment and VMware tools:</p>
+<pre><code>sudo apt update
+sudo apt install -y ubuntu-desktop open-vm-tools open-vm-tools-desktop
+sudo reboot</code></pre>
+<div class="admonition warning"><p class="admonition-title">Classroom note</p><p>Treat the Apple Silicon path as a supplemental path and verify ROS Noetic, cfclient, the course simulation project, and Crazyradio USB passthrough before the formal lab. The primary classroom path should remain an x86_64 Ubuntu 20.04 Desktop VM so that the environment stays consistent.</p></div>
 <h2>3. Experimental steps</h2>
 <h3>Stage 1: VMware software installation</h3>
 <p>For the specific illustrated process, open the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/01_vmware16_install_csdn.html</code>. Original link:</p>

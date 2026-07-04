@@ -1110,7 +1110,47 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
+def vm_manual_supplement(lang: str) -> str:
+    if lang == "zh":
+        return '''<h3>Mac 用户补充方案</h3>
+<p>Intel Mac 用户可以继续使用本实验主流程中的 amd64 Ubuntu 20.04 Desktop 镜像，只需将虚拟机软件替换为 VMware Fusion、UTM 或 VirtualBox 等 macOS 可用工具。</p>
+<p>Apple Silicon Mac（M1/M2/M3/M4）不能直接使用 amd64 桌面镜像，应使用 ARM64 Ubuntu 虚拟机。ARM64 镜像地址：</p>
+<pre><code>https://cdimage.ubuntu.com/ubuntu/releases/20.04.5/release/ubuntu-20.04.5-live-server-arm64.iso</code></pre>
+<p>该镜像是 Ubuntu Server，默认没有图形界面。使用 VMware Fusion 创建虚拟机并启动后，按文本安装界面完成以下配置：语言选择 English，键盘保持 English (US)，网络使用 DHCP，镜像源保持默认，磁盘选择 <code>Use an entire disk</code>，创建用户名、主机名和密码；OpenSSH 可按需要勾选，其他附加软件包暂不选择。安装完成后选择 <code>Reboot Now</code>，如提示移除安装介质，请在虚拟机设置中断开 ISO 后回车继续。</p>
+<p>首次登录命令行后，执行以下命令安装桌面环境和 VMware 工具：</p>
+<pre><code>sudo apt update
+sudo apt install -y ubuntu-desktop open-vm-tools open-vm-tools-desktop
+sudo reboot</code></pre>
+<div class="admonition warning"><p class="admonition-title">课堂建议</p><p>Apple Silicon 方案应作为补充方案使用，并在正式实验前完成 ROS Noetic、cfclient、课程仿真工程和 Crazyradio USB 透传测试。课堂主方案仍建议使用 x86_64 Ubuntu 20.04 Desktop 虚拟机，以保证环境一致。</p></div>
+'''
+    return '''<h3>Supplement for Mac Users</h3>
+<p>Intel Mac users can continue to use the amd64 Ubuntu 20.04 Desktop image in the main workflow. Replace VMware Workstation with a macOS virtualization tool such as VMware Fusion, UTM, or VirtualBox.</p>
+<p>Apple Silicon Macs (M1/M2/M3/M4) should not use the amd64 desktop image directly. Use an ARM64 Ubuntu virtual machine instead. ARM64 image URL:</p>
+<pre><code>https://cdimage.ubuntu.com/ubuntu/releases/20.04.5/release/ubuntu-20.04.5-live-server-arm64.iso</code></pre>
+<p>This image is Ubuntu Server and does not include a desktop environment by default. After creating and starting the virtual machine in VMware Fusion, complete the text-mode installer as follows: select English, keep the keyboard as English (US), use DHCP networking, keep the default mirror, select <code>Use an entire disk</code>, and create the username, host name, and password. OpenSSH is optional; leave other extra package selections empty. After installation, choose <code>Reboot Now</code>. If the installer asks you to remove the installation medium, disconnect the ISO in the virtual-machine settings and press Enter.</p>
+<p>After the first command-line login, install the desktop environment and VMware tools:</p>
+<pre><code>sudo apt update
+sudo apt install -y ubuntu-desktop open-vm-tools open-vm-tools-desktop
+sudo reboot</code></pre>
+<div class="admonition warning"><p class="admonition-title">Classroom note</p><p>Treat the Apple Silicon path as a supplemental path and verify ROS Noetic, cfclient, the course simulation project, and Crazyradio USB passthrough before the formal lab. The primary classroom path should remain an x86_64 Ubuntu 20.04 Desktop VM so that the environment stays consistent.</p></div>
+'''
+
+
+def apply_vm_manual_overrides(lang: str, body: str) -> str:
+    if lang == "zh":
+        marker = '<h2>三、实验步骤</h2>'
+        sentinel = "Mac 用户补充方案"
+    else:
+        marker = '<h2>3. Experimental steps</h2>'
+        sentinel = "Supplement for Mac Users"
+    if sentinel not in body and marker in body:
+        body = body.replace(marker, vm_manual_supplement(lang) + marker, 1)
+    return body
+
+
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
+    if manual.slug == "manual-01-vm":
+        return apply_vm_manual_overrides(lang, body)
     if manual.slug != "manual-03-crazyflie-setup":
         return body
     image = '<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>'
