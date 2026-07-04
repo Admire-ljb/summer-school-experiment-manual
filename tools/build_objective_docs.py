@@ -1142,11 +1142,11 @@ def apply_vm_manual_overrides(lang: str, body: str) -> str:
         sentinel = "Mac 用户补充方案"
         replacements = {
             "<p>物理机配置：建议8GB以上内存、50GB以上可用磁盘空间（虚拟机需占用约20GB）。</p>":
-            "<p>物理机配置：建议16GB以上内存，并保证能够为虚拟机分配100GB磁盘空间。虚拟机统一按8GB内存、100GB磁盘配置，后续人形机器人及其他课程也优先复用该环境。</p>",
+            "<p>物理机配置：建议16GB以上内存，并保证能够为虚拟机分配100GB磁盘空间。虚拟机统一按8GB内存、100GB磁盘配置，后续扩展实验也优先复用该环境。</p>",
             "<p>运行内存可以使用默认推荐内存，点击下一步</p>":
             "<p>运行内存设置为8GB，设置完成后点击下一步</p>",
             "<p>可以稍微增大磁盘空间，点击下一步</p>":
-            "<p>磁盘容量设置为100GB，后续课程会继续使用该虚拟机环境。设置完成后点击下一步</p>",
+            "<p>磁盘容量设置为100GB，后续实验会继续使用该虚拟机环境。设置完成后点击下一步</p>",
             "<p>处理器：根据物理机核心数分配（如4核CPU分配2核，每个核心1-2线程）。</p>":
             "<p>处理器：根据物理机核心数分配，建议至少分配4个虚拟CPU；高性能电脑可分配6-8个虚拟CPU，但应保留足够资源给宿主机。</p>",
             "<p>基础任务：2GB</p>":
@@ -1167,11 +1167,11 @@ def apply_vm_manual_overrides(lang: str, body: str) -> str:
         sentinel = "Supplement for Mac Users"
         replacements = {
             "<p>Physical machine configuration: It is recommended to have more than 8GB of memory and more than 50GB of available disk space (the virtual machine needs to occupy about 20GB).</p>":
-            "<p>Physical machine configuration: more than 16GB of memory is recommended, and the host should be able to allocate a 100GB virtual disk. Configure the virtual machine with 8GB of memory and a 100GB disk; the same environment should be reused for later humanoid-robot and other course tasks whenever possible.</p>",
+            "<p>Physical machine configuration: more than 16GB of memory is recommended, and the host should be able to allocate a 100GB virtual disk. Configure the virtual machine with 8GB of memory and a 100GB disk; the same environment should be reused for later extended experiments whenever possible.</p>",
             "<p>You can use the default recommended memory for running memory, click Next</p>":
             "<p>Set the virtual-machine memory to 8GB, then click Next.</p>",
             "<p>You can slightly increase the disk space, click Next</p>":
-            "<p>Set the disk capacity to 100GB. Later courses will continue to use this virtual-machine environment. Then click Next.</p>",
+            "<p>Set the disk capacity to 100GB. Later experiments will continue to use this virtual-machine environment. Then click Next.</p>",
             "<p>Processor: allocated according to the number of cores of the physical machine (for example, a 4-core CPU is allocated 2 cores, and each core has 1-2 threads).</p>":
             "<p>Processor: allocate resources according to the number of host CPU cores. At least 4 virtual CPUs are recommended. High-performance computers may use 6-8 virtual CPUs, while keeping enough resources for the host system.</p>",
             "<p>Basic tasks: 2GB</p>":
