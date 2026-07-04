@@ -47,7 +47,7 @@
 <p>Understand the core concepts of virtual machines (such as hardware isolation, snapshot management) and their application scenarios in development and testing.</p>
 <h2>2. Experimental preparation</h2>
 <h3>Hardware requirements</h3>
-<p>Physical machine configuration: It is recommended to have more than 8GB of memory and more than 50GB of available disk space (the virtual machine needs to occupy about 20GB).</p>
+<p>Physical machine configuration: more than 16GB of memory and more than 150GB of available disk space are recommended. If the same virtual machine will also support humanoid-robot simulation, AI toolchains, or other course environments, reserve more than 200GB of available space if possible.</p>
 <h3>Software resources (from the Course Materials Package)</h3>
 <p>VMware Workstation Pro 16: <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>
 <p>Ubuntu 20.04 LTS Desktop image file: <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>
@@ -92,7 +92,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images-en/manual-01-vm/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The number of processors and cores can be adjusted appropriately. You can set it as shown and click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>You can use the default recommended memory for running memory, click Next</p>
+<p>Set the virtual-machine memory to 8GB. If the host has 32GB or more memory, 12GB is recommended so the same environment can later support humanoid-robot simulation and other course tasks. Then click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>You can use the default configuration for the network type, click Next</p>
 <figure><img src="../assets/images-en/manual-01-vm/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -102,7 +102,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images-en/manual-01-vm/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Select Create a new virtual disk and click Next</p>
 <figure><img src="../assets/images-en/manual-01-vm/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>You can slightly increase the disk space, click Next</p>
+<p>Set the disk capacity to 120GB. If disk space is sufficient, 150GB is recommended. Because later courses will continue to use this virtual-machine environment, do not allocate less than 80GB. Then click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Just click Next on this page</p>
 <figure><img src="../assets/images-en/manual-01-vm/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -112,14 +112,14 @@ sudo reboot</code></pre>
 <p>Virtual machine name: Ubuntu20.04_Test.</p>
 <p>Storage path: Select the newly created VMware_Ubuntu folder under drive D.</p>
 <h3>Hardware configuration</h3>
-<p>Processor: allocated according to the number of cores of the physical machine (for example, a 4-core CPU is allocated 2 cores, and each core has 1-2 threads).</p>
+<p>Processor: allocate resources according to the number of host CPU cores. At least 4 virtual CPUs are recommended. High-performance computers may use 6-8 virtual CPUs, while keeping enough resources for the host system.</p>
 <p>Memory:</p>
-<p>Basic tasks: 2GB</p>
-<p>Multitasking/development environment: 4GB</p>
-<p>Reserve at least 4GB of memory for the physical machine.</p>
+<p>Basic UAV experiments: 8GB</p>
+<p>Humanoid-robot simulation, AI toolchains, or multi-course reuse: 12GB</p>
+<p>Reserve at least 8GB of memory for the host machine.</p>
 <p>disk:</p>
 <p>Type: SCSI (recommended)</p>
-<p>Capacity: Allocate 60GB, select &quot;Store as single file&quot;.</p>
+<p>Capacity: allocate 120GB. If disk space is sufficient, allocate 150GB. Select &quot;Store as single file&quot;.</p>
 <p>Network: Default NAT mode (automatically obtains IP and can access the external network).</p>
 <h3>Load ISO image</h3>
 <p>In the virtual machine settings, select the CD/DVD drive and load <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code> from the Course Materials Package.</p>
@@ -133,9 +133,9 @@ sudo reboot</code></pre>
 <p>Partition settings:</p>
 <p>Select &quot;Other options&quot; to create the partition table manually.</p>
 <p>Partitioning scheme:</p>
-<p>/ (root directory): 20GB, EXT4 file system.</p>
+<p>/ (root directory): 50GB, EXT4 file system.</p>
 <p>/home (user directory): remaining space, EXT4 file system.</p>
-<p>Swap (swap partition): 2GB (spare when memory is insufficient).</p>
+<p>Swap (swap partition): 4GB (spare when memory is insufficient).</p>
 <p>User information: Set username (such as student) and password (need to remember).</p>
 <p>Installation is complete: Click &quot;Restart&quot;, remove the ISO image and press Enter.</p>
 <h3>System initialization</h3>
