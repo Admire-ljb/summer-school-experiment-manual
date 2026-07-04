@@ -1142,21 +1142,21 @@ def apply_vm_manual_overrides(lang: str, body: str) -> str:
         sentinel = "Mac 用户补充方案"
         replacements = {
             "<p>物理机配置：建议8GB以上内存、50GB以上可用磁盘空间（虚拟机需占用约20GB）。</p>":
-            "<p>物理机配置：建议16GB以上内存、150GB以上可用磁盘空间；如后续还要承载人形机器人仿真、AI工具链或其他课程环境，建议预留200GB以上可用空间。</p>",
+            "<p>物理机配置：建议16GB以上内存，并保证能够为虚拟机分配100GB磁盘空间。虚拟机统一按8GB内存、100GB磁盘配置，后续人形机器人及其他课程也优先复用该环境。</p>",
             "<p>运行内存可以使用默认推荐内存，点击下一步</p>":
-            "<p>运行内存建议设置为8GB；如果物理机内存为32GB或以上，可设置为12GB，以便后续人形机器人仿真和其他课程环境复用。设置完成后点击下一步</p>",
+            "<p>运行内存设置为8GB，设置完成后点击下一步</p>",
             "<p>可以稍微增大磁盘空间，点击下一步</p>":
-            "<p>磁盘容量建议设置为120GB；如果磁盘空间充足，可设置为150GB。后续课程会继续使用该虚拟机环境，不建议低于80GB。设置完成后点击下一步</p>",
+            "<p>磁盘容量设置为100GB，后续课程会继续使用该虚拟机环境。设置完成后点击下一步</p>",
             "<p>处理器：根据物理机核心数分配（如4核CPU分配2核，每个核心1-2线程）。</p>":
             "<p>处理器：根据物理机核心数分配，建议至少分配4个虚拟CPU；高性能电脑可分配6-8个虚拟CPU，但应保留足够资源给宿主机。</p>",
             "<p>基础任务：2GB</p>":
-            "<p>基础无人机实验：8GB</p>",
+            "<p>统一配置：8GB</p>",
             "<p>多任务/开发环境：4GB</p>":
-            "<p>人形机器人仿真、AI工具链或多课程复用：12GB</p>",
+            "",
             "<p>保留至少4GB内存给物理机。</p>":
             "<p>保留至少8GB内存给物理机。</p>",
             "<p>容量：分配60GB，选择“存储为单个文件”。</p>":
-            "<p>容量：建议分配120GB，磁盘充足时可分配150GB，选择“存储为单个文件”。</p>",
+            "<p>容量：分配100GB，选择“存储为单个文件”。</p>",
             "<p>/（根目录）：20GB，EXT4文件系统。</p>":
             "<p>/（根目录）：50GB，EXT4文件系统。</p>",
             "<p>Swap（交换分区）：2GB（内存不足时备用）。</p>":
@@ -1167,21 +1167,21 @@ def apply_vm_manual_overrides(lang: str, body: str) -> str:
         sentinel = "Supplement for Mac Users"
         replacements = {
             "<p>Physical machine configuration: It is recommended to have more than 8GB of memory and more than 50GB of available disk space (the virtual machine needs to occupy about 20GB).</p>":
-            "<p>Physical machine configuration: more than 16GB of memory and more than 150GB of available disk space are recommended. If the same virtual machine will also support humanoid-robot simulation, AI toolchains, or other course environments, reserve more than 200GB of available space if possible.</p>",
+            "<p>Physical machine configuration: more than 16GB of memory is recommended, and the host should be able to allocate a 100GB virtual disk. Configure the virtual machine with 8GB of memory and a 100GB disk; the same environment should be reused for later humanoid-robot and other course tasks whenever possible.</p>",
             "<p>You can use the default recommended memory for running memory, click Next</p>":
-            "<p>Set the virtual-machine memory to 8GB. If the host has 32GB or more memory, 12GB is recommended so the same environment can later support humanoid-robot simulation and other course tasks. Then click Next.</p>",
+            "<p>Set the virtual-machine memory to 8GB, then click Next.</p>",
             "<p>You can slightly increase the disk space, click Next</p>":
-            "<p>Set the disk capacity to 120GB. If disk space is sufficient, 150GB is recommended. Because later courses will continue to use this virtual-machine environment, do not allocate less than 80GB. Then click Next.</p>",
+            "<p>Set the disk capacity to 100GB. Later courses will continue to use this virtual-machine environment. Then click Next.</p>",
             "<p>Processor: allocated according to the number of cores of the physical machine (for example, a 4-core CPU is allocated 2 cores, and each core has 1-2 threads).</p>":
             "<p>Processor: allocate resources according to the number of host CPU cores. At least 4 virtual CPUs are recommended. High-performance computers may use 6-8 virtual CPUs, while keeping enough resources for the host system.</p>",
             "<p>Basic tasks: 2GB</p>":
-            "<p>Basic UAV experiments: 8GB</p>",
+            "<p>Unified configuration: 8GB</p>",
             "<p>Multitasking/development environment: 4GB</p>":
-            "<p>Humanoid-robot simulation, AI toolchains, or multi-course reuse: 12GB</p>",
+            "",
             "<p>Reserve at least 4GB of memory for the physical machine.</p>":
             "<p>Reserve at least 8GB of memory for the host machine.</p>",
             "<p>Capacity: Allocate 60GB, select &quot;Store as single file&quot;.</p>":
-            "<p>Capacity: allocate 120GB. If disk space is sufficient, allocate 150GB. Select &quot;Store as single file&quot;.</p>",
+            "<p>Capacity: allocate 100GB and select &quot;Store as single file&quot;.</p>",
             "<p>/ (root directory): 20GB, EXT4 file system.</p>":
             "<p>/ (root directory): 50GB, EXT4 file system.</p>",
             "<p>Swap (swap partition): 2GB (spare when memory is insufficient).</p>":

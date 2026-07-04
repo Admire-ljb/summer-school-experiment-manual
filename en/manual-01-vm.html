@@ -47,7 +47,7 @@
 <p>Understand the core concepts of virtual machines (such as hardware isolation, snapshot management) and their application scenarios in development and testing.</p>
 <h2>2. Experimental preparation</h2>
 <h3>Hardware requirements</h3>
-<p>Physical machine configuration: more than 16GB of memory and more than 150GB of available disk space are recommended. If the same virtual machine will also support humanoid-robot simulation, AI toolchains, or other course environments, reserve more than 200GB of available space if possible.</p>
+<p>Physical machine configuration: more than 16GB of memory is recommended, and the host should be able to allocate a 100GB virtual disk. Configure the virtual machine with 8GB of memory and a 100GB disk; the same environment should be reused for later humanoid-robot and other course tasks whenever possible.</p>
 <h3>Software resources (from the Course Materials Package)</h3>
 <p>VMware Workstation Pro 16: <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>
 <p>Ubuntu 20.04 LTS Desktop image file: <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>
@@ -92,7 +92,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images-en/manual-01-vm/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The number of processors and cores can be adjusted appropriately. You can set it as shown and click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Set the virtual-machine memory to 8GB. If the host has 32GB or more memory, 12GB is recommended so the same environment can later support humanoid-robot simulation and other course tasks. Then click Next.</p>
+<p>Set the virtual-machine memory to 8GB, then click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>You can use the default configuration for the network type, click Next</p>
 <figure><img src="../assets/images-en/manual-01-vm/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -102,7 +102,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images-en/manual-01-vm/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Select Create a new virtual disk and click Next</p>
 <figure><img src="../assets/images-en/manual-01-vm/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Set the disk capacity to 120GB. If disk space is sufficient, 150GB is recommended. Because later courses will continue to use this virtual-machine environment, do not allocate less than 80GB. Then click Next.</p>
+<p>Set the disk capacity to 100GB. Later courses will continue to use this virtual-machine environment. Then click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Just click Next on this page</p>
 <figure><img src="../assets/images-en/manual-01-vm/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -114,12 +114,11 @@ sudo reboot</code></pre>
 <h3>Hardware configuration</h3>
 <p>Processor: allocate resources according to the number of host CPU cores. At least 4 virtual CPUs are recommended. High-performance computers may use 6-8 virtual CPUs, while keeping enough resources for the host system.</p>
 <p>Memory:</p>
-<p>Basic UAV experiments: 8GB</p>
-<p>Humanoid-robot simulation, AI toolchains, or multi-course reuse: 12GB</p>
+<p>Unified configuration: 8GB</p>
 <p>Reserve at least 8GB of memory for the host machine.</p>
 <p>disk:</p>
 <p>Type: SCSI (recommended)</p>
-<p>Capacity: allocate 120GB. If disk space is sufficient, allocate 150GB. Select &quot;Store as single file&quot;.</p>
+<p>Capacity: allocate 100GB and select &quot;Store as single file&quot;.</p>
 <p>Network: Default NAT mode (automatically obtains IP and can access the external network).</p>
 <h3>Load ISO image</h3>
 <p>In the virtual machine settings, select the CD/DVD drive and load <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code> from the Course Materials Package.</p>
