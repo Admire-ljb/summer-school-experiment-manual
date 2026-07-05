@@ -73,7 +73,7 @@
     {
       "slug": "manual-04-multiranger",
       "number": 4,
-      "zh_title": "multiranger",
+      "zh_title": "多向测距传感器实验",
       "en_title": "Multi-ranger Sensor Experiment",
       "source_name": "Day2_实验手册1-multiranger.docx",
       "purpose": "Read multi-direction distance measurements and connect sensor readings to basic flight behavior.",
@@ -211,7 +211,7 @@
     {
       "slug": "manual-10-motion-commander",
       "number": 10,
-      "zh_title": "Motion Commander 进阶编程",
+      "zh_title": "运动控制接口进阶编程",
       "en_title": "Advanced Motion Commander Programming",
       "source_name": "Day3_实验手册3-Motion Commander进阶编程.docx",
       "purpose": "Use Motion Commander movement primitives to construct repeatable flight routines.",
@@ -257,7 +257,7 @@
     {
       "slug": "manual-12-position-commander",
       "number": 12,
-      "zh_title": "PositionCommander",
+      "zh_title": "位置控制接口实验",
       "en_title": "PositionCommander",
       "source_name": "Day3_实验手册5-PositionCommander.docx",
       "purpose": "Use coordinate-based commands for waypoint routes and structured spatial tasks.",

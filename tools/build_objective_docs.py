@@ -92,18 +92,18 @@ Block = ParagraphBlock | TableBlock
 
 
 MANUALS = [
-    Manual("manual-01-vm", 1, "\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a", "Virtual Machine Installation and Configuration", "Day1_\u5b9e\u9a8c\u624b\u518c1-\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a.docx", "Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.", ("Windows host computer with sufficient memory and disk space.", "VMware Workstation Pro 16 installation package.", "Ubuntu 20.04 LTS desktop image."), ("Install VMware Workstation and verify that the new virtual-machine wizard is available.", "Create an Ubuntu virtual machine with appropriate CPU, memory, disk, and NAT network settings.", "Install Ubuntu, perform first-boot setup, install VMware Tools, and create a clean snapshot."), ("Confirm network access from Ubuntu.", "Verify screen scaling and host-to-guest file transfer.", "Restore the clean snapshot once to confirm recovery is available.")),
-    Manual("manual-02-ros", 2, "\u914d\u7f6e\u8ba4\u77e5 ROS", "ROS Configuration and Basic Concepts", "Day1_\u5b9e\u9a8c\u624b\u518c2-\u914d\u7f6e\u8ba4\u77e5ROS.docx", "Install ROS and establish the basic concepts used by later robot-control experiments.", ("Ubuntu virtual machine from Manual 1.", "Network access for package installation.", "Terminal access and basic Linux command familiarity."), ("Install ROS using the documented installation path or classroom script.", "Start roscore and run turtlesim-related commands.", "Use ROS tools to inspect nodes, topics, graphs, and message data."), ("Explain package, node, topic, publisher, and subscriber roles.", "Run turtlesim and teleoperation successfully.", "Use rqt_graph, rqt_plot, rosnode, and rostopic for observation.")),
-    Manual("manual-03-crazyflie-setup", 3, "\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8 Crazyflie \u65e0\u4eba\u673a", "Initial Crazyflie Configuration and Operation", "Day1_\u5b9e\u9a8c\u624b\u518c3-\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8crazyfile\u65e0\u4eba\u673a.docx", "Prepare the Crazyflie software and hardware connection path for safe first operation.", ("Ubuntu/ROS environment from the previous manuals.", "Crazyflie aircraft, battery, USB cable, and Crazyradio.", "cflib, Crazyflie client, and required Python dependencies."), ("Install the Crazyflie client and required libraries.", "Configure USB permissions and radio connection settings.", "Connect to the aircraft and run conservative first-control tests."), ("Crazyflie client starts correctly.", "USB and radio connection can detect the aircraft.", "A short scripted test can be explained and stopped safely.")),
-    Manual("manual-04-multiranger", 4, "multiranger", "Multi-ranger Sensor Experiment", "Day2_\u5b9e\u9a8c\u624b\u518c1-multiranger.docx", "Read multi-direction distance measurements and connect sensor readings to basic flight behavior.", ("Crazyflie with Multi-ranger deck.", "Working cflib environment.", "Clear indoor test area with simple obstacles."), ("Connect to Crazyflie through cflib.", "Read front, back, left, right, up, and down range values.", "Use threshold rules to generate simple reactive movement."), ("Range values change consistently when obstacles move.", "Students can identify which sensor direction triggered a response.", "The reactive behavior remains inside the safety area.")),
+    Manual("manual-01-vm", 1, "\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a", "Virtual Machine Installation and Configuration", "Day1_\u5b9e\u9a8c\u624b\u518c1-\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a.docx", "Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.", ("Windows host computer with sufficient memory and disk space.", "Course Materials Package: course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe.", "Course Materials Package: course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso."), ("Install VMware Workstation and verify that the new virtual-machine wizard is available.", "Create an Ubuntu virtual machine with appropriate CPU, memory, disk, and NAT network settings.", "Install Ubuntu, perform first-boot setup, install VMware Tools, and create a clean snapshot."), ("Confirm network access from Ubuntu.", "Verify screen scaling and host-to-guest file transfer.", "Restore the clean snapshot once to confirm recovery is available.")),
+    Manual("manual-02-ros", 2, "\u914d\u7f6e\u8ba4\u77e5 ROS", "ROS Configuration and Basic Concepts", "Day1_\u5b9e\u9a8c\u624b\u518c2-\u914d\u7f6e\u8ba4\u77e5ROS.docx", "Install ROS and establish the basic concepts used by later robot-control experiments.", ("Ubuntu virtual machine from Manual 1.", "Network access for package installation.", "Terminal access and basic Linux command familiarity."), ("Run the FishROS script from Course Materials Package: course-materials/02_scripts_and_code/04_fishros_install.sh.", "Start roscore and run turtlesim-related commands.", "Use ROS tools to inspect nodes, topics, graphs, and message data."), ("Explain package, node, topic, publisher, and subscriber roles.", "Run turtlesim and teleoperation successfully.", "Use rqt_graph, rqt_plot, rosnode, and rostopic for observation.")),
+    Manual("manual-03-crazyflie-setup", 3, "\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8 Crazyflie \u65e0\u4eba\u673a", "Initial Crazyflie Configuration and Operation", "Day1_\u5b9e\u9a8c\u624b\u518c3-\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8crazyfile\u65e0\u4eba\u673a.docx", "Prepare the Crazyflie software and hardware connection path for safe first operation.", ("Ubuntu/ROS environment from the previous manuals.", "Crazyflie aircraft, battery, USB cable, and Crazyradio.", "Course Materials Package: course-materials/05_source_references/crazyflie-clients-python-master.zip, cflib, and required Python dependencies."), ("Install the Crazyflie client and required libraries.", "Configure USB permissions and radio connection settings.", "Connect to the aircraft and run conservative first-control tests."), ("Crazyflie client starts correctly.", "USB and radio connection can detect the aircraft.", "A short scripted test can be explained and stopped safely.")),
+    Manual("manual-04-multiranger", 4, "\u591a\u5411\u6d4b\u8ddd\u4f20\u611f\u5668\u5b9e\u9a8c", "Multi-ranger Sensor Experiment", "Day2_\u5b9e\u9a8c\u624b\u518c1-multiranger.docx", "Read multi-direction distance measurements and connect sensor readings to basic flight behavior.", ("Crazyflie with Multi-ranger deck.", "Working cflib environment.", "Clear indoor test area with simple obstacles."), ("Connect to Crazyflie through cflib.", "Read front, back, left, right, up, and down range values.", "Use threshold rules to generate simple reactive movement."), ("Range values change consistently when obstacles move.", "Students can identify which sensor direction triggered a response.", "The reactive behavior remains inside the safety area.")),
     Manual("manual-05-ranging", 5, "\u6d4b\u8ddd\u8fdb\u9636", "Advanced Ranging Experiment", "Day2_\u5b9e\u9a8c\u624b\u518c2-\u6d4b\u8ddd\u8fdb\u9636.docx", "Extend basic range reading into mission rules and obstacle-aware flight actions.", ("Crazyflie and Multi-ranger deck.", "Validated range-reading script.", "Instructor-confirmed test area."), ("Collect range readings under several obstacle configurations.", "Implement obstacle-triggered actions such as landing, backing away, or bouncing.", "Adjust thresholds and speeds conservatively."), ("The program exits through a safe stop condition.", "Sensor logs support the observed behavior.", "The selected thresholds can be justified from the measurements.")),
     Manual("manual-06-complex-map", 6, "\u590d\u6742\u5730\u56fe\u98de\u884c\u4e0e\u5efa\u56fe", "Complex-map Flight and Mapping", "Day2_\u5b9e\u9a8c\u624b\u518c3-\u590d\u6742\u5730\u56fe\u98de\u884c\u4e0e\u5efa\u56fe.docx", "Use controlled flight and range sensing to explore a more complex obstacle map.", ("Prepared obstacle area.", "Crazyflie with relevant sensing deck.", "Mapping or logging script from the manual."), ("Inspect the map constraints and permitted flight area.", "Run the flight or mapping procedure slowly enough for stable data collection.", "Review the generated obstacle points or map-like output."), ("The flight remains within the allowed area.", "The map output reflects major walls or obstacle regions.", "Failure cases are documented with likely causes.")),
     Manual("manual-07-autonomous-mapping-review", 7, "\u81ea\u4e3b\u5efa\u56fe+\u590d\u4e60", "Autonomous Mapping and Review", "Day2_\u5b9e\u9a8c\u624b\u518c4-\u81ea\u4e3b\u5efa\u56fe+\u590d\u4e60.docx", "Consolidate the ranging and mapping workflow through an autonomous mapping review task.", ("Completed range-sensing and mapping exercises.", "Known test area and flight restrictions.", "Team notes from previous experiments."), ("Review connection, sensing, control, and mapping requirements.", "Design or modify a route that samples useful map areas.", "Run the autonomous mapping task and record the result."), ("The route is reproducible.", "The produced map or log supports the route explanation.", "Main risks and improvements are recorded objectively.")),
-    Manual("manual-08-path-planning", 8, "\u8def\u5f84\u89c4\u5212\u4eff\u771f", "Path-planning Simulation", "Day3_\u5b9e\u9a8c\u624b\u518c1-\u8def\u5f84\u89c4\u5212\u4eff\u771f.docx", "Run path-planning simulation experiments and compare route-generation behavior.", ("Simulation project files.", "Ubuntu environment with required dependencies.", "Terminal access in the project directory."), ("Prepare and build the simulation project as documented.", "Set start and goal conditions in the simulator or visualization tool.", "Run A*, RRT, RRT*, or the provided planning examples and observe outputs."), ("A route is generated for the selected task.", "The observed route can be compared across algorithms or parameters.", "Execution notes include commands, errors, and screenshots where applicable.")),
+    Manual("manual-08-path-planning", 8, "\u8def\u5f84\u89c4\u5212\u4eff\u771f", "Path-planning Simulation", "Day3_\u5b9e\u9a8c\u624b\u518c1-\u8def\u5f84\u89c4\u5212\u4eff\u771f.docx", "Run path-planning simulation experiments and compare route-generation behavior.", ("Course Materials Package: course-materials/00_project_archives/uav_motion_planning.zip.", "Ubuntu environment with required dependencies.", "Terminal access in the project directory."), ("Prepare and build the simulation project as documented.", "Set start and goal conditions in the simulator or visualization tool.", "Run A*, RRT, RRT*, or the provided planning examples and observe outputs."), ("A route is generated for the selected task.", "The observed route can be compared across algorithms or parameters.", "Execution notes include commands, errors, and screenshots where applicable.")),
     Manual("manual-09-cflib", 9, "cflib \u5e93\u7f16\u7a0b", "cflib Programming", "Day3_\u5b9e\u9a8c\u624b\u518c2-cflib\u5e93\u7f16\u7a0b.docx", "Use cflib to structure Crazyflie connection, logging, parameter access, and command scripts.", ("Working Crazyflie connection.", "Python environment with cflib installed.", "Known radio URI or scanning procedure."), ("Initialize CRTP drivers and create a Crazyflie object.", "Use synchronized connection patterns for safer program structure.", "Read parameters or logs and send controlled commands."), ("The script connects and exits cleanly.", "Logged or printed values match the expected aircraft state.", "Motion commands are short, conservative, and explainable.")),
-    Manual("manual-10-motion-commander", 10, "Motion Commander \u8fdb\u9636\u7f16\u7a0b", "Advanced Motion Commander Programming", "Day3_\u5b9e\u9a8c\u624b\u518c3-Motion Commander\u8fdb\u9636\u7f16\u7a0b.docx", "Use Motion Commander movement primitives to construct repeatable flight routines.", ("cflib script template.", "Safe test area.", "Instructor-approved height and speed parameters."), ("Create a MotionCommander context.", "Combine takeoff, landing, directional movement, turns, and pauses.", "Test short movement segments before a complete sequence."), ("The drone completes the intended primitive sequence.", "Timing, height, and distance choices are recorded.", "The program can be stopped safely if behavior deviates.")),
+    Manual("manual-10-motion-commander", 10, "\u8fd0\u52a8\u63a7\u5236\u63a5\u53e3\u8fdb\u9636\u7f16\u7a0b", "Advanced Motion Commander Programming", "Day3_\u5b9e\u9a8c\u624b\u518c3-Motion Commander\u8fdb\u9636\u7f16\u7a0b.docx", "Use Motion Commander movement primitives to construct repeatable flight routines.", ("cflib script template.", "Safe test area.", "Instructor-approved height and speed parameters."), ("Create a MotionCommander context.", "Combine takeoff, landing, directional movement, turns, and pauses.", "Test short movement segments before a complete sequence."), ("The drone completes the intended primitive sequence.", "Timing, height, and distance choices are recorded.", "The program can be stopped safely if behavior deviates.")),
     Manual("manual-11-integrated-practice", 11, "\u9636\u6bb5\u7efc\u5408\u5b9e\u8df5", "Integrated Practice", "Day3_\u5b9e\u9a8c\u624b\u518c4-\u9636\u6bb5\u7efc\u5408\u5b9e\u8df5.docx", "Combine setup, sensing, planning, and control skills in a bounded practical task.", ("Completed prior manuals.", "Task area and constraints.", "Team role assignment for operation, monitoring, and recording."), ("Read the task constraints and define success criteria.", "Break the route or behavior into testable components.", "Run the integrated task and record results."), ("The task is completed within the defined constraints.", "The team can explain the selected method.", "Problems are documented with concrete evidence.")),
-    Manual("manual-12-position-commander", 12, "PositionCommander", "PositionCommander", "Day3_\u5b9e\u9a8c\u624b\u518c5-PositionCommander.docx", "Use coordinate-based commands for waypoint routes and structured spatial tasks.", ("Crazyflie setup with appropriate positioning support.", "Coordinate-frame assumptions understood before flight.", "Waypoint list or route sketch."), ("Initialize PositionCommander or the documented position-control API.", "Set default height, speed, and coordinate frame carefully.", "Execute waypoint routes such as square, cube, star, or map-based paths."), ("The coordinate route matches the intended geometry.", "The aircraft remains inside the allowed volume.", "The route can be adjusted by editing explicit coordinates.")),
+    Manual("manual-12-position-commander", 12, "\u4f4d\u7f6e\u63a7\u5236\u63a5\u53e3\u5b9e\u9a8c", "PositionCommander", "Day3_\u5b9e\u9a8c\u624b\u518c5-PositionCommander.docx", "Use coordinate-based commands for waypoint routes and structured spatial tasks.", ("Crazyflie setup with appropriate positioning support.", "Coordinate-frame assumptions understood before flight.", "Waypoint list or route sketch."), ("Initialize PositionCommander or the documented position-control API.", "Set default height, speed, and coordinate frame carefully.", "Execute waypoint routes such as square, cube, star, or map-based paths."), ("The coordinate route matches the intended geometry.", "The aircraft remains inside the allowed volume.", "The route can be adjusted by editing explicit coordinates.")),
     Manual("manual-13-project-demo", 13, "\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1", "Integrated Project Demonstration", "Day3_\u5b9e\u9a8c\u624b\u518c6-\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1.docx", "Present a complete project task using the course experiments as technical basis.", ("Project objective and success criteria.", "Working code and tested hardware setup.", "Presentation evidence such as logs, route sketches, video, or screenshots."), ("Select a feasible demonstration task.", "Implement and rehearse the workflow under safety constraints.", "Present the method, result, limitations, and improvement plan."), ("The demonstration is executable or reproducible.", "The presentation explains method and evidence objectively.", "Safety, teamwork, and failure handling are included in the report.")),
 ]
 
@@ -1110,6 +1110,134 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
+def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str:
+    common_pairs = {
+        "<p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>":
+        "<p>本次实验将主要进行python脚本的运行，编程库参考资料已保存到course-materials：<code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>。</p>",
+        "<p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>":
+        "<p>若在进行实验中遇到一些困难，也可打开上述资料包网页快照进行进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>",
+        "<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>":
+        "<p>This experiment mainly runs Python scripts. The programming library reference is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>.</p>",
+        "<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>":
+        "<p>If you encounter difficulties during the experiment, open the package snapshot listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>",
+        "<p>统一配置：8GB</p>\n\n<p>保留至少8GB内存给物理机。</p>":
+        "<p>统一配置：8GB</p>\n<p>保留至少8GB内存给物理机。</p>",
+        "<p>Unified configuration: 8GB</p>\n\n<p>Reserve at least 8GB of memory for the host machine.</p>":
+        "<p>Unified configuration: 8GB</p>\n<p>Reserve at least 8GB of memory for the host machine.</p>",
+        "<p>再下一步让脚本自动帮助我们选择下载速度最快的源，输入数字1按回车键。</p>":
+        "<p>再下一步让脚本自动帮助我们选择访问速度最快的软件源，输入数字1按回车键。</p>",
+        "<p>The next step is to let the script automatically help us select the source with the fastest download speed. Enter the number 1 and press Enter.</p>":
+        "<p>The next step is to let the script automatically help us select the fastest software mirror. Enter the number 1 and press Enter.</p>",
+        "<p>再输入以下命令配置一下pip3下载的软件源：</p>":
+        "<p>再输入以下命令配置一下pip3使用的软件源：</p>",
+        "<p>Then enter the following command to configure the software source downloaded by pip3:</p>":
+        "<p>Then enter the following command to configure the software source used by pip3:</p>",
+        "<p>课堂用途：用于提高 pip 下载 Python 依赖的速度和稳定性。</p>":
+        "<p>课堂用途：用于提高 pip 安装 Python 依赖时的软件源访问速度和稳定性。</p>",
+        "<p>Classroom use: Used to improve the speed and stability of pip downloading Python dependencies.</p>":
+        "<p>Classroom use: Used to improve the speed and stability of pip access when installing Python dependencies.</p>",
+        "<li>手册中的用途是设置 pip index-url，让 cflib、GUI 客户端和相关依赖更快下载。</li>":
+        "<li>手册中的用途是设置 pip index-url，让 cflib、GUI 客户端和相关依赖安装时使用清华镜像源。</li>",
+        "<li>The purpose in the manual is to set the pip index-url so that cflib, GUI client and related dependencies can be downloaded faster.</li>":
+        "<li>The purpose in the manual is to set the pip index-url so that cflib, the GUI client, and related dependencies use the Tsinghua mirror source during installation.</li>",
+    }
+    manual_pairs: dict[str, dict[str, str]] = {
+        "manual-01-vm": {
+            "<h3>软件资源（可从官网下载，为节省时间由助教拷贝）</h3>\n<p>VMware Workstation Pro 16</p>\n<p>Ubuntu 20.04 LTS Desktop版镜像文件</p>":
+            "<h3>软件资源（从course-materials获取）</h3>\n<p>VMware Workstation Pro 16：<code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>\n<p>Ubuntu 20.04 LTS Desktop版镜像文件：<code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>",
+            "<h3>Software resources (can be downloaded from the official website, copied by the teaching assistant to save time)</h3>\n<p>VMware Workstation Pro 16</p>\n<p>Ubuntu 20.04 LTS Desktop version image file</p>":
+            "<h3>Software resources (from the Course Materials Package)</h3>\n<p>VMware Workstation Pro 16: <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>\n<p>Ubuntu 20.04 LTS Desktop image file: <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>",
+            "<p>具体图文流程在浏览器中打开此链接：</p>":
+            "<p>具体图文流程可打开course-materials中的网页快照：<code>course-materials/01_web_snapshots/01_vmware16_install_csdn.html</code>。原始链接为：</p>",
+            "<p>For the specific graphic process, open this link in your browser:</p>":
+            "<p>For the specific illustrated process, open the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/01_vmware16_install_csdn.html</code>. Original link:</p>",
+            "<h3>下载与安装</h3>\n<p>访问VMware官网，下载Workstation Pro 16安装包。</p>":
+            "<h3>从course-materials安装</h3>\n<p>在course-materials中找到 <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code>。</p>",
+            "<h3>Download and install</h3>\n<p>Visit the VMware official website and download the Workstation Pro 16 installation package.</p>":
+            "<h3>Install from the Course Materials Package</h3>\n<p>In the Course Materials Package, locate <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code>.</p>",
+            "<p>具体参考图文流程在浏览器中打开此链接：</p>":
+            "<p>具体参考图文流程可打开course-materials中的网页快照：<code>course-materials/01_web_snapshots/02_ubuntu_vmware_install_csdn.html</code>。原始链接为：</p>",
+            "<p>Please refer to the graphic process for specific details and open this link in your browser:</p>":
+            "<p>For the illustrated reference process, open the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/02_ubuntu_vmware_install_csdn.html</code>. Original link:</p>",
+            "<p>该界面中点击浏览选中ubuntu20.04系统映像文件，点击下一步</p>":
+            "<p>该界面中点击浏览，选择course-materials中的 <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code>，点击下一步</p>",
+            "<p>In this interface, click Browse to select the ubuntu20.04 system image file, and click Next</p>":
+            "<p>In this interface, click Browse, select <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code> from the Course Materials Package, and click Next</p>",
+            "<p>在虚拟机设置中，选择CD/DVD驱动器，加载下载的Ubuntu 20.04 ISO文件。</p>":
+            "<p>在虚拟机设置中，选择CD/DVD驱动器，加载course-materials中的 <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code>。</p>",
+            "<p>In the virtual machine settings, select the CD/DVD drive and load the downloaded Ubuntu 20.04 ISO file.</p>":
+            "<p>In the virtual machine settings, select the CD/DVD drive and load <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code> from the Course Materials Package.</p>",
+            "<p>课堂用途：辅助完成 Ubuntu 镜像下载、虚拟机创建、系统安装和国内镜像源配置。</p>":
+            "<p>课堂用途：辅助完成 Ubuntu 镜像选择、虚拟机创建、系统安装和国内镜像源配置。</p>",
+            "<p>Class purpose: Assist in completing Ubuntu image download, virtual machine creation, system installation and domestic image source configuration.</p>":
+            "<p>Class purpose: Assist in selecting the Ubuntu image, creating the virtual machine, installing the system, and configuring domestic mirror sources.</p>",
+        },
+        "manual-02-ros": {
+            "<p>在这里将会一个开源的脚本一键安装配置ROS环境，利用该脚本配置ROS系统将会极为方便，适合初学者快速上手ROS。同时也向同学们推荐一些网络教学视频，学有余力的同学可以对照视频进行ROS学习的巩固和拓展：</p>":
+            "<p>这里使用course-materials中的 FishROS 一键安装脚本配置 ROS 环境。脚本位置为 <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code>。利用该脚本配置ROS系统将会极为方便，适合初学者快速上手ROS。同时也向同学们推荐一些网络教学视频，学有余力的同学可以对照视频进行ROS学习的巩固和拓展：</p>",
+            "<p>Here we will use an open source script to install and configure the ROS environment with one click. Using this script to configure the ROS system will be extremely convenient and suitable for beginners to quickly get started with ROS. At the same time, we also recommend some online teaching videos to students. Students who are willing to learn can refer to the videos to consolidate and expand their ROS learning:</p>":
+            "<p>Here we use the FishROS one-click installation script from the Course Materials Package to configure the ROS environment. The script is located at <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code>. Using this script to configure the ROS system is convenient for beginners. At the same time, we also recommend some online teaching videos to students. Students who are willing to learn can refer to the videos to consolidate and expand their ROS learning:</p>",
+            "<p>打开虚拟机，进入主界面后呼出终端（鼠标点击一下桌面后，同时按住ctrl+alt+T键，参考第一节课的实验手册。）</p>\n<p>在终端中输入如下命令(可以右键选中如下命令点击复制，再粘贴到终端中)：</p>\n<p>wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>":
+            "<p>先将 <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code> 拖入虚拟机的用户目录或 <code>workspace</code> 文件夹中。打开虚拟机，进入主界面后呼出终端（鼠标点击一下桌面后，同时按住ctrl+alt+T键，参考第一节课的实验手册。）</p>\n<p>在脚本所在目录中输入如下命令运行脚本：</p>\n<pre><code>cp 04_fishros_install.sh fishros\n. fishros</code></pre>\n<p>该脚本本身已经放在course-materials中，但安装 ROS 和系统依赖时仍需要虚拟机联网。</p>",
+            "<p>Open the virtual machine, enter the main interface and call out the terminal (after clicking the mouse on the desktop, press and hold the ctrl+alt+T keys at the same time, refer to the experiment manual of the first lesson.)</p>\n<p>Enter the following command in the terminal (you can right-click to select the following command, click copy, and then paste it into the terminal):</p>\n<p>wget http://fishros.com/install -O fishros &amp;&amp; . fishros</p>":
+            "<p>First drag <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code> into the virtual machine user directory or the <code>workspace</code> folder. Open the virtual machine, enter the main interface and call out the terminal (after clicking the mouse on the desktop, press and hold the ctrl+alt+T keys at the same time, refer to the experiment manual of the first lesson.)</p>\n<p>In the directory containing the script, enter the following commands to run it:</p>\n<pre><code>cp 04_fishros_install.sh fishros\n. fishros</code></pre>\n<p>The script file is included in the Course Materials Package, but installing ROS and system dependencies still requires network access inside the virtual machine.</p>",
+            "<p>课堂用途：用于通过命令行下载并运行 ROS 安装脚本。</p>\n<ul>\n<li>手册中的命令为：wget http://fishros.com/install -O fishros &amp;&amp; . fishros</li>":
+            "<p>课堂用途：用于从course-materials运行 ROS 安装脚本。</p>\n<ul>\n<li>course-materials位置：<code>course-materials/02_scripts_and_code/04_fishros_install.sh</code></li>\n<li>手册中的运行命令为：<code>cp 04_fishros_install.sh fishros</code>，然后执行 <code>. fishros</code></li>",
+            "<p>Classroom use: Used to download and run the ROS installation script through the command line.</p>\n<ul>\n<li>The command in the manual is: wget http://fishros.com/install -O fishros &amp;&amp; . fishros</li>":
+            "<p>Classroom use: Used to run the ROS installation script from the Course Materials Package.</p>\n<ul>\n<li>Course Materials Package location: <code>course-materials/02_scripts_and_code/04_fishros_install.sh</code></li>\n<li>Run it with: <code>cp 04_fishros_install.sh fishros</code>, then <code>. fishros</code></li>",
+        },
+        "manual-03-crazyflie-setup": {
+            "<p>直接用图形化操作的方法，在主机windows的文件界面将软件包拖动进linux虚拟机的文件界面即可。</p>":
+            "<p>cfclient 软件安装包位于 <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>。直接用图形化操作的方法，在主机windows的文件界面将该压缩包拖动进linux虚拟机的文件界面即可。</p>",
+            "<p>Directly use the graphical operation method to drag the software package into the file interface of the Linux virtual machine from the file interface of the host windows.</p>":
+            "<p>The cfclient software package is located at <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>. Directly use the graphical operation method to drag this archive into the file interface of the Linux virtual machine from the file interface of the host Windows.</p>",
+            "<p>再双击该压缩包，点击extract解压至该文件目录下。</p>":
+            "<p>再双击 <code>crazyflie-clients-python-master.zip</code>，点击extract解压至该文件目录下。</p>",
+            "<p>Double-click the compressed package and click extract to extract it to the file directory.</p>":
+            "<p>Double-click <code>crazyflie-clients-python-master.zip</code> and click extract to extract it to the file directory.</p>",
+            "<p>具体的无人机基础认知教程可参考该官方网址：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
+            "<p>具体的无人机基础认知教程可参考course-materials中的网页快照：<code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>。</p>",
+            "<p>For specific basic drone cognition tutorials, please refer to this official website: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
+            "<p>For the basic Crazyflie tutorial, refer to the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>.</p>",
+            "<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以再参考官方网址的教程：</p>\n<p>USB permissions | Bitcraze</p>":
+            "<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以参考course-materials中的网页快照：</p>\n<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>\n<p>USB permissions | Bitcraze</p>",
+            "<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, you can refer to the tutorial on the official website:</p>\n<p>USB permissions | Bitcraze</p>":
+            "<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, refer to the saved webpage snapshot in the Course Materials Package:</p>\n<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>\n<p>USB permissions | Bitcraze</p>",
+            "<p>补充，实验官方教程网址为：https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>":
+            "<p>补充，实验官方教程已保存到course-materials：<code>course-materials/01_web_snapshots/07_bitcraze_stem_drone_bundle.html</code>。</p>",
+            "<p>Supplement, the official tutorial website for the experiment is: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>":
+            "<p>Supplement: the official experiment tutorial is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/07_bitcraze_stem_drone_bundle.html</code>.</p>",
+        },
+        "manual-04-multiranger": {
+            "<p>该模块的官方教程网址：Multi-ranger deck | Bitcraze</p>":
+            "<p>该模块的产品说明已保存到course-materials：<code>course-materials/01_web_snapshots/11_bitcraze_multi_ranger_deck.html</code></p>",
+            "<p>The official tutorial URL of this module: Multi-ranger deck | Bitcraze</p>":
+            "<p>The product description for this module is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/11_bitcraze_multi_ranger_deck.html</code>.</p>",
+        },
+        "manual-08-path-planning": {
+            "<p>同时再打开本机上存放今天实验所需要的工程文件压缩包的所在位置（该压缩包放在电脑桌面或者某个文件夹都可以）。鼠标选中本机上的压缩包文件，直接拖动到虚拟机中的workspace中。</p>":
+            "<p>同时打开course-materials中的项目压缩文件位置：<code>course-materials/00_project_archives/uav_motion_planning.zip</code>。鼠标选中该压缩包文件，直接拖动到虚拟机中的workspace中。</p>",
+            "<p>At the same time, open the location on the local computer where the compressed package of project files required for today&#x27;s experiment is stored (the compressed package can be placed on the computer desktop or in a certain folder). Select the compressed package file on the local machine with the mouse and drag it directly to the workspace in the virtual machine.</p>":
+            "<p>At the same time, open the project archive in the Course Materials Package: <code>course-materials/00_project_archives/uav_motion_planning.zip</code>. Select this archive on the host machine and drag it directly into <code>workspace</code> in the virtual machine.</p>",
+            "<p>接下来输入以下命令（可能会因为无法连接到外网而失败，可以多试几次）:</p>":
+            "<p>接下来输入以下命令（如虚拟机缺少系统依赖或软件源不可用，可能需要先检查网络或离线源配置）:</p>",
+            "<p>Next enter the following command (it may fail because you cannot connect to the external network, you can try a few more times):</p>":
+            "<p>Next enter the following command (if system dependencies are missing or the software source is unavailable, check the network or offline-source configuration first):</p>",
+        },
+        "manual-09-cflib": {
+            "<p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行，详细的类函数，有余力的同学可以进入该网址查看：github.com</p>":
+            "<p>可以看到，我们在第10行导入了cflib中的motioncommander模块，我们将调用该模块的功能使得无人机进行飞行。详细的类函数可查看course-materials中的源码：<code>course-materials/05_source_references/crazyflie-lib-python-master.zip</code>。</p>",
+            "<p>As you can see, we imported the motioncommander module in cflib on line 10. We will call the function of this module to make the drone fly. For detailed class functions, students who have spare capacity can go to this website to view: github.com</p>":
+            "<p>As you can see, we imported the motioncommander module in cflib on line 10. We will call this module to fly the drone. For detailed class functions, refer to the source archive in the Course Materials Package: <code>course-materials/05_source_references/crazyflie-lib-python-master.zip</code>.</p>",
+        },
+    }
+    for old, new in common_pairs.items():
+        body = body.replace(old, new)
+    for old, new in manual_pairs.get(manual.slug, {}).items():
+        body = body.replace(old, new)
+    return body
+
+
 def vm_manual_supplement(lang: str) -> str:
     if lang == "zh":
         return '''<h3>Mac 用户补充方案</h3>
@@ -1349,8 +1477,12 @@ def write_pages() -> dict[str, dict[str, int]]:
         else:
             zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
             en_body = english_body(manual, blocks, cache, image_map)
+        zh_body = apply_course_material_overrides(manual, "zh", zh_body)
+        en_body = apply_course_material_overrides(manual, "en", en_body)
         zh_body = apply_manual_overrides(manual, "zh", zh_body)
         en_body = apply_manual_overrides(manual, "en", en_body)
+        zh_body = apply_course_material_overrides(manual, "zh", zh_body)
+        en_body = apply_course_material_overrides(manual, "en", en_body)
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
         (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, en_body, manual.slug), encoding="utf-8")
     return manifest
@@ -1445,7 +1577,7 @@ const toggle=document.getElementById('menu-toggle');if(toggle){toggle.addEventLi
 def write_root_files(manifest: dict[str, dict[str, int]]) -> None:
     (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Experiment Manual</title></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
     (ROOT / ".nojekyll").write_text("", encoding="utf-8")
-    (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (ROOT / "README.md").write_text("""# Palm-sized UAV Experiment Manual
 
 Bilingual experiment manual for palm-sized UAV summer school labs.
@@ -1454,6 +1586,10 @@ Bilingual experiment manual for palm-sized UAV summer school labs.
 - `zh/` contains Chinese experiment pages, including text, tables, links, commands, and figures.
 - `en/` contains English experiment pages with language switches back to the Chinese pages.
 - `.github/workflows/pages.yml` deploys the static site with GitHub Pages Actions.
+
+## Course Materials
+
+Download the `course-materials` folder from the [BUAA cloud link](https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9). The link is valid until 2028-11-11 10:31.
 
 ## Local preview
 
