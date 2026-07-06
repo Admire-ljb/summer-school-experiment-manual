@@ -97,16 +97,16 @@
 <h3>3. 相对坐标移动（轴向移动）</h3>
 <p>为了简化编程，PositionHlCommander 提供了一组“前后左右”的快捷指令。</p>
 <p>注意：这里的“前后左右”是相对于坐标轴的，而不是相对于无人机机头的（因为机头始终朝向 X 轴正向）。</p>
-<p>forward(distance) / back(distance)</p>
+<pre><code>forward(distance) / back(distance)</code></pre>
 <p>功能：沿 X 轴 正方向（前）或负方向（后）移动指定距离。</p>
 <p>数学含义： =  + distance， Y 和 Z 不变。</p>
 <figure><img src="../assets/images/manual-12-position-commander/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>left(distance) / right(distance)</p>
+<pre><code>left(distance) / right(distance)</code></pre>
 <p>功能：沿 Y 轴 正方向（左）或负方向（右）移动指定距离。</p>
 <p>数学含义：  =   + distance， X 和 Z 不变。</p>
 <p>重要提示：Crazyflie 遵循右手坐标系，面向 X 轴正向时，Y 轴正向在左手边。</p>
 <figure><img src="../assets/images/manual-12-position-commander/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>up(distance) / down(distance)</p>
+<pre><code>up(distance) / down(distance)</code></pre>
 <p>功能：沿 Z 轴 垂直上升或下降指定距离。</p>
 <figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>重要注意事项！！！</h3>
@@ -123,23 +123,23 @@ from cflib.utils import uri_helper
 # URI to the Crazyflie to connect to
 uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E4&#x27;)
 def simple_sequence():
-with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(2.0)
-with PositionHlCommander(
-scf,
-x=0.0, y=0.0, z=0.0,
-default_velocity=0.25,
-default_height=0.35,
-controller=PositionHlCommander.CONTROLLER_PID) as pc:
-pc.go_to(1.0, 0.0, 0.5)
-pc.go_to(1.0, 1.0, 0.5)
-pc.go_to(0.0, 1.0, 0.5)
-pc.go_to(0.0, 0.0, 0.5)
+    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(2.0)
+        with PositionHlCommander(
+        scf,
+        x=0.0, y=0.0, z=0.0,
+        default_velocity=0.25,
+        default_height=0.35,
+        controller=PositionHlCommander.CONTROLLER_PID) as pc:
+            pc.go_to(1.0, 0.0, 0.5)
+            pc.go_to(1.0, 1.0, 0.5)
+            pc.go_to(0.0, 1.0, 0.5)
+            pc.go_to(0.0, 0.0, 0.5)
 if __name__ == &#x27;__main__&#x27;:
-cflib.crtp.init_drivers()
-simple_sequence()</code></pre>
+    cflib.crtp.init_drivers()
+    simple_sequence()</code></pre>
 <p>现在，修改该程序，让无人机的飞行轨迹遍历空中立体的矩形的八个点，注意，矩形的高度为0.5m即可，即设置z轴的最大高度为1m即可。</p>
 <h3>实验二：以坐标轴来实现花样立体飞行</h3>
 <p>让无人机的飞行轨迹在xy平面上呈现一个标准的五角星，然后，再让这颗五角星立起来，在xz或者yz平面上呈现一个标准的五角星。这样的要求，如果用之前的motioncommander来做，是不是就会比较麻烦，如果用坐标来实现，是不是也就是几行代码的事？</p>

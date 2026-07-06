@@ -99,16 +99,16 @@
 <h3>3. Relative coordinate movement (axial movement)</h3>
 <p>In order to simplify programming, PositionHlCommander provides a set of &quot;front, back, left, and right&quot; shortcut instructions.</p>
 <p>Note: The &quot;front, back, left, and right&quot; here are relative to the coordinate axis, not relative to the drone&#x27;s nose (because the nose is always facing the positive X-axis).</p>
-<p>forward(distance) / back(distance)</p>
+<pre><code>forward(distance) / back(distance)</code></pre>
 <p>Function: Move the specified distance along the X-axis in the positive direction (front) or negative direction (back).</p>
 <p>Mathematical meaning: = + distance, Y and Z are unchanged.</p>
 <figure><img src="../assets/images/manual-12-position-commander/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>left(distance) / right(distance)</p>
+<pre><code>left(distance) / right(distance)</code></pre>
 <p>Function: Move the specified distance along the Y-axis in the positive direction (left) or negative direction (right).</p>
 <p>Mathematical meaning: = + distance, X and Z are unchanged.</p>
 <p>Important: Crazyflie follows a right-handed coordinate system. When facing the positive X-axis, the positive Y-axis is on the left-hand side.</p>
 <figure><img src="../assets/images/manual-12-position-commander/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>up(distance) / down(distance)</p>
+<pre><code>up(distance) / down(distance)</code></pre>
 <p>Function: Vertically rise or fall a specified distance along the Z axis.</p>
 <figure><img src="../assets/images/manual-12-position-commander/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Important notes</h3>
@@ -125,23 +125,23 @@ from cflib.utils import uri_helper
 # URI to the Crazyflie to connect to
 uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E4&#x27;)
 def simple_sequence():
-with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(2.0)
-with PositionHlCommander(
-scf,
-x=0.0, y=0.0, z=0.0,
-default_velocity=0.25,
-default_height=0.35,
-controller=PositionHlCommander.CONTROLLER_PID) as pc:
-pc.go_to(1.0, 0.0, 0.5)
-pc.go_to(1.0, 1.0, 0.5)
-pc.go_to(0.0, 1.0, 0.5)
-pc.go_to(0.0, 0.0, 0.5)
+    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(2.0)
+        with PositionHlCommander(
+        scf,
+        x=0.0, y=0.0, z=0.0,
+        default_velocity=0.25,
+        default_height=0.35,
+        controller=PositionHlCommander.CONTROLLER_PID) as pc:
+            pc.go_to(1.0, 0.0, 0.5)
+            pc.go_to(1.0, 1.0, 0.5)
+            pc.go_to(0.0, 1.0, 0.5)
+            pc.go_to(0.0, 0.0, 0.5)
 if __name__ == &#x27;__main__&#x27;:
-cflib.crtp.init_drivers()
-simple_sequence()</code></pre>
+    cflib.crtp.init_drivers()
+    simple_sequence()</code></pre>
 <p>Now, modify the program so that the drone&#x27;s flight trajectory traverses eight points of a three-dimensional rectangle in the air. Note that the height of the rectangle is 0.5m, that is, set the maximum height of the z-axis to 1m.</p>
 <h3>Experiment 2: Use coordinate axes to realize pattern three-dimensional flight</h3>
 <p>Let the drone&#x27;s flight trajectory present a standard five-pointed star on the xy plane, and then let the five-pointed star stand up to present a standard five-pointed star on the xz or yz plane. Would it be more troublesome to implement such a request using the previous motioncommander? If implemented using coordinates, would it only require a few lines of code?</p>

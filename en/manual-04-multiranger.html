@@ -83,30 +83,30 @@ from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default=&#x27;radio://0/60/2M/注意改成对的硬件地址&#x27;)
 if len(sys.argv) &gt; 1:
-URI = sys.argv[1]
+    URI = sys.argv[1]
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
-MIN_DISTANCE = 0.2  # m
-if range is None:
-return False
-else:
-return range &lt; MIN_DISTANCE
+    MIN_DISTANCE = 0.2  # m
+    if range is None:
+        return False
+    else:
+        return range &lt; MIN_DISTANCE
 if __name__ == &#x27;__main__&#x27;:
-# Initialize the low-level drivers
-cflib.crtp.init_drivers()
-cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-with SyncCrazyflie(URI, cf=cf) as scf:
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(1.0)
-with Multiranger(scf) as multiranger:
-keep_flying = True
-while keep_flying:
-print(&quot;--------------------------------------&quot;)
-print(&quot;multiranger.front:&quot;+str(multiranger.front))
-time.sleep(0.1)
-print(&#x27;Demo terminated!&#x27;)</code></pre>
+    # Initialize the low-level drivers
+    cflib.crtp.init_drivers()
+    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
+    with SyncCrazyflie(URI, cf=cf) as scf:
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        with Multiranger(scf) as multiranger:
+                keep_flying = True
+                while keep_flying:
+                   print(&quot;--------------------------------------&quot;)
+                   print(&quot;multiranger.front:&quot;+str(multiranger.front))
+                   time.sleep(0.1)
+        print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>Now, you can check the distance from the obstacle in front of the drone returned by the multiranger module through the cflib library function call. Now, based on the content of multiranger.py that you have viewed previously, call the properties of the multiranger class to check the distance from the obstacle in the other five directions (back, left, right, up, down), and output it in the terminal.</p>
 <h3>Experiment 2: &quot;Push&quot; Drones</h3>
 <p>Now use the multiranger module combined with the flow deck module to achieve some interesting effects.</p>
@@ -121,10 +121,10 @@ than 0.2m by setting a velocity in the opposite direction.
 The demo is ended by either pressing Ctrl-C or by holding your hand above the
 Crazyflie.
 For the example to run the following hardware is needed:
-* Crazyflie 2.0
-* Crazyradio PA
-* Flow deck
-* Multiranger deck
+ * Crazyflie 2.0
+ * Crazyradio PA
+ * Flow deck
+ * Multiranger deck
 &quot;&quot;&quot;
 import logging
 import sys
@@ -137,44 +137,44 @@ from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/注意改成对的硬件地址&#x27;)
 if len(sys.argv) &gt; 1:
-URI = sys.argv[1]
+    URI = sys.argv[1]
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
-MIN_DISTANCE = 0.2  # m
-if range is None:
-return False
-else:
-return range &lt; MIN_DISTANCE
+    MIN_DISTANCE = 0.2  # m
+    if range is None:
+        return False
+    else:
+        return range &lt; MIN_DISTANCE
 if __name__ == &#x27;__main__&#x27;:
-# Initialize the low-level drivers
-cflib.crtp.init_drivers()
-cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-with SyncCrazyflie(URI, cf=cf) as scf:
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(1.0)
-with MotionCommander(scf) as motion_commander:
-with Multiranger(scf) as multiranger:
-keep_flying = True
-while keep_flying:
-VELOCITY = 0.5
-velocity_x = 0.0
-velocity_y = 0.0
-if is_close(multiranger.front):
-velocity_x -= VELOCITY
-if is_close(multiranger.back):
-velocity_x += VELOCITY
-if is_close(multiranger.left):
-velocity_y -= VELOCITY
-if is_close(multiranger.right):
-velocity_y += VELOCITY
-if is_close(multiranger.up):
-keep_flying = False
-motion_commander.start_linear_motion(
-velocity_x, velocity_y, 0)
-time.sleep(0.1)
-print(&#x27;Demo terminated!&#x27;)</code></pre>
+    # Initialize the low-level drivers
+    cflib.crtp.init_drivers()
+    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
+    with SyncCrazyflie(URI, cf=cf) as scf:
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        with MotionCommander(scf) as motion_commander:
+            with Multiranger(scf) as multiranger:
+                keep_flying = True
+                while keep_flying:
+                    VELOCITY = 0.5
+                    velocity_x = 0.0
+                    velocity_y = 0.0
+                    if is_close(multiranger.front):
+                        velocity_x -= VELOCITY
+                    if is_close(multiranger.back):
+                        velocity_x += VELOCITY
+                    if is_close(multiranger.left):
+                        velocity_y -= VELOCITY
+                    if is_close(multiranger.right):
+                        velocity_y += VELOCITY
+                    if is_close(multiranger.up):
+                        keep_flying = False
+                    motion_commander.start_linear_motion(
+                        velocity_x, velocity_y, 0)
+                    time.sleep(0.1)
+            print(&#x27;Demo terminated!&#x27;)</code></pre>
 <h2>Reference links</h2>
 <p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
 <ol class="numbered-list" start="1">

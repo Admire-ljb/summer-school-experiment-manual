@@ -146,8 +146,11 @@ def relationship_map(zf: zipfile.ZipFile) -> dict[str, str]:
     return {rel.attrib["Id"]: rel.attrib["Target"] for rel in root if "Id" in rel.attrib and "Target" in rel.attrib}
 
 
-def text_from(element: ET.Element) -> str:
-    return "".join(node.text or "" for node in element.findall(".//w:t", NS)).strip()
+def text_from(element: ET.Element, preserve: bool = False) -> str:
+    text = "".join(node.text or "" for node in element.findall(".//w:t", NS))
+    if preserve:
+        text = text.replace("\u00a0", " ")
+    return text.rstrip() if preserve else text.strip()
 
 
 def paragraph_style(paragraph: ET.Element) -> str:
@@ -526,6 +529,8 @@ def is_code_like(text: str) -> bool:
         return True
     if re.match(r"^(import\b|from\b|def\b|class\b|if __name__|for |while |with |try:|except|return\b|print\(|#)", stripped):
         return True
+    if re.match(r"^(SUBSYSTEM==|[a-z_][a-z0-9_]*\([^)]*\)\s*/\s*[a-z_][a-z0-9_]*\()", stripped):
+        return True
     return False
 
 
@@ -533,13 +538,50 @@ def is_code_style(style: str) -> bool:
     return style.strip().lower() in {"html", "code", "sourcecode", "source code"}
 
 
-def is_code_block(block: Block) -> bool:
+def is_code_candidate(block: Block) -> bool:
     return (
         isinstance(block, ParagraphBlock)
-        and bool(block.text.strip())
         and not block.images
-        and (is_code_style(block.style) or is_code_like(block.text))
+        and (is_code_style(block.style) or (bool(block.text.strip()) and is_code_like(block.text)))
     )
+
+
+def is_code_block(block: Block) -> bool:
+    return is_code_candidate(block) and bool(block.text.strip())
+
+
+CODE_COMPLETIONS = {
+    "def move_linear_simple(scf):\n    ...": """def move_linear_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.back(0.5)
+        time.sleep(1)""",
+    "def take_off_simple(scf):\n    ...": """def take_off_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT):
+        time.sleep(2)""",
+    "def log_pos_callback(timestamp, data, logconf):\n    ...": """def log_pos_callback(timestamp, data, logconf):
+    print(data)
+    global position_estimate
+    position_estimate[0] = data['stateEstimate.x']
+    position_estimate[1] = data['stateEstimate.y']""",
+    "def param_deck_flow(name, value_str):\n    ...": """def param_deck_flow(name, value_str):
+    value = int(value_str)
+    print(value)
+    if value:
+        deck_attached_event.set()
+        print('Deck is attached!')
+    else:
+        print('Deck is NOT attached!')""",
+}
+
+
+def normalize_code_text(code: str) -> str:
+    code = code.replace("\u00a0", " ")
+    for placeholder, replacement in CODE_COMPLETIONS.items():
+        code = code.replace(placeholder, replacement)
+    return code
 
 
 def load_translation_cache() -> dict[str, str]:
@@ -912,7 +954,8 @@ def extract_manual(manual: Manual) -> tuple[list[Block], dict[str, int]]:
         image_index = 0
         for child in body:
             if child.tag == f"{{{NS['w']}}}p":
-                text = text_from(child)
+                style = paragraph_style(child)
+                text = text_from(child, preserve=is_code_style(style))
                 images: list[str] = []
                 for blip in child.findall(".//a:blip", NS):
                     rid = blip.attrib.get(f"{{{NS['r']}}}embed")
@@ -924,7 +967,7 @@ def extract_manual(manual: Manual) -> tuple[list[Block], dict[str, int]]:
                             stats["images"] += 1
                 if text or images:
                     stats["paragraphs"] += 1
-                    blocks.append(ParagraphBlock(text, paragraph_style(child), tuple(images)))
+                    blocks.append(ParagraphBlock(text, style, tuple(images)))
             elif child.tag == f"{{{NS['w']}}}tbl":
                 table = table_to_rows(child)
                 if table:
@@ -973,10 +1016,15 @@ def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str], image_m
         block = blocks[index]
         if is_code_block(block):
             code_lines: list[str] = []
-            while index < len(blocks) and is_code_block(blocks[index]):
-                code_lines.append(blocks[index].text.strip())  # type: ignore[union-attr]
+            while index < len(blocks) and is_code_candidate(blocks[index]):
+                code_lines.append(blocks[index].text.rstrip())  # type: ignore[union-attr]
                 index += 1
-            rendered.append(f"<pre><code>{html.escape(chr(10).join(code_lines))}</code></pre>")
+            while code_lines and not code_lines[0].strip():
+                code_lines.pop(0)
+            while code_lines and not code_lines[-1].strip():
+                code_lines.pop()
+            code_text = normalize_code_text(chr(10).join(code_lines))
+            rendered.append(f"<pre><code>{html.escape(code_text)}</code></pre>")
             continue
         if isinstance(block, ParagraphBlock) and bullet_item_text(block.text) and not block.images:
             items: list[str] = []

@@ -72,43 +72,43 @@ from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
 URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址&#x27;)
 if len(sys.argv) &gt; 1:
-URI = sys.argv[1]
+    URI = sys.argv[1]
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
-MIN_DISTANCE = 0.4  # m
-if range is None:
-return False
-else:
-return range &lt; MIN_DISTANCE
+    MIN_DISTANCE = 0.4  # m
+    if range is None:
+        return False
+    else:
+        return range &lt; MIN_DISTANCE
 if __name__ == &#x27;__main__&#x27;:
-# Initialize the low-level drivers
-cflib.crtp.init_drivers()
-cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-with SyncCrazyflie(URI, cf=cf) as scf:
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(1.0)
-with MotionCommander(scf) as motion_commander:
-with Multiranger(scf) as multiranger:
-keep_flying = True
-print(&#x27;already,wait a second&#x27;)
-time.sleep(1.0)
-VELOCITY = 0.3
-velocity_x = 0.3
-velocity_y = 0.0
-while keep_flying: # 只要可以继续飞行就循环执行
-# 检查上方有没有障碍物
-if is_close(multiranger.up):
-keep_flying = False #有障碍物！停止飞行
-# 检查前方有没有障碍物
-if is_close(multiranger.front):
-keep_flying = False  #有障碍物！停止飞行
+    # Initialize the low-level drivers
+    cflib.crtp.init_drivers()
+    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
+    with SyncCrazyflie(URI, cf=cf) as scf:
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        with MotionCommander(scf) as motion_commander:
+            with Multiranger(scf) as multiranger:
+                keep_flying = True
+                print(&#x27;already,wait a second&#x27;)
+                time.sleep(1.0)
+                VELOCITY = 0.3
+                velocity_x = 0.3
+                velocity_y = 0.0
+                while keep_flying: # 只要可以继续飞行就循环执行
+                     # 检查上方有没有障碍物
+                    if is_close(multiranger.up):
+                        keep_flying = False #有障碍物！停止飞行
+                     # 检查前方有没有障碍物
+                    if is_close(multiranger.front):
+                        keep_flying = False  #有障碍物！停止飞行
 # 命令无人机以设定速度飞行
-motion_commander.start_linear_motion(
-velocity_x, velocity_y, 0)
-time.sleep(0.1)
-print(&#x27;Demo terminated!&#x27;)</code></pre>
+                    motion_commander.start_linear_motion(
+                        velocity_x, velocity_y, 0)
+                    time.sleep(0.1)
+            print(&#x27;Demo terminated!&#x27;)</code></pre>
 <p>This code implements a simple function. The drone takes off, stabilizes its attitude for 1 second and flies forward at a speed of 0.3m per second. Until an obstacle is detected within 0.4m in front of the drone, it will stop moving forward and land.</p>
 <h3>Program execution flow</h3>
 <p>Start the program → Connect the drone → Prepare to unlock</p>
@@ -144,62 +144,68 @@ deck_attached_event = Event()
 logging.basicConfig(level=logging.ERROR)
 position_estimate = [0, 0]
 def move_box_limit(scf):
-with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-body_x_cmd = 0.2
-body_y_cmd = 0.1
-max_vel = 0.2
-while (1):
-#if position_estimate[0] &gt; BOX_LIMIT:
-#    mc.start_back()
-#elif position_estimate[0] &lt; -BOX_LIMIT:
-#    mc.start_forward()
-if position_estimate[0] &gt; BOX_LIMIT:
-body_x_cmd = -max_vel
-elif position_estimate[0] &lt; -BOX_LIMIT:
-body_x_cmd = max_vel
-if position_estimate[1] &gt; BOX_LIMIT:
-body_y_cmd = -max_vel
-elif position_estimate[1] &lt; -BOX_LIMIT:
-body_y_cmd = max_vel
-mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)
-time.sleep(0.1)
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        body_x_cmd = 0.2
+        body_y_cmd = 0.1
+        max_vel = 0.2
+        while (1):
+            #if position_estimate[0] &gt; BOX_LIMIT:
+            #    mc.start_back()
+            #elif position_estimate[0] &lt; -BOX_LIMIT:
+            #    mc.start_forward()
+            if position_estimate[0] &gt; BOX_LIMIT:
+                body_x_cmd = -max_vel
+            elif position_estimate[0] &lt; -BOX_LIMIT:
+                body_x_cmd = max_vel
+            if position_estimate[1] &gt; BOX_LIMIT:
+                body_y_cmd = -max_vel
+            elif position_estimate[1] &lt; -BOX_LIMIT:
+                body_y_cmd = max_vel
+            mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)
+            time.sleep(0.1)
 def move_linear_simple(scf):
-...
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.back(0.5)
+        time.sleep(1)
 def take_off_simple(scf):
-...
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT):
+        time.sleep(2)
 def log_pos_callback(timestamp, data, logconf):
-print(data)
-global position_estimate
-position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]
-position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]
+    print(data)
+    global position_estimate
+    position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]
+    position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]
 def param_deck_flow(_, value_str):
-value = int(value_str)
-print(value)
-if value:
-deck_attached_event.set()
-print(&#x27;Deck is attached!&#x27;)
-else:
-print(&#x27;Deck is NOT attached!&#x27;)
+    value = int(value_str)
+    print(value)
+    if value:
+        deck_attached_event.set()
+        print(&#x27;Deck is attached!&#x27;)
+    else:
+        print(&#x27;Deck is NOT attached!&#x27;)
 if __name__ == &#x27;__main__&#x27;:
-cflib.crtp.init_drivers()
-with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,
-cb=param_deck_flow)
-time.sleep(1)
-logconf = LogConfig(name=&#x27;Position&#x27;, period_in_ms=10)
-logconf.add_variable(&#x27;stateEstimate.x&#x27;, &#x27;float&#x27;)
-logconf.add_variable(&#x27;stateEstimate.y&#x27;, &#x27;float&#x27;)
-scf.cf.log.add_config(logconf)
-logconf.data_received_cb.add_callback(log_pos_callback)
-if not deck_attached_event.wait(timeout=5):
-print(&#x27;No flow deck detected!&#x27;)
-sys.exit(1)
-# Arm the Crazyflie
-scf.cf.platform.send_arming_request(True)
-time.sleep(1.0)
-logconf.start()
-move_box_limit(scf)
-logconf.stop()</code></pre>
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
+        scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,
+                                         cb=param_deck_flow)
+        time.sleep(1)
+        logconf = LogConfig(name=&#x27;Position&#x27;, period_in_ms=10)
+        logconf.add_variable(&#x27;stateEstimate.x&#x27;, &#x27;float&#x27;)
+        logconf.add_variable(&#x27;stateEstimate.y&#x27;, &#x27;float&#x27;)
+        scf.cf.log.add_config(logconf)
+        logconf.data_received_cb.add_callback(log_pos_callback)
+        if not deck_attached_event.wait(timeout=5):
+            print(&#x27;No flow deck detected!&#x27;)
+            sys.exit(1)
+        # Arm the Crazyflie
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        logconf.start()
+        move_box_limit(scf)
+        logconf.stop()</code></pre>
 <p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
 <h3>Experiment 4 (optional extension): walk follow the wall</h3>
 <p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>

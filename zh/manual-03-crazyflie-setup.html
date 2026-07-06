@@ -105,12 +105,12 @@ sudo usermod -a -G plugdev $USER</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>注意以下命令较长，复制粘贴的时候保证命令完整性：</p>
 <p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
-<pre><code># Crazyradio (normal operation)</code></pre>
-<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;7777&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
-<pre><code># Bootloader</code></pre>
-<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;0101&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
-<pre><code># Crazyflie (over USB)</code></pre>
-<p>SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</p>
+<pre><code># Crazyradio (normal operation)
+SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;7777&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;
+# Bootloader
+SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;0101&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;
+# Crazyflie (over USB)
+SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</code></pre>
 <p>EOF</p>
 <p>再输入以下命令：</p>
 <pre><code>sudo udevadm control --reload-rules
@@ -165,37 +165,37 @@ URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 if __name__ == &#x27;__main__&#x27;:
-# Initialize the low-level drivers (don&#x27;t list the debug drivers)
-cflib.crtp.init_drivers(enable_debug_driver=False)
-with SyncCrazyflie(URI) as scf:
-# We take off when the commander is created
-with MotionCommander(scf) as mc:
-print(&#x27;Taking off!&#x27;)
-time.sleep(1)
-# There is a set of functions that move a specific distance
-# We can move in all directions
-print(&#x27;Moving forward 0.5m&#x27;)
-mc.forward(0.5)
-# Wait a bit
-time.sleep(1)
-print(&#x27;Moving up 0.2m&#x27;)
-mc.up(0.2)
-# Wait a bit
-time.sleep(1)
-print(&#x27;Doing a 270deg circle&#x27;);
-mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
-print(&#x27;Moving down 0.2m&#x27;)
-mc.down(0.2)
-# Wait a bit
-time.sleep(1)
-print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
-mc.left(0.2, velocity=0.6)
-# Wait a bit
-time.sleep(1)
-print(&#x27;Moving forward 0.5m&#x27;)
-mc.forward(0.5)
-# We land when the MotionCommander goes out of scope
-print(&#x27;Landing!&#x27;)</code></pre>
+    # Initialize the low-level drivers (don&#x27;t list the debug drivers)
+    cflib.crtp.init_drivers(enable_debug_driver=False)
+    with SyncCrazyflie(URI) as scf:
+        # We take off when the commander is created
+        with MotionCommander(scf) as mc:
+            print(&#x27;Taking off!&#x27;)
+            time.sleep(1)
+            # There is a set of functions that move a specific distance
+            # We can move in all directions
+            print(&#x27;Moving forward 0.5m&#x27;)
+            mc.forward(0.5)
+            # Wait a bit
+            time.sleep(1)
+            print(&#x27;Moving up 0.2m&#x27;)
+            mc.up(0.2)
+            # Wait a bit
+            time.sleep(1)
+            print(&#x27;Doing a 270deg circle&#x27;);
+            mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
+            print(&#x27;Moving down 0.2m&#x27;)
+            mc.down(0.2)
+            # Wait a bit
+            time.sleep(1)
+            print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
+            mc.left(0.2, velocity=0.6)
+            # Wait a bit
+            time.sleep(1)
+            print(&#x27;Moving forward 0.5m&#x27;)
+            mc.forward(0.5)
+            # We land when the MotionCommander goes out of scope
+            print(&#x27;Landing!&#x27;)</code></pre>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <ol class="numbered-list" start="1">
