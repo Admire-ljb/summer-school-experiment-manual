@@ -525,7 +525,9 @@ def is_code_like(text: str) -> bool:
         return False
     if stripped.startswith(("http://", "https://")):
         return True
-    if re.match(r"^(sudo|pip|python|python3|ros|rosrun|roslaunch|catkin|source|git|cd|mkdir|touch|ping|reboot)\b", stripped):
+    if re.match(r"^(sudo|pip|python|python3|ros|rosrun|roslaunch|catkin|source|git|cd|mkdir|touch|cat|ping|reboot)\b", stripped):
+        return True
+    if stripped in {"EOF", "EOT"}:
         return True
     if re.match(r"^(import\b|from\b|def\b|class\b|if __name__|for |while |with |try:|except|return\b|print\(|#)", stripped):
         return True

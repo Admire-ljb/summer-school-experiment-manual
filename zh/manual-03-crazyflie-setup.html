@@ -104,14 +104,14 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
 sudo usermod -a -G plugdev $USER</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>注意以下命令较长，复制粘贴的时候保证命令完整性：</p>
-<p>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null</p>
-<pre><code># Crazyradio (normal operation)
+<pre><code>cat &lt;&lt;EOF | sudo tee /etc/udev/rules.d/99-bitcraze.rules &gt; /dev/null
+# Crazyradio (normal operation)
 SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;7777&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;
 # Bootloader
 SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;1915&quot;, ATTRS{idProduct}==&quot;0101&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;
 # Crazyflie (over USB)
-SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;</code></pre>
-<p>EOF</p>
+SUBSYSTEM==&quot;usb&quot;, ATTRS{idVendor}==&quot;0483&quot;, ATTRS{idProduct}==&quot;5740&quot;, MODE=&quot;0664&quot;, GROUP=&quot;plugdev&quot;
+EOF</code></pre>
 <p>再输入以下命令：</p>
 <pre><code>sudo udevadm control --reload-rules
 sudo udevadm trigger</code></pre>
