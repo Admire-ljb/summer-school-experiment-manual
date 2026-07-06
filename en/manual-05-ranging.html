@@ -29,7 +29,8 @@
 <li><a class="" href="manual-10-motion-commander.html"><span>Experiment 10</span>Advanced Motion Commander Programming</a></li>
 <li><a class="" href="manual-11-integrated-practice.html"><span>Experiment 11</span>Integrated Practice</a></li>
 <li><a class="" href="manual-12-position-commander.html"><span>Experiment 12</span>PositionCommander</a></li>
-<li><a class="" href="manual-13-project-demo.html"><span>Experiment 13</span>Integrated Project Demonstration</a></li></ul>
+<li class="nav-group">Competition</li>
+<li><a class="" href="manual-13-project-demo.html"><span>Competition</span>Integrated Project Competition</a></li></ul>
       </nav>
     </div>
   </aside>
@@ -54,8 +55,9 @@
 <li>Multiranger deck</li>
 </ul>
 <h2>3. Experimental steps</h2>
-<p>This experiment mainly runs Python scripts. The programming library reference is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>.</p>
-<p>If you encounter difficulties during the experiment, open the package snapshot listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>
+<p>This experiment mainly runs Python scripts. Open the Bitcraze cflib User Guides directly:</p>
+<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>
+<p>If you encounter difficulties during the experiment, open the URL listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>
 <h3>Experiment 1: Take off and proceed, obstacle landing detected</h3>
 <p>In the last lesson, everyone learned to call the multiranger module individually to view its parameters, and ran a ready-made program to achieve the effect of &quot;pushing&quot; the drone. Next, students will follow the sample program and program to implement specific functions step by step from the basics.</p>
 <p>Next, a complete example program that can be run is given. Today&#x27;s related programming based on the multiranger module can use this as a template for further code writing.</p>
@@ -201,6 +203,91 @@ logconf.stop()</code></pre>
 <p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
 <h3>Experiment 4 (optional extension): walk follow the wall</h3>
 <p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>
+<div class="admonition"><p class="admonition-title">Example code: wall_following.py</p>
+<p>Create <code>wall_following.py</code> inside <code>workspace/wall_following/</code> and copy the code below. This file converts front, left, and right range readings into velocity and yaw-rate commands.</p></div>
+<pre><code>class WallFollowing:
+    def __init__(self, reference_distance=0.45, stop_distance=0.25, max_speed=0.22):
+        self.reference_distance = reference_distance
+        self.stop_distance = stop_distance
+        self.max_speed = max_speed
+
+    def _valid(self, value):
+        return value is not None and value &gt; 0.0
+
+    def compute(self, front, left, right):
+        vx = self.max_speed
+        vy = 0.0
+        yaw_rate = 0.0
+
+        if self._valid(front) and front &lt; self.stop_distance:
+            vx = 0.0
+            yaw_rate = 45.0
+            return vx, vy, yaw_rate
+
+        if self._valid(left):
+            error = self.reference_distance - left
+            vy = max(-0.12, min(0.12, 0.45 * error))
+        elif self._valid(right):
+            error = right - self.reference_distance
+            vy = max(-0.12, min(0.12, 0.45 * error))
+        else:
+            vx = 0.10
+            yaw_rate = 18.0
+
+        return vx, vy, yaw_rate
+</code></pre>
+<div class="admonition"><p class="admonition-title">Example code: multiranger_wall_following.py</p>
+<p>Create <code>multiranger_wall_following.py</code> under <code>workspace/</code> and copy the code below. Before running it, change <code>URI</code> to the full radio URI assigned to your group, then test hover and emergency stop at low speed in a clear safe area.</p></div>
+<pre><code>import logging
+import time
+
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+from cflib.utils import uri_helper
+from cflib.utils.multiranger import Multiranger
+
+from wall_following.wall_following import WallFollowing
+
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
+DEFAULT_HEIGHT = 0.35
+CONTROL_PERIOD = 0.10
+
+
+def is_close(range_m, threshold=0.18):
+    return range_m is not None and range_m &lt; threshold
+
+
+def main():
+    cflib.crtp.init_drivers()
+    controller = WallFollowing(reference_distance=0.45, stop_distance=0.25, max_speed=0.20)
+
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+            with Multiranger(scf) as multiranger:
+                keep_flying = True
+                while keep_flying:
+                    if is_close(multiranger.up, threshold=0.20):
+                        keep_flying = False
+                        break
+
+                    vx, vy, yaw_rate = controller.compute(
+                        front=multiranger.front,
+                        left=multiranger.left,
+                        right=multiranger.right,
+                    )
+                    mc.start_linear_motion(vx, vy, 0.0, yaw_rate)
+                    time.sleep(CONTROL_PERIOD)
+
+                mc.stop()
+
+
+if __name__ == &#x27;__main__&#x27;:
+    logging.basicConfig(level=logging.ERROR)
+    main()
+</code></pre>
+
 <p>This code mainly implements the function of the drone walking along the wall to achieve the purpose of exploring along the wall. Students can use this to experience the concept of autonomous exploration by the drone and pave the way for subsequent courses.</p>
 
       </div>

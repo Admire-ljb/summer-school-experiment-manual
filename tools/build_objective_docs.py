@@ -104,7 +104,7 @@ MANUALS = [
     Manual("manual-10-motion-commander", 10, "\u8fd0\u52a8\u63a7\u5236\u63a5\u53e3\u8fdb\u9636\u7f16\u7a0b", "Advanced Motion Commander Programming", "Day3_\u5b9e\u9a8c\u624b\u518c3-Motion Commander\u8fdb\u9636\u7f16\u7a0b.docx", "Use Motion Commander movement primitives to construct repeatable flight routines.", ("cflib script template.", "Safe test area.", "Instructor-approved height and speed parameters."), ("Create a MotionCommander context.", "Combine takeoff, landing, directional movement, turns, and pauses.", "Test short movement segments before a complete sequence."), ("The drone completes the intended primitive sequence.", "Timing, height, and distance choices are recorded.", "The program can be stopped safely if behavior deviates.")),
     Manual("manual-11-integrated-practice", 11, "\u9636\u6bb5\u7efc\u5408\u5b9e\u8df5", "Integrated Practice", "Day3_\u5b9e\u9a8c\u624b\u518c4-\u9636\u6bb5\u7efc\u5408\u5b9e\u8df5.docx", "Combine setup, sensing, planning, and control skills in a bounded practical task.", ("Completed prior manuals.", "Task area and constraints.", "Team role assignment for operation, monitoring, and recording."), ("Read the task constraints and define success criteria.", "Break the route or behavior into testable components.", "Run the integrated task and record results."), ("The task is completed within the defined constraints.", "The team can explain the selected method.", "Problems are documented with concrete evidence.")),
     Manual("manual-12-position-commander", 12, "\u4f4d\u7f6e\u63a7\u5236\u63a5\u53e3\u5b9e\u9a8c", "PositionCommander", "Day3_\u5b9e\u9a8c\u624b\u518c5-PositionCommander.docx", "Use coordinate-based commands for waypoint routes and structured spatial tasks.", ("Crazyflie setup with appropriate positioning support.", "Coordinate-frame assumptions understood before flight.", "Waypoint list or route sketch."), ("Initialize PositionCommander or the documented position-control API.", "Set default height, speed, and coordinate frame carefully.", "Execute waypoint routes such as square, cube, star, or map-based paths."), ("The coordinate route matches the intended geometry.", "The aircraft remains inside the allowed volume.", "The route can be adjusted by editing explicit coordinates.")),
-    Manual("manual-13-project-demo", 13, "\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1", "Integrated Project Demonstration", "Day3_\u5b9e\u9a8c\u624b\u518c6-\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1.docx", "Present a complete project task using the course experiments as technical basis.", ("Project objective and success criteria.", "Working code and tested hardware setup.", "Presentation evidence such as logs, route sketches, video, or screenshots."), ("Select a feasible demonstration task.", "Implement and rehearse the workflow under safety constraints.", "Present the method, result, limitations, and improvement plan."), ("The demonstration is executable or reproducible.", "The presentation explains method and evidence objectively.", "Safety, teamwork, and failure handling are included in the report.")),
+    Manual("manual-13-project-demo", 13, "\u7efc\u5408\u6bd4\u8d5b\u8bf4\u660e", "Integrated Project Competition", "Day3_\u5b9e\u9a8c\u624b\u518c6-\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1.docx", "Present the final competition task using the course experiments as technical basis.", ("Competition objective and success criteria.", "Working code and tested hardware setup.", "Presentation evidence such as logs, route sketches, video, or screenshots."), ("Read the competition task and scoring rules.", "Implement and rehearse the workflow under safety constraints.", "Present the method, result, limitations, and improvement plan."), ("The run is executable or reproducible.", "The presentation explains method and evidence objectively.", "Safety, teamwork, and failure handling are included in the report.")),
 ]
 
 
@@ -1019,16 +1019,28 @@ def render_blocks(blocks: list[Block], lang: str, cache: dict[str, str], image_m
     return "\n".join(rendered)
 
 
+def manual_label(manual: Manual, lang: str) -> str:
+    if manual.slug == FINAL_TEST_SLUG:
+        return "\u6bd4\u8d5b\u8bf4\u660e" if lang == "zh" else "Competition"
+    return f"\u5b9e\u9a8c {manual.number}" if lang == "zh" else f"Experiment {manual.number}"
+
+
+def manual_display_title(manual: Manual, lang: str) -> str:
+    return manual.zh_title if lang == "zh" else manual.en_title
+
+
 def nav_html(lang: str, current_slug: str | None = None) -> str:
     home = "\u9996\u9875" if lang == "zh" else "Home"
     items = [f'<li><a class="{"active" if current_slug is None else ""}" href="index.html">{home}</a></li>']
     for manual in MANUALS:
-        title = manual.zh_title if lang == "zh" else manual.en_title
-        label = f"\u5b9e\u9a8c {manual.number}" if lang == "zh" else f"Experiment {manual.number}"
+        if manual.slug == FINAL_TEST_SLUG:
+            section = "\u6bd4\u8d5b\u8bf4\u660e" if lang == "zh" else "Competition"
+            items.append(f'<li class="nav-group">{section}</li>')
+        title = manual_display_title(manual, lang)
+        label = manual_label(manual, lang)
         active = " active" if current_slug == manual.slug else ""
         items.append(f'<li><a class="{active.strip()}" href="{manual.slug}.html"><span>{label}</span>{html.escape(title)}</a></li>')
     return "\n".join(items)
-
 
 def layout(lang: str, title: str, body: str, current_slug: str | None = None) -> str:
     zh_href = "index.html" if lang == "zh" else f"../zh/{'index.html' if current_slug is None else current_slug + '.html'}"
@@ -1091,15 +1103,25 @@ def write_index(lang: str) -> None:
             "<p>\u8bfe\u7a0b\u8d44\u6599\u5305\u6587\u4ef6\u5939\u540d\u4e3a <code>course-materials</code>\uff0c\u53ef\u901a\u8fc7 <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">\u5317\u822a\u7f51\u76d8\u94fe\u63a5</a> \u4e0b\u8f7d\uff0c\u6709\u6548\u671f\u81f3 2028-11-11 10:31\u3002\u4e0b\u8f7d\u540e\u8bf7\u89e3\u538b\u4e3a <code>course-materials</code> \u6587\u4ef6\u5939\uff0c\u4ee5\u4fbf\u4e0e\u672c\u6587\u6863\u4e2d\u7684\u8def\u5f84\u4fdd\u6301\u4e00\u81f4\u3002</p></div>"
             "<h2>\u5b9e\u9a8c\u76ee\u5f55</h2><div class=\"toctree-wrapper\">"
         )
+        competition_card = ""
         for manual in MANUALS:
-            body += f'<a class="doc-card" href="{manual.slug}.html"><span>\u5b9e\u9a8c {manual.number}</span><strong>{html.escape(manual.zh_title)}</strong><em>{html.escape(manual.en_title)}</em></a>\n'
-        body += "</div>"
+            card = f'<a class="doc-card" href="{manual.slug}.html"><span>{manual_label(manual, "zh")}</span><strong>{html.escape(manual_display_title(manual, "zh"))}</strong><em>{html.escape(manual.en_title)}</em></a>\n'
+            if manual.slug == FINAL_TEST_SLUG:
+                competition_card = card
+            else:
+                body += card
+        body += '</div><h2>\u6bd4\u8d5b\u8bf4\u660e</h2><div class="toctree-wrapper">' + competition_card + '</div>'
         title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c"
     else:
         body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><div class=\"admonition\"><p class=\"admonition-title\">Course Materials Package</p><p>Download the <code>course-materials</code> folder from the <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">BUAA cloud link</a>. The link is valid until November 11, 2028 at 10:31. After downloading, extract it as <code>course-materials</code> so the paths in this manual match the folder name.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
+        competition_card = ""
         for manual in MANUALS:
-            body += f'<a class="doc-card" href="{manual.slug}.html"><span>Experiment {manual.number}</span><strong>{html.escape(manual.en_title)}</strong></a>\n'
-        body += "</div>"
+            card = f'<a class="doc-card" href="{manual.slug}.html"><span>{manual_label(manual, "en")}</span><strong>{html.escape(manual_display_title(manual, "en"))}</strong></a>\n'
+            if manual.slug == FINAL_TEST_SLUG:
+                competition_card = card
+            else:
+                body += card
+        body += '</div><h2>Competition Brief</h2><div class="toctree-wrapper">' + competition_card + '</div>'
         title = "Palm-sized UAV Experiment Manual"
     (ROOT / lang / "index.html").write_text(layout(lang, title, body), encoding="utf-8")
 
@@ -1110,16 +1132,138 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
+WALL_FOLLOWING_MODULE = """\
+class WallFollowing:
+    def __init__(self, reference_distance=0.45, stop_distance=0.25, max_speed=0.22):
+        self.reference_distance = reference_distance
+        self.stop_distance = stop_distance
+        self.max_speed = max_speed
+
+    def _valid(self, value):
+        return value is not None and value > 0.0
+
+    def compute(self, front, left, right):
+        vx = self.max_speed
+        vy = 0.0
+        yaw_rate = 0.0
+
+        if self._valid(front) and front < self.stop_distance:
+            vx = 0.0
+            yaw_rate = 45.0
+            return vx, vy, yaw_rate
+
+        if self._valid(left):
+            error = self.reference_distance - left
+            vy = max(-0.12, min(0.12, 0.45 * error))
+        elif self._valid(right):
+            error = right - self.reference_distance
+            vy = max(-0.12, min(0.12, 0.45 * error))
+        else:
+            vx = 0.10
+            yaw_rate = 18.0
+
+        return vx, vy, yaw_rate
+"""
+
+
+MULTIRANGER_WALL_FOLLOWING_SCRIPT = """\
+import logging
+import time
+
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+from cflib.utils import uri_helper
+from cflib.utils.multiranger import Multiranger
+
+from wall_following.wall_following import WallFollowing
+
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+DEFAULT_HEIGHT = 0.35
+CONTROL_PERIOD = 0.10
+
+
+def is_close(range_m, threshold=0.18):
+    return range_m is not None and range_m < threshold
+
+
+def main():
+    cflib.crtp.init_drivers()
+    controller = WallFollowing(reference_distance=0.45, stop_distance=0.25, max_speed=0.20)
+
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+            with Multiranger(scf) as multiranger:
+                keep_flying = True
+                while keep_flying:
+                    if is_close(multiranger.up, threshold=0.20):
+                        keep_flying = False
+                        break
+
+                    vx, vy, yaw_rate = controller.compute(
+                        front=multiranger.front,
+                        left=multiranger.left,
+                        right=multiranger.right,
+                    )
+                    mc.start_linear_motion(vx, vy, 0.0, yaw_rate)
+                    time.sleep(CONTROL_PERIOD)
+
+                mc.stop()
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.ERROR)
+    main()
+"""
+
+
+def wall_following_examples(lang: str) -> str:
+    module_code = html.escape(WALL_FOLLOWING_MODULE)
+    script_code = html.escape(MULTIRANGER_WALL_FOLLOWING_SCRIPT)
+    if lang == "zh":
+        return f'''
+<div class="admonition"><p class="admonition-title">示例代码：wall_following.py</p>
+<p>在 <code>workspace/wall_following/</code> 文件夹中新建 <code>wall_following.py</code>，复制以下代码。该文件只负责根据前、左、右三个方向的测距值计算速度和偏航角速度。</p></div>
+<pre><code>{module_code}</code></pre>
+<div class="admonition"><p class="admonition-title">示例代码：multiranger_wall_following.py</p>
+<p>在 <code>workspace/</code> 下新建 <code>multiranger_wall_following.py</code>，复制以下代码。运行前请把 <code>URI</code> 改成所在小组分配的完整 radio URI，并在低速、空旷、安全的场地中先做悬停和急停测试。</p></div>
+<pre><code>{script_code}</code></pre>
+'''
+    return f'''
+<div class="admonition"><p class="admonition-title">Example code: wall_following.py</p>
+<p>Create <code>wall_following.py</code> inside <code>workspace/wall_following/</code> and copy the code below. This file converts front, left, and right range readings into velocity and yaw-rate commands.</p></div>
+<pre><code>{module_code}</code></pre>
+<div class="admonition"><p class="admonition-title">Example code: multiranger_wall_following.py</p>
+<p>Create <code>multiranger_wall_following.py</code> under <code>workspace/</code> and copy the code below. Before running it, change <code>URI</code> to the full radio URI assigned to your group, then test hover and emergency stop at low speed in a clear safe area.</p></div>
+<pre><code>{script_code}</code></pre>
+'''
+
+
+def apply_wall_following_examples(manual: Manual, lang: str, body: str) -> str:
+    if "multiranger_wall_following.py</code>" in body and "Example code: multiranger_wall_following.py" in body:
+        return body
+    if "multiranger_wall_following.py</code>" in body and "示例代码：multiranger_wall_following.py" in body:
+        return body
+    examples = wall_following_examples(lang)
+    if lang == "zh":
+        marker = "<p>将该节课附上的wall_following.py和multiranger_wall_following.py拷贝至虚拟机中。其中将multiranger_wall_following.py放在workspace目录下，在workspace目录下再新建一个名为wall_following的目录，将wall_following.py文件放入其中，以完成multiranger_wall_following.py文件运行所需要的依赖。</p>"
+    else:
+        marker = "<p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>"
+    if marker in body:
+        return body.replace(marker, marker + examples, 1)
+    return body + examples
+
 def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str:
     common_pairs = {
         "<p>本次实验将主要进行python脚本的运行，所有的编程库的调用，皆来自于官方的网址教程：用户指南 |比特热潮</p>":
-        "<p>本次实验将主要进行python脚本的运行，编程库参考资料已保存到course-materials：<code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>。</p>",
+        "<p>本次实验将主要进行python脚本的运行，编程库参考资料可直接打开 Bitcraze cflib User Guides：</p>\n<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>",
         "<p>若在进行实验中遇到一些困难，也可点击上述网址进行进一步的参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>":
-        "<p>若在进行实验中遇到一些困难，也可打开上述资料包网页快照进行进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>",
+        "<p>若在进行实验中遇到困难，可直接打开上述网址进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>",
         "<p>This experiment will mainly run python scripts. All programming library calls come from the official website tutorial: User Guide | Bit Boom</p>":
-        "<p>This experiment mainly runs Python scripts. The programming library reference is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/10_bitcraze_cflib_user_guides.html</code>.</p>",
+        "<p>This experiment mainly runs Python scripts. Open the Bitcraze cflib User Guides directly:</p>\n<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>",
         "<p>If you encounter some difficulties during the experiment, you can also click on the above URL for further reference. At the same time, some operations and knowledge points are also mentioned in the experiment manual of the previous class. If you have any questions, you can refer to the experiment manual of the previous section. This part of the operation will not be repeated in this experiment manual.</p>":
-        "<p>If you encounter difficulties during the experiment, open the package snapshot listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>",
+        "<p>If you encounter difficulties during the experiment, open the URL listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>",
         "<p>统一配置：8GB</p>\n\n<p>保留至少8GB内存给物理机。</p>":
         "<p>统一配置：8GB</p>\n<p>保留至少8GB内存给物理机。</p>",
         "<p>Unified configuration: 8GB</p>\n\n<p>Reserve at least 8GB of memory for the host machine.</p>":
@@ -1148,17 +1292,17 @@ def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str
             "<h3>Software resources (can be downloaded from the official website, copied by the teaching assistant to save time)</h3>\n<p>VMware Workstation Pro 16</p>\n<p>Ubuntu 20.04 LTS Desktop version image file</p>":
             "<h3>Software resources (from the Course Materials Package)</h3>\n<p>VMware Workstation Pro 16: <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>\n<p>Ubuntu 20.04 LTS Desktop image file: <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>",
             "<p>具体图文流程在浏览器中打开此链接：</p>":
-            "<p>具体图文流程可打开course-materials中的网页快照：<code>course-materials/01_web_snapshots/01_vmware16_install_csdn.html</code>。原始链接为：</p>",
+            "<p>具体图文流程可直接打开以下网址：</p>",
             "<p>For the specific graphic process, open this link in your browser:</p>":
-            "<p>For the specific illustrated process, open the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/01_vmware16_install_csdn.html</code>. Original link:</p>",
+            "<p>For the specific illustrated process, open this URL directly:</p>",
             "<h3>下载与安装</h3>\n<p>访问VMware官网，下载Workstation Pro 16安装包。</p>":
             "<h3>从course-materials安装</h3>\n<p>在course-materials中找到 <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code>。</p>",
             "<h3>Download and install</h3>\n<p>Visit the VMware official website and download the Workstation Pro 16 installation package.</p>":
             "<h3>Install from the Course Materials Package</h3>\n<p>In the Course Materials Package, locate <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code>.</p>",
             "<p>具体参考图文流程在浏览器中打开此链接：</p>":
-            "<p>具体参考图文流程可打开course-materials中的网页快照：<code>course-materials/01_web_snapshots/02_ubuntu_vmware_install_csdn.html</code>。原始链接为：</p>",
+            "<p>具体参考图文流程可直接打开以下网址：</p>",
             "<p>Please refer to the graphic process for specific details and open this link in your browser:</p>":
-            "<p>For the illustrated reference process, open the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/02_ubuntu_vmware_install_csdn.html</code>. Original link:</p>",
+            "<p>For the illustrated reference process, open this URL directly:</p>",
             "<p>该界面中点击浏览选中ubuntu20.04系统映像文件，点击下一步</p>":
             "<p>该界面中点击浏览，选择course-materials中的 <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code>，点击下一步</p>",
             "<p>In this interface, click Browse to select the ubuntu20.04 system image file, and click Next</p>":
@@ -1196,23 +1340,23 @@ def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str
             "<p>Double-click the compressed package and click extract to extract it to the file directory.</p>":
             "<p>Double-click <code>crazyflie-clients-python-master.zip</code> and click extract to extract it to the file directory.</p>",
             "<p>具体的无人机基础认知教程可参考该官方网址：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
-            "<p>具体的无人机基础认知教程可参考course-materials中的网页快照：<code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>。</p>",
+            "<p>具体的无人机基础认知教程可直接打开 Bitcraze 官方教程：</p>\n<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</code></pre>",
             "<p>For specific basic drone cognition tutorials, please refer to this official website: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
-            "<p>For the basic Crazyflie tutorial, refer to the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>.</p>",
+            "<p>For the basic Crazyflie tutorial, open the official Bitcraze tutorial directly:</p>\n<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</code></pre>",
             "<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以再参考官方网址的教程：</p>\n<p>USB permissions | Bitcraze</p>":
-            "<p>首先先配置linux虚拟机中的usb设备的权限，详细的操作可以参考course-materials中的网页快照：</p>\n<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>\n<p>USB permissions | Bitcraze</p>",
+            "<p>首先先配置linux虚拟机中的usb设备的权限，详细操作可直接打开 Bitcraze USB permissions 页面：</p>\n<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/</code></pre>",
             "<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, you can refer to the tutorial on the official website:</p>\n<p>USB permissions | Bitcraze</p>":
-            "<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, refer to the saved webpage snapshot in the Course Materials Package:</p>\n<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>\n<p>USB permissions | Bitcraze</p>",
+            "<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, open the Bitcraze USB permissions page directly:</p>\n<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/</code></pre>",
             "<p>补充，实验官方教程网址为：https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>":
-            "<p>补充，实验官方教程已保存到course-materials：<code>course-materials/01_web_snapshots/07_bitcraze_stem_drone_bundle.html</code>。</p>",
+            "<p>补充，实验官方教程网址为：</p>\n<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</code></pre>",
             "<p>Supplement, the official tutorial website for the experiment is: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>":
-            "<p>Supplement: the official experiment tutorial is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/07_bitcraze_stem_drone_bundle.html</code>.</p>",
+            "<p>Supplement: open the official experiment tutorial directly:</p>\n<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</code></pre>",
         },
         "manual-04-multiranger": {
             "<p>该模块的官方教程网址：Multi-ranger deck | Bitcraze</p>":
-            "<p>该模块的产品说明已保存到course-materials：<code>course-materials/01_web_snapshots/11_bitcraze_multi_ranger_deck.html</code></p>",
+            "<p>该模块的产品说明可直接打开 Bitcraze 页面：</p>\n<pre><code>https://store.bitcraze.io/products/multi-ranger-deck</code></pre>",
             "<p>The official tutorial URL of this module: Multi-ranger deck | Bitcraze</p>":
-            "<p>The product description for this module is saved in the Course Materials Package at <code>course-materials/01_web_snapshots/11_bitcraze_multi_ranger_deck.html</code>.</p>",
+            "<p>Open the Bitcraze product page for this module directly:</p>\n<pre><code>https://store.bitcraze.io/products/multi-ranger-deck</code></pre>",
         },
         "manual-08-path-planning": {
             "<p>同时再打开本机上存放今天实验所需要的工程文件压缩包的所在位置（该压缩包放在电脑桌面或者某个文件夹都可以）。鼠标选中本机上的压缩包文件，直接拖动到虚拟机中的workspace中。</p>":
@@ -1235,6 +1379,8 @@ def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str
         body = body.replace(old, new)
     for old, new in manual_pairs.get(manual.slug, {}).items():
         body = body.replace(old, new)
+    if manual.slug in {"manual-05-ranging", "manual-06-complex-map"}:
+        body = apply_wall_following_examples(manual, lang, body)
     return body
 
 
@@ -1472,8 +1618,8 @@ def write_pages() -> dict[str, dict[str, int]]:
 
     for manual, blocks, _stats in extracted.values():
         if manual.slug == FINAL_TEST_SLUG:
-            zh_body = final_project_demo_body(manual, "zh")
-            en_body = final_project_demo_body(manual, "en")
+            zh_body = '<h1>\u6bd4\u8d5b\u8bf4\u660e\uff1a\u7efc\u5408\u9879\u76ee\u5c55\u793a\u4efb\u52a1</h1><p class="subtitle">Integrated Project Competition</p>' + render_blocks(blocks, "zh", cache)
+            en_body = '<h1>Competition Brief: Integrated Project Competition</h1>' + render_blocks(blocks, "en", cache, image_map)
         else:
             zh_body = f'<h1>\u5b9e\u9a8c {manual.number}: {html.escape(manual.zh_title)}</h1><p class="subtitle">{html.escape(manual.en_title)}</p>' + render_blocks(blocks, "zh", cache)
             en_body = english_body(manual, blocks, cache, image_map)
@@ -1512,6 +1658,7 @@ a:hover{color:var(--accent-dark);text-decoration:underline}
 .wy-menu ul{list-style:none;padding:0;margin:0}
 .wy-menu a{display:block;color:var(--sidebar-link);padding:10px 20px;border-left:4px solid transparent;font-size:14px;line-height:1.4}
 .wy-menu a span{display:block;color:#9db9c9;font-size:12px;margin-bottom:2px}
+.nav-group{margin:16px 20px 6px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}
 .wy-menu a.active,.wy-menu a:hover{background:var(--sidebar-dark);border-left-color:var(--accent);color:#fff;text-decoration:none}
 .wy-nav-content-wrap{margin-left:300px;min-height:100vh}
 .wy-nav-content{background:#fcfcfc;min-height:100vh;padding:38px 56px 88px}
@@ -1652,6 +1799,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-

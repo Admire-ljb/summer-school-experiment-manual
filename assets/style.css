@@ -16,6 +16,7 @@ a:hover{color:var(--accent-dark);text-decoration:underline}
 .wy-menu ul{list-style:none;padding:0;margin:0}
 .wy-menu a{display:block;color:var(--sidebar-link);padding:10px 20px;border-left:4px solid transparent;font-size:14px;line-height:1.4}
 .wy-menu a span{display:block;color:#9db9c9;font-size:12px;margin-bottom:2px}
+.nav-group{margin:16px 20px 6px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}
 .wy-menu a.active,.wy-menu a:hover{background:var(--sidebar-dark);border-left-color:var(--accent);color:#fff;text-decoration:none}
 .wy-nav-content-wrap{margin-left:300px;min-height:100vh}
 .wy-nav-content{background:#fcfcfc;min-height:100vh;padding:38px 56px 88px}

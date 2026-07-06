@@ -280,22 +280,22 @@
     {
       "slug": "manual-13-project-demo",
       "number": 13,
-      "zh_title": "综合项目展示任务",
-      "en_title": "Integrated Project Demonstration",
+      "zh_title": "综合比赛说明",
+      "en_title": "Integrated Project Competition",
       "source_name": "Day3_实验手册6-综合项目展示任务.docx",
-      "purpose": "Present a complete project task using the course experiments as technical basis.",
+      "purpose": "Present the final competition task using the course experiments as technical basis.",
       "preparation": [
-        "Project objective and success criteria.",
+        "Competition objective and success criteria.",
         "Working code and tested hardware setup.",
         "Presentation evidence such as logs, route sketches, video, or screenshots."
       ],
       "procedure": [
-        "Select a feasible demonstration task.",
+        "Read the competition task and scoring rules.",
         "Implement and rehearse the workflow under safety constraints.",
         "Present the method, result, limitations, and improvement plan."
       ],
       "verification": [
-        "The demonstration is executable or reproducible.",
+        "The run is executable or reproducible.",
         "The presentation explains method and evidence objectively.",
         "Safety, teamwork, and failure handling are included in the report."
       ]

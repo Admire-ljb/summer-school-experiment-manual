@@ -29,7 +29,8 @@
 <li><a class="" href="manual-10-motion-commander.html"><span>Experiment 10</span>Advanced Motion Commander Programming</a></li>
 <li><a class="" href="manual-11-integrated-practice.html"><span>Experiment 11</span>Integrated Practice</a></li>
 <li><a class="" href="manual-12-position-commander.html"><span>Experiment 12</span>PositionCommander</a></li>
-<li><a class="" href="manual-13-project-demo.html"><span>Experiment 13</span>Integrated Project Demonstration</a></li></ul>
+<li class="nav-group">Competition</li>
+<li><a class="" href="manual-13-project-demo.html"><span>Competition</span>Integrated Project Competition</a></li></ul>
       </nav>
     </div>
   </aside>
@@ -79,7 +80,8 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
 <p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/010.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Experiment 2: Get to know the infrastructure of the crazyfile drone</h3>
-<p>For the basic Crazyflie tutorial, refer to the saved webpage snapshot in the Course Materials Package: <code>course-materials/01_web_snapshots/08_bitcraze_crazyflie_2x.html</code>.</p>
+<p>For the basic Crazyflie tutorial, open the official Bitcraze tutorial directly:</p>
+<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</code></pre>
 <p>First, let’s get to know the basic components of a drone. Its basic parts are as follows:</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/011.jpeg" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Figure 1 Crazyflie drone parts</p>
@@ -96,9 +98,8 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
 <p>Bootloader Mode: Both M2 and M3 flash blue lights, about 1 time/second</p>
 <p>Self-test fails: If the M1 light flashes red 5 times quickly, and pauses for a period of time, and then flashes red light 5 times quickly, and then pauses for a period of time, and repeats this, it means that the self-test has failed. Note that self-test is different from the test before assembly (M4 will flash green light 5 times quickly, the test passes. If M1 light flashes red light 5 times quickly, it fails)</p>
 <h3>Experiment 3: Connect your drone using wired and wireless methods</h3>
-<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, refer to the saved webpage snapshot in the Course Materials Package:</p>
-<p><code>course-materials/01_web_snapshots/09_bitcraze_usb_permissions.html</code></p>
-<p>USB permissions | Bitcraze</p>
+<p>First, configure the permissions of the USB device in the Linux virtual machine. For detailed operations, open the Bitcraze USB permissions page directly:</p>
+<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/installation/usb_permissions/</code></pre>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>The specific operation is to enter the following commands in the terminal in the original directory:</p>
 <pre><code>sudo groupadd plugdev
