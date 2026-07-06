@@ -60,91 +60,21 @@
 <p>If you encounter difficulties during the experiment, open the URL listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>
 <h3>Experiment 1: walk follow the wall</h3>
 <p>This experiment is an expanded experiment of the previous class. Now the parameters that can be adjusted in the code are given. Students can modify the parameters to test the operation effect.</p>
-<p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>
-<div class="admonition"><p class="admonition-title">Example code: wall_following.py</p>
-<p>Create <code>wall_following.py</code> inside <code>workspace/wall_following/</code> and copy the code below. This file converts front, left, and right range readings into velocity and yaw-rate commands.</p></div>
-<pre><code>class WallFollowing:
-    def __init__(self, reference_distance=0.45, stop_distance=0.25, max_speed=0.22):
-        self.reference_distance = reference_distance
-        self.stop_distance = stop_distance
-        self.max_speed = max_speed
 
-    def _valid(self, value):
-        return value is not None and value &gt; 0.0
-
-    def compute(self, front, left, right):
-        vx = self.max_speed
-        vy = 0.0
-        yaw_rate = 0.0
-
-        if self._valid(front) and front &lt; self.stop_distance:
-            vx = 0.0
-            yaw_rate = 45.0
-            return vx, vy, yaw_rate
-
-        if self._valid(left):
-            error = self.reference_distance - left
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        elif self._valid(right):
-            error = right - self.reference_distance
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        else:
-            vx = 0.10
-            yaw_rate = 18.0
-
-        return vx, vy, yaw_rate
-</code></pre>
-<div class="admonition"><p class="admonition-title">Example code: multiranger_wall_following.py</p>
-<p>Create <code>multiranger_wall_following.py</code> under <code>workspace/</code> and copy the code below. Before running it, change <code>URI</code> to the full radio URI assigned to your group, then test hover and emergency stop at low speed in a clear safe area.</p></div>
-<pre><code>import logging
-import time
-
-import cflib.crtp
-from cflib.crazyflie import Crazyflie
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.positioning.motion_commander import MotionCommander
-from cflib.utils import uri_helper
-from cflib.utils.multiranger import Multiranger
-
-from wall_following.wall_following import WallFollowing
-
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-DEFAULT_HEIGHT = 0.35
-CONTROL_PERIOD = 0.10
-
-
-def is_close(range_m, threshold=0.18):
-    return range_m is not None and range_m &lt; threshold
-
-
-def main():
-    cflib.crtp.init_drivers()
-    controller = WallFollowing(reference_distance=0.45, stop_distance=0.25, max_speed=0.20)
-
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                while keep_flying:
-                    if is_close(multiranger.up, threshold=0.20):
-                        keep_flying = False
-                        break
-
-                    vx, vy, yaw_rate = controller.compute(
-                        front=multiranger.front,
-                        left=multiranger.left,
-                        right=multiranger.right,
-                    )
-                    mc.start_linear_motion(vx, vy, 0.0, yaw_rate)
-                    time.sleep(CONTROL_PERIOD)
-
-                mc.stop()
-
-
-if __name__ == &#x27;__main__&#x27;:
-    logging.basicConfig(level=logging.ERROR)
-    main()
-</code></pre>
+<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
+<p><code>wall_following.py</code> and <code>multiranger_wall_following.py</code> come from Bitcraze's official <code>crazyflie-demos</code> repository. Use the files in the official repository as the source of record; this manual lists the source links and classroom usage steps.</p>
+<ul>
+<li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
+<li><code>wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">official file link</a></li>
+<li><code>multiranger_wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">official file link</a></li>
+</ul></div>
+<p>Recommended usage in the virtual machine:</p>
+<pre><code>cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+python3 multiranger_wall_following.py</code></pre>
+<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. Set <code>URI</code> in the script or the <code>CFLIB_URI</code> environment variable to the full radio URI assigned to your group. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
 
 <p>As shown in the figure below, lines 75 to 77 in the multiranger_wall_following.py file</p>
 <figure><img src="../assets/images/manual-06-complex-map/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -154,7 +84,10 @@ if __name__ == &#x27;__main__&#x27;:
 <p>Note that the content of this experiment will be related to part of the final assessment. This experiment hopes to improve and test the students&#x27; programming proficiency. If more clever code logic is used to implement such tasks, it will make everyone&#x27;s practical assessment results even better.</p>
 <figure><img src="../assets/images/manual-06-complex-map/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Experiment 3: Manually control flight mapping</h3>
-<p>Put the multiranger_pointcloud.py file attached to this lesson into the workspace, and the python script can be run directly. As shown in the figure below, the main function of this program is to use the multiranger module of the crazyflie drone in an obstacle environment to construct point cloud maps of surrounding obstacles.</p>
+<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> comes from Bitcraze's official <code>crazyflie-demos</code> repository. Use the file in the official repository as the source of record; this manual lists the source link and classroom usage steps.</p><ul><li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py">official file link</a></li></ul></div><p>Recommended usage in the virtual machine:</p><pre><code>cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud
+python3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. This example requires a graphical desktop and Python visualization dependencies; if dependencies are missing, install <code>numpy</code>, <code>vispy</code>, and <code>PyQt6</code> according to the official README. Run the first test in a safe area and confirm that the drone lands normally after the visualization window is closed.</p>
 <figure><img src="../assets/images/manual-06-complex-map/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>After running this program, you will use the keyboard to manually control the drone to fly in an obstacle environment and sense the surrounding environment. Use the direction keys to control the flight direction of the drone. The drone will rise to the default height of 0.3m. The a and d keys are used to control the drone&#x27;s steering slowly, the z and x keys are used to control the drone&#x27;s steering quickly, and the height is controlled by the w and s keys. Since the multiranger&#x27;s sampling speed is limited, if the drone flies too fast, the sampled environment map may not be clear. Therefore, if you want to get a clearer point cloud map, you can slightly slow down the drone&#x27;s flight speed to get a clearer point cloud map.</p>
 <figure><img src="../assets/images/manual-06-complex-map/004.png" alt="manual image" loading="lazy" decoding="async"></figure>

@@ -1182,118 +1182,46 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 """
 
 
-WALL_FOLLOWING_MODULE = """\
-class WallFollowing:
-    def __init__(self, reference_distance=0.45, stop_distance=0.25, max_speed=0.22):
-        self.reference_distance = reference_distance
-        self.stop_distance = stop_distance
-        self.max_speed = max_speed
-
-    def _valid(self, value):
-        return value is not None and value > 0.0
-
-    def compute(self, front, left, right):
-        vx = self.max_speed
-        vy = 0.0
-        yaw_rate = 0.0
-
-        if self._valid(front) and front < self.stop_distance:
-            vx = 0.0
-            yaw_rate = 45.0
-            return vx, vy, yaw_rate
-
-        if self._valid(left):
-            error = self.reference_distance - left
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        elif self._valid(right):
-            error = right - self.reference_distance
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        else:
-            vx = 0.10
-            yaw_rate = 18.0
-
-        return vx, vy, yaw_rate
-"""
-
-
-MULTIRANGER_WALL_FOLLOWING_SCRIPT = """\
-import logging
-import time
-
-import cflib.crtp
-from cflib.crazyflie import Crazyflie
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.positioning.motion_commander import MotionCommander
-from cflib.utils import uri_helper
-from cflib.utils.multiranger import Multiranger
-
-from wall_following.wall_following import WallFollowing
-
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-DEFAULT_HEIGHT = 0.35
-CONTROL_PERIOD = 0.10
-
-
-def is_close(range_m, threshold=0.18):
-    return range_m is not None and range_m < threshold
-
-
-def main():
-    cflib.crtp.init_drivers()
-    controller = WallFollowing(reference_distance=0.45, stop_distance=0.25, max_speed=0.20)
-
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
-        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                while keep_flying:
-                    if is_close(multiranger.up, threshold=0.20):
-                        keep_flying = False
-                        break
-
-                    vx, vy, yaw_rate = controller.compute(
-                        front=multiranger.front,
-                        left=multiranger.left,
-                        right=multiranger.right,
-                    )
-                    mc.start_linear_motion(vx, vy, 0.0, yaw_rate)
-                    time.sleep(CONTROL_PERIOD)
-
-                mc.stop()
-
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.ERROR)
-    main()
-"""
-
-
 def wall_following_examples(lang: str) -> str:
-    module_code = html.escape(WALL_FOLLOWING_MODULE)
-    script_code = html.escape(MULTIRANGER_WALL_FOLLOWING_SCRIPT)
     if lang == "zh":
-        return f'''
-<div class="admonition"><p class="admonition-title">示例代码：wall_following.py</p>
-<p>在 <code>workspace/wall_following/</code> 文件夹中新建 <code>wall_following.py</code>，复制以下代码。该文件只负责根据前、左、右三个方向的测距值计算速度和偏航角速度。</p></div>
-<pre><code>{module_code}</code></pre>
-<div class="admonition"><p class="admonition-title">示例代码：multiranger_wall_following.py</p>
-<p>在 <code>workspace/</code> 下新建 <code>multiranger_wall_following.py</code>，复制以下代码。运行前请把 <code>URI</code> 改成所在小组分配的完整 radio URI，并在低速、空旷、安全的场地中先做悬停和急停测试。</p></div>
-<pre><code>{script_code}</code></pre>
+        return '''
+<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Wall Following</p>
+<p><code>wall_following.py</code> 和 <code>multiranger_wall_following.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p>
+<ul>
+<li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
+<li><code>wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">官方文件链接</a></li>
+<li><code>multiranger_wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">官方文件链接</a></li>
+</ul></div>
+<p>建议在虚拟机中按以下方式使用：</p>
+<pre><code>cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+python3 multiranger_wall_following.py</code></pre>
+<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；将脚本中的 <code>URI</code> 或环境变量 <code>CFLIB_URI</code> 设置为所在小组分配的完整 radio URI；首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
 '''
-    return f'''
-<div class="admonition"><p class="admonition-title">Example code: wall_following.py</p>
-<p>Create <code>wall_following.py</code> inside <code>workspace/wall_following/</code> and copy the code below. This file converts front, left, and right range readings into velocity and yaw-rate commands.</p></div>
-<pre><code>{module_code}</code></pre>
-<div class="admonition"><p class="admonition-title">Example code: multiranger_wall_following.py</p>
-<p>Create <code>multiranger_wall_following.py</code> under <code>workspace/</code> and copy the code below. Before running it, change <code>URI</code> to the full radio URI assigned to your group, then test hover and emergency stop at low speed in a clear safe area.</p></div>
-<pre><code>{script_code}</code></pre>
+    return '''
+<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
+<p><code>wall_following.py</code> and <code>multiranger_wall_following.py</code> come from Bitcraze's official <code>crazyflie-demos</code> repository. Use the files in the official repository as the source of record; this manual lists the source links and classroom usage steps.</p>
+<ul>
+<li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
+<li><code>wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">official file link</a></li>
+<li><code>multiranger_wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">official file link</a></li>
+</ul></div>
+<p>Recommended usage in the virtual machine:</p>
+<pre><code>cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+python3 multiranger_wall_following.py</code></pre>
+<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. Set <code>URI</code> in the script or the <code>CFLIB_URI</code> environment variable to the full radio URI assigned to your group. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
 '''
 
 
 def apply_wall_following_examples(manual: Manual, lang: str, body: str) -> str:
-    if "multiranger_wall_following.py</code>" in body and "Example code: multiranger_wall_following.py" in body:
+    if "Official demo repository: Multiranger Wall Following" in body:
         return body
-    if "multiranger_wall_following.py</code>" in body and "示例代码：multiranger_wall_following.py" in body:
+    if "官方示例仓库：Multiranger Wall Following" in body:
         return body
     examples = wall_following_examples(lang)
     if lang == "zh":
@@ -1301,7 +1229,7 @@ def apply_wall_following_examples(manual: Manual, lang: str, body: str) -> str:
     else:
         marker = "<p>Copy the wall_following.py and multiranger_wall_following.py attached to this lesson to the virtual machine. Place multiranger_wall_following.py in the workspace directory, create a new directory named wall_following in the workspace directory, and put the wall_following.py file into it to complete the dependencies required to run the multiranger_wall_following.py file.</p>"
     if marker in body:
-        return body.replace(marker, marker + examples, 1)
+        return body.replace(marker, examples, 1)
     return body + examples
 
 def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str:
@@ -1407,6 +1335,12 @@ def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str
             "<p>该模块的产品说明可直接打开 Bitcraze 页面：</p>\n<pre><code>https://store.bitcraze.io/products/multi-ranger-deck</code></pre>",
             "<p>The official tutorial URL of this module: Multi-ranger deck | Bitcraze</p>":
             "<p>Open the Bitcraze product page for this module directly:</p>\n<pre><code>https://store.bitcraze.io/products/multi-ranger-deck</code></pre>",
+        },
+        "manual-06-complex-map": {
+            "<p>将本节课附带的multiranger_pointcloud.py文件放入workspace中，该python脚本可直接运行。如下图所示，该程序的主要功能为crazyflie无人机在障碍环境中使用multiranger模块进行周边障碍物的点云地图建图。</p>":
+            "<div class=\"admonition\"><p class=\"admonition-title\">官方示例仓库：Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p><ul><li>仓库主页：<a href=\"https://github.com/bitcraze/crazyflie-demos/tree/main\">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>示例目录：<a href=\"https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud\">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>：<a href=\"https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py\">官方文件链接</a></li></ul></div><p>建议在虚拟机中按以下方式使用：</p><pre><code>cd ~/workspace\ngit clone https://github.com/bitcraze/crazyflie-demos.git\ncd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud\npython3 multiranger_pointcloud.py</code></pre><p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；该示例需要图形界面和 Python 可视化依赖，若提示缺少依赖，请根据官方 README 安装 <code>numpy</code>、<code>vispy</code> 和 <code>PyQt6</code>。首次运行应在安全场地中进行，并确认窗口关闭后无人机会正常降落。</p>",
+            "<p>Put the multiranger_pointcloud.py file attached to this lesson into the workspace, and the python script can be run directly. As shown in the figure below, the main function of this program is to use the multiranger module of the crazyflie drone in an obstacle environment to construct point cloud maps of surrounding obstacles.</p>":
+            "<div class=\"admonition\"><p class=\"admonition-title\">Official demo repository: Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> comes from Bitcraze's official <code>crazyflie-demos</code> repository. Use the file in the official repository as the source of record; this manual lists the source link and classroom usage steps.</p><ul><li>Repository: <a href=\"https://github.com/bitcraze/crazyflie-demos/tree/main\">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>Demo directory: <a href=\"https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud\">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>: <a href=\"https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py\">official file link</a></li></ul></div><p>Recommended usage in the virtual machine:</p><pre><code>cd ~/workspace\ngit clone https://github.com/bitcraze/crazyflie-demos.git\ncd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud\npython3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. This example requires a graphical desktop and Python visualization dependencies; if dependencies are missing, install <code>numpy</code>, <code>vispy</code>, and <code>PyQt6</code> according to the official README. Run the first test in a safe area and confirm that the drone lands normally after the visualization window is closed.</p>",
         },
         "manual-08-path-planning": {
             "<p>同时再打开本机上存放今天实验所需要的工程文件压缩包的所在位置（该压缩包放在电脑桌面或者某个文件夹都可以）。鼠标选中本机上的压缩包文件，直接拖动到虚拟机中的workspace中。</p>":

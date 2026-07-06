@@ -206,91 +206,21 @@ if __name__ == &#x27;__main__&#x27;:
         logconf.stop()</code></pre>
 <p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
 <h3>实验四（拓展选做）：walk follow the wall</h3>
-<p>将该节课附上的wall_following.py和multiranger_wall_following.py拷贝至虚拟机中。其中将multiranger_wall_following.py放在workspace目录下，在workspace目录下再新建一个名为wall_following的目录，将wall_following.py文件放入其中，以完成multiranger_wall_following.py文件运行所需要的依赖。</p>
-<div class="admonition"><p class="admonition-title">示例代码：wall_following.py</p>
-<p>在 <code>workspace/wall_following/</code> 文件夹中新建 <code>wall_following.py</code>，复制以下代码。该文件只负责根据前、左、右三个方向的测距值计算速度和偏航角速度。</p></div>
-<pre><code>class WallFollowing:
-    def __init__(self, reference_distance=0.45, stop_distance=0.25, max_speed=0.22):
-        self.reference_distance = reference_distance
-        self.stop_distance = stop_distance
-        self.max_speed = max_speed
 
-    def _valid(self, value):
-        return value is not None and value &gt; 0.0
-
-    def compute(self, front, left, right):
-        vx = self.max_speed
-        vy = 0.0
-        yaw_rate = 0.0
-
-        if self._valid(front) and front &lt; self.stop_distance:
-            vx = 0.0
-            yaw_rate = 45.0
-            return vx, vy, yaw_rate
-
-        if self._valid(left):
-            error = self.reference_distance - left
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        elif self._valid(right):
-            error = right - self.reference_distance
-            vy = max(-0.12, min(0.12, 0.45 * error))
-        else:
-            vx = 0.10
-            yaw_rate = 18.0
-
-        return vx, vy, yaw_rate
-</code></pre>
-<div class="admonition"><p class="admonition-title">示例代码：multiranger_wall_following.py</p>
-<p>在 <code>workspace/</code> 下新建 <code>multiranger_wall_following.py</code>，复制以下代码。运行前请把 <code>URI</code> 改成所在小组分配的完整 radio URI，并在低速、空旷、安全的场地中先做悬停和急停测试。</p></div>
-<pre><code>import logging
-import time
-
-import cflib.crtp
-from cflib.crazyflie import Crazyflie
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.positioning.motion_commander import MotionCommander
-from cflib.utils import uri_helper
-from cflib.utils.multiranger import Multiranger
-
-from wall_following.wall_following import WallFollowing
-
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-DEFAULT_HEIGHT = 0.35
-CONTROL_PERIOD = 0.10
-
-
-def is_close(range_m, threshold=0.18):
-    return range_m is not None and range_m &lt; threshold
-
-
-def main():
-    cflib.crtp.init_drivers()
-    controller = WallFollowing(reference_distance=0.45, stop_distance=0.25, max_speed=0.20)
-
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                while keep_flying:
-                    if is_close(multiranger.up, threshold=0.20):
-                        keep_flying = False
-                        break
-
-                    vx, vy, yaw_rate = controller.compute(
-                        front=multiranger.front,
-                        left=multiranger.left,
-                        right=multiranger.right,
-                    )
-                    mc.start_linear_motion(vx, vy, 0.0, yaw_rate)
-                    time.sleep(CONTROL_PERIOD)
-
-                mc.stop()
-
-
-if __name__ == &#x27;__main__&#x27;:
-    logging.basicConfig(level=logging.ERROR)
-    main()
-</code></pre>
+<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Wall Following</p>
+<p><code>wall_following.py</code> 和 <code>multiranger_wall_following.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p>
+<ul>
+<li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
+<li><code>wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">官方文件链接</a></li>
+<li><code>multiranger_wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">官方文件链接</a></li>
+</ul></div>
+<p>建议在虚拟机中按以下方式使用：</p>
+<pre><code>cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+python3 multiranger_wall_following.py</code></pre>
+<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；将脚本中的 <code>URI</code> 或环境变量 <code>CFLIB_URI</code> 设置为所在小组分配的完整 radio URI；首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
 
 <p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
       </div>
