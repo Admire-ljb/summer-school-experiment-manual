@@ -1474,19 +1474,26 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
         body = body.replace(old, new)
         marker = '<h3>\u5b9e\u9a8c\u56db\uff1a\u4f7f\u7528python\u811a\u672c\u8ba9\u65e0\u4eba\u673a\u81ea\u4e3b\u8d77\u98de</h3>'
         radio_section = '''<h3>\u591a\u7ec4\u540c\u65f6\u5b9e\u9a8c\u7684\u65e0\u7ebf\u9891\u6bb5\u89c4\u5212</h3>
-<p>\u6b63\u5f0f\u5b9e\u9a8c\u4e2d\u5982\u679c\u591a\u7ec4\u5728\u540c\u4e00\u623f\u95f4\u540c\u65f6\u4f7f\u7528 Crazyradio\uff0c\u5efa\u8bae\u4e3a\u6bcf\u7ec4\u56fa\u5b9a\u4e00\u5957\u5b8c\u6574\u7684 radio URI\u3002URI \u683c\u5f0f\u4e3a <code>radio://\u63a5\u53e3\u7f16\u53f7/\u4fe1\u9053/\u901f\u7387/\u5730\u5740</code>\uff0c\u4f8b\u5982 <code>radio://0/60/2M/E7E7E7E7A3</code>\u3002\u5176\u4e2d\uff0c\u4fe1\u9053\u7528\u4e8e\u51cf\u5c11\u540c\u9891\u65e0\u7ebf\u62e5\u585e\uff0c\u5730\u5740\u7528\u4e8e\u907f\u514d\u8bef\u8fde\u5230\u5176\u4ed6\u7ec4\u7684\u65e0\u4eba\u673a\uff1b\u53ea\u4fee\u6539\u5730\u5740\u4e0d\u80fd\u5b8c\u5168\u89e3\u51b3\u540c\u9891\u5e72\u6270\u95ee\u9898\u3002</p>
+<p>\u6b63\u5f0f\u5b9e\u9a8c\u4e2d\u5982\u679c 12 \u7ec4\u5728\u540c\u4e00\u623f\u95f4\u540c\u65f6\u4f7f\u7528 Crazyradio\uff0c\u5efa\u8bae\u4e3a\u6bcf\u7ec4\u56fa\u5b9a\u4e00\u5957\u5b8c\u6574\u7684 radio URI\u3002URI \u683c\u5f0f\u4e3a <code>radio://\u63a5\u53e3\u7f16\u53f7/\u4fe1\u9053/\u901f\u7387/\u5730\u5740</code>\uff0c\u4f8b\u5982 <code>radio://0/60/2M/E7E7E7E7A6</code>\u3002\u5176\u4e2d\uff0c\u4fe1\u9053\u7528\u4e8e\u51cf\u5c11\u540c\u9891\u65e0\u7ebf\u62e5\u585e\uff0c\u5730\u5740\u7528\u4e8e\u907f\u514d\u8bef\u8fde\u5230\u5176\u4ed6\u7ec4\u7684\u65e0\u4eba\u673a\uff1b\u53ea\u4fee\u6539\u5730\u5740\u4e0d\u80fd\u5b8c\u5168\u89e3\u51b3\u540c\u9891\u5e72\u6270\u95ee\u9898\u3002</p>
 <table><tbody>
-<tr><th>\u7ec4\u522b</th><th>\u5efa\u8bae URI</th></tr>
-<tr><td>A\u7ec4</td><td><code>radio://0/40/2M/E7E7E7E7A1</code></td></tr>
-<tr><td>B\u7ec4</td><td><code>radio://0/50/2M/E7E7E7E7A2</code></td></tr>
-<tr><td>C\u7ec4</td><td><code>radio://0/60/2M/E7E7E7E7A3</code></td></tr>
-<tr><td>D\u7ec4</td><td><code>radio://0/70/2M/E7E7E7E7A4</code></td></tr>
-<tr><td>E\u7ec4</td><td><code>radio://0/80/2M/E7E7E7E7A5</code></td></tr>
+<tr><th>\u7ec4\u522b</th><th>Channel</th><th>Address</th><th>\u5b8c\u6574 URI</th></tr>
+<tr><td>1\u7ec4 / A\u7ec4</td><td>10</td><td><code>E7E7E7E7A1</code></td><td><code>radio://0/10/2M/E7E7E7E7A1</code></td></tr>
+<tr><td>2\u7ec4 / B\u7ec4</td><td>20</td><td><code>E7E7E7E7A2</code></td><td><code>radio://0/20/2M/E7E7E7E7A2</code></td></tr>
+<tr><td>3\u7ec4 / C\u7ec4</td><td>30</td><td><code>E7E7E7E7A3</code></td><td><code>radio://0/30/2M/E7E7E7E7A3</code></td></tr>
+<tr><td>4\u7ec4 / D\u7ec4</td><td>40</td><td><code>E7E7E7E7A4</code></td><td><code>radio://0/40/2M/E7E7E7E7A4</code></td></tr>
+<tr><td>5\u7ec4 / E\u7ec4</td><td>50</td><td><code>E7E7E7E7A5</code></td><td><code>radio://0/50/2M/E7E7E7E7A5</code></td></tr>
+<tr><td>6\u7ec4 / F\u7ec4</td><td>60</td><td><code>E7E7E7E7A6</code></td><td><code>radio://0/60/2M/E7E7E7E7A6</code></td></tr>
+<tr><td>7\u7ec4 / G\u7ec4</td><td>70</td><td><code>E7E7E7E7A7</code></td><td><code>radio://0/70/2M/E7E7E7E7A7</code></td></tr>
+<tr><td>8\u7ec4 / H\u7ec4</td><td>80</td><td><code>E7E7E7E7A8</code></td><td><code>radio://0/80/2M/E7E7E7E7A8</code></td></tr>
+<tr><td>9\u7ec4 / I\u7ec4</td><td>90</td><td><code>E7E7E7E7A9</code></td><td><code>radio://0/90/2M/E7E7E7E7A9</code></td></tr>
+<tr><td>10\u7ec4 / J\u7ec4</td><td>100</td><td><code>E7E7E7E7AA</code></td><td><code>radio://0/100/2M/E7E7E7E7AA</code></td></tr>
+<tr><td>11\u7ec4 / K\u7ec4</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
+<tr><td>12\u7ec4 / L\u7ec4</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
 <p>\u914d\u7f6e\u65f6\u5148\u7528 USB \u5355\u72ec\u8fde\u63a5\u4e00\u67b6\u65e0\u4eba\u673a\uff0c\u5728 cfclient \u4e2d\u8fde\u63a5 <code>usb://0</code>\uff0c\u8fdb\u5165 <code>Connect - Configure 2.x</code>\uff0c\u5199\u5165\u8be5\u7ec4\u5206\u914d\u7684 Radio channel \u548c Radio address\uff0c\u4fdd\u5b58\u540e\u91cd\u542f\u65e0\u4eba\u673a\u3002\u4e4b\u540e\u8be5\u7ec4\u7684 cfclient \u5730\u5740\u680f\u548c\u6240\u6709 Python \u811a\u672c\u90fd\u5e94\u4f7f\u7528\u540c\u4e00\u4e2a\u5b8c\u6574 URI\u3002</p>
 <div class="admonition warning"><p class="admonition-title">\u8bfe\u5802\u6ce8\u610f\u4e8b\u9879</p><p>\u540c\u4e00\u623f\u95f4\u591a\u7ec4\u5b9e\u9a8c\u65f6\uff0c\u4fe1\u9053\u5c3d\u91cf\u62c9\u5f00\uff0c\u4f8b\u5982\u95f4\u9694 10\uff1b\u6bcf\u67b6\u65e0\u4eba\u673a\u548c\u6bcf\u53f0\u7535\u8111\u65c1\u5e94\u8d34\u4e0a\u7ec4\u522b\u3001channel\u3001address \u548c\u5b8c\u6574 URI\u3002\u6b63\u5f0f\u98de\u884c\u524d\u5148\u9010\u7ec4\u5355\u72ec\u6d4b\u8bd5\u8fde\u63a5\uff0c\u786e\u8ba4\u4e0d\u4f1a\u626b\u63cf\u6216\u8fde\u63a5\u5230\u5176\u4ed6\u7ec4\u65e0\u4eba\u673a\u3002</p></div>
 '''
-        if "radio://0/40/2M/E7E7E7E7A1" not in body:
+        if "radio://0/120/2M/E7E7E7E7AC" not in body:
             body = body.replace(marker, radio_section + marker)
         return body
     old = f'''<p>Then enter the following command to update the software tool:</p>
@@ -1504,14 +1511,21 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
     body = body.replace(old, new)
     marker = '<h3>Experiment 4: Use python script to make drone take off autonomously</h3>'
     radio_section = '''<h3>Radio Planning for Multi-group Experiments</h3>
-<p>When several groups use Crazyradio in the same room, assign each group a fixed complete radio URI. The URI format is <code>radio://interface/channel/data-rate/address</code>, for example <code>radio://0/60/2M/E7E7E7E7A3</code>. The channel reduces same-frequency congestion, while the address prevents accidental connection to another group&apos;s drone. Changing only the address is not enough to fully avoid same-channel interference.</p>
+<p>When 12 groups use Crazyradio in the same room, assign each group a fixed complete radio URI. The URI format is <code>radio://interface/channel/data-rate/address</code>, for example <code>radio://0/60/2M/E7E7E7E7A6</code>. The channel reduces same-frequency congestion, while the address prevents accidental connection to another group&apos;s drone. Changing only the address is not enough to fully avoid same-channel interference.</p>
 <table><tbody>
-<tr><th>Group</th><th>Recommended URI</th></tr>
-<tr><td>Group A</td><td><code>radio://0/40/2M/E7E7E7E7A1</code></td></tr>
-<tr><td>Group B</td><td><code>radio://0/50/2M/E7E7E7E7A2</code></td></tr>
-<tr><td>Group C</td><td><code>radio://0/60/2M/E7E7E7E7A3</code></td></tr>
-<tr><td>Group D</td><td><code>radio://0/70/2M/E7E7E7E7A4</code></td></tr>
-<tr><td>Group E</td><td><code>radio://0/80/2M/E7E7E7E7A5</code></td></tr>
+<tr><th>Group</th><th>Channel</th><th>Address</th><th>Complete URI</th></tr>
+<tr><td>Group 1 / A</td><td>10</td><td><code>E7E7E7E7A1</code></td><td><code>radio://0/10/2M/E7E7E7E7A1</code></td></tr>
+<tr><td>Group 2 / B</td><td>20</td><td><code>E7E7E7E7A2</code></td><td><code>radio://0/20/2M/E7E7E7E7A2</code></td></tr>
+<tr><td>Group 3 / C</td><td>30</td><td><code>E7E7E7E7A3</code></td><td><code>radio://0/30/2M/E7E7E7E7A3</code></td></tr>
+<tr><td>Group 4 / D</td><td>40</td><td><code>E7E7E7E7A4</code></td><td><code>radio://0/40/2M/E7E7E7E7A4</code></td></tr>
+<tr><td>Group 5 / E</td><td>50</td><td><code>E7E7E7E7A5</code></td><td><code>radio://0/50/2M/E7E7E7E7A5</code></td></tr>
+<tr><td>Group 6 / F</td><td>60</td><td><code>E7E7E7E7A6</code></td><td><code>radio://0/60/2M/E7E7E7E7A6</code></td></tr>
+<tr><td>Group 7 / G</td><td>70</td><td><code>E7E7E7E7A7</code></td><td><code>radio://0/70/2M/E7E7E7E7A7</code></td></tr>
+<tr><td>Group 8 / H</td><td>80</td><td><code>E7E7E7E7A8</code></td><td><code>radio://0/80/2M/E7E7E7E7A8</code></td></tr>
+<tr><td>Group 9 / I</td><td>90</td><td><code>E7E7E7E7A9</code></td><td><code>radio://0/90/2M/E7E7E7E7A9</code></td></tr>
+<tr><td>Group 10 / J</td><td>100</td><td><code>E7E7E7E7AA</code></td><td><code>radio://0/100/2M/E7E7E7E7AA</code></td></tr>
+<tr><td>Group 11 / K</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
+<tr><td>Group 12 / L</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
 <p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. After that, the cfclient address field and all Python scripts for that group should use the same complete URI.</p>
 <div class="admonition warning"><p class="admonition-title">Classroom note</p><p>For multi-group experiments in one room, keep channels well separated, for example by 10 channels. Label each drone and computer with its group, channel, address, and full URI. Before formal flight, test each group one by one and confirm that it does not scan or connect to another group&apos;s drone.</p></div>

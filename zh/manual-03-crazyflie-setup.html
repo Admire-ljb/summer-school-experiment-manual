@@ -129,14 +129,21 @@ sudo udevadm trigger</code></pre>
 <p>同样在连接的过程中保证无人机静止平放，使其能初始化姿态，出现如下界面，手上拿着无人机，姿态界面出现相应的变化，则以无线的方式连接成功。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/020.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>多组同时实验的无线频段规划</h3>
-<p>正式实验中如果多组在同一房间同时使用 Crazyradio，建议为每组固定一套完整的 radio URI。URI 格式为 <code>radio://接口编号/信道/速率/地址</code>，例如 <code>radio://0/60/2M/E7E7E7E7A3</code>。其中，信道用于减少同频无线拥塞，地址用于避免误连到其他组的无人机；只修改地址不能完全解决同频干扰问题。</p>
+<p>正式实验中如果 12 组在同一房间同时使用 Crazyradio，建议为每组固定一套完整的 radio URI。URI 格式为 <code>radio://接口编号/信道/速率/地址</code>，例如 <code>radio://0/60/2M/E7E7E7E7A6</code>。其中，信道用于减少同频无线拥塞，地址用于避免误连到其他组的无人机；只修改地址不能完全解决同频干扰问题。</p>
 <table><tbody>
-<tr><th>组别</th><th>建议 URI</th></tr>
-<tr><td>A组</td><td><code>radio://0/40/2M/E7E7E7E7A1</code></td></tr>
-<tr><td>B组</td><td><code>radio://0/50/2M/E7E7E7E7A2</code></td></tr>
-<tr><td>C组</td><td><code>radio://0/60/2M/E7E7E7E7A3</code></td></tr>
-<tr><td>D组</td><td><code>radio://0/70/2M/E7E7E7E7A4</code></td></tr>
-<tr><td>E组</td><td><code>radio://0/80/2M/E7E7E7E7A5</code></td></tr>
+<tr><th>组别</th><th>Channel</th><th>Address</th><th>完整 URI</th></tr>
+<tr><td>1组 / A组</td><td>10</td><td><code>E7E7E7E7A1</code></td><td><code>radio://0/10/2M/E7E7E7E7A1</code></td></tr>
+<tr><td>2组 / B组</td><td>20</td><td><code>E7E7E7E7A2</code></td><td><code>radio://0/20/2M/E7E7E7E7A2</code></td></tr>
+<tr><td>3组 / C组</td><td>30</td><td><code>E7E7E7E7A3</code></td><td><code>radio://0/30/2M/E7E7E7E7A3</code></td></tr>
+<tr><td>4组 / D组</td><td>40</td><td><code>E7E7E7E7A4</code></td><td><code>radio://0/40/2M/E7E7E7E7A4</code></td></tr>
+<tr><td>5组 / E组</td><td>50</td><td><code>E7E7E7E7A5</code></td><td><code>radio://0/50/2M/E7E7E7E7A5</code></td></tr>
+<tr><td>6组 / F组</td><td>60</td><td><code>E7E7E7E7A6</code></td><td><code>radio://0/60/2M/E7E7E7E7A6</code></td></tr>
+<tr><td>7组 / G组</td><td>70</td><td><code>E7E7E7E7A7</code></td><td><code>radio://0/70/2M/E7E7E7E7A7</code></td></tr>
+<tr><td>8组 / H组</td><td>80</td><td><code>E7E7E7E7A8</code></td><td><code>radio://0/80/2M/E7E7E7E7A8</code></td></tr>
+<tr><td>9组 / I组</td><td>90</td><td><code>E7E7E7E7A9</code></td><td><code>radio://0/90/2M/E7E7E7E7A9</code></td></tr>
+<tr><td>10组 / J组</td><td>100</td><td><code>E7E7E7E7AA</code></td><td><code>radio://0/100/2M/E7E7E7E7AA</code></td></tr>
+<tr><td>11组 / K组</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
+<tr><td>12组 / L组</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
 <p>配置时先用 USB 单独连接一架无人机，在 cfclient 中连接 <code>usb://0</code>，进入 <code>Connect - Configure 2.x</code>，写入该组分配的 Radio channel 和 Radio address，保存后重启无人机。之后该组的 cfclient 地址栏和所有 Python 脚本都应使用同一个完整 URI。</p>
 <div class="admonition warning"><p class="admonition-title">课堂注意事项</p><p>同一房间多组实验时，信道尽量拉开，例如间隔 10；每架无人机和每台电脑旁应贴上组别、channel、address 和完整 URI。正式飞行前先逐组单独测试连接，确认不会扫描或连接到其他组无人机。</p></div>
