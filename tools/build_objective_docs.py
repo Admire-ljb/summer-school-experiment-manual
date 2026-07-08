@@ -594,6 +594,25 @@ CODE_TEXT_REPLACEMENTS = {
 
 def normalize_code_text(code: str) -> str:
     code = code.replace("\u00a0", " ")
+    code = code.replace("\n(...)\n", "\n")
+    code = code.replace(
+        "def move_box_limit(scf):\n"
+        "    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:\n"
+        "        while (1):",
+        "def move_box_limit(scf):\n"
+        "    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:\n"
+        "        mc.start_forward()\n"
+        "        while True:",
+    )
+    code = code.replace(
+        "            elif position_estimate[0] < -BOX_LIMIT:\n"
+        "                mc.start_forward()\n"
+        "def move_linear_simple(scf):",
+        "            elif position_estimate[0] < -BOX_LIMIT:\n"
+        "                mc.start_forward()\n"
+        "            time.sleep(0.1)\n"
+        "def move_linear_simple(scf):",
+    )
     for source, replacement in CODE_TEXT_REPLACEMENTS.items():
         code = code.replace(source, replacement)
     for placeholder, replacement in CODE_COMPLETIONS.items():
@@ -1477,9 +1496,125 @@ def apply_vm_manual_overrides(lang: str, body: str) -> str:
     return body
 
 
+def apply_cflib_copyable_code_overrides(lang: str, body: str) -> str:
+    takeoff_program = """import logging
+import sys
+import time
+from threading import Event
+
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+from cflib.utils import uri_helper
+
+URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
+DEFAULT_HEIGHT = 0.5
+deck_attached_event = Event()
+
+logging.basicConfig(level=logging.ERROR)
+
+
+def param_deck_flow(_, value_str):
+    value = int(value_str)
+    print(value)
+    if value:
+        deck_attached_event.set()
+        print('Deck is attached!')
+    else:
+        print('Deck is NOT attached!')
+
+
+def take_off_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(3)
+        mc.stop()
+
+
+if __name__ == '__main__':
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
+        scf.cf.param.add_update_callback(
+            group='deck',
+            name='bcFlow2',
+            cb=param_deck_flow,
+        )
+        time.sleep(1)
+
+        if not deck_attached_event.wait(timeout=5):
+            print('No flow deck detected!')
+            sys.exit(1)
+
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        take_off_simple(scf)"""
+    forward_back_function = """def move_linear_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.back(0.5)
+        time.sleep(1)"""
+    turn_function = """def move_linear_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.turn_left(180)
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)"""
+
+    code_blocks = {
+        6: f"<pre><code>{html.escape(takeoff_program)}</code></pre>",
+        7: f"<pre><code>{html.escape(forward_back_function)}</code></pre>",
+        8: f"<pre><code>{html.escape(turn_function)}</code></pre>",
+    }
+    for index in (2, 4, 5, 9):
+        pattern = rf'<figure><img src="\.\./assets/(?:images|images-en)/manual-09-cflib/{index:03d}\.png" alt="manual image" loading="lazy" decoding="async"></figure>'
+        body = re.sub(pattern, "", body)
+    for index, replacement in code_blocks.items():
+        pattern = rf'<figure><img src="\.\./assets/(?:images|images-en)/manual-09-cflib/{index:03d}\.png" alt="manual image" loading="lazy" decoding="async"></figure>'
+        body = re.sub(pattern, replacement, body)
+
+    if lang == "zh":
+        paragraph_replacements = {
+            "<p>将已有的程序按照如下图所示的程序进行编写。（之前的param_deck_flow函数可以保留），然后运行该程序，无人机将会起飞悬停3秒后降落。第21至23行则会控制该飞行流程，第14行设置了默认起飞高度。可以适当改变这些参数来观察效果。</p>":
+            "<p>将 <code>motion_flying.py</code> 改为下面的完整可复制版本。运行后，无人机将起飞并悬停 3 秒，然后自动降落。<code>DEFAULT_HEIGHT</code> 设置默认起飞高度；首次测试时应保持低高度，并确认急停方式。</p>",
+            "<p>我们再在主函数前添加以下函数，将程序最后一行要调用的函数替换为该函数。（例如将刚才在上图42行调用的take_off_simple函数替换为现在的move_linear_simple函数）。该函数的作用为无人机起飞之后，悬停一秒，前进0.5米，再悬停一秒，后退0.5米，再悬停一秒，随后降落。我们通过motioncommander类实体化一个对象mc，通过调用mc的成员函数forward和back实现无人机的前进后退。</p>":
+            "<p>在主函数前添加下面的 <code>move_linear_simple</code> 函数，并将主函数最后调用的 <code>take_off_simple(scf)</code> 改为 <code>move_linear_simple(scf)</code>。无人机起飞后将悬停 1 秒、前进 0.5 米、再次悬停 1 秒、后退 0.5 米，随后降落。</p>",
+            "<p>再进一步地，我们将函数的内容替换为如下：</p>":
+            "<p>如果需要演示转向后返回，将 <code>move_linear_simple</code> 替换为下面的可复制版本：</p>",
+            "<p>根据我们学习到的在终端中打印出无人机在实时运行时的飞行数据，参照如下代码（take_off_simple(scf)函数和param_deck_flow(name, value_str)函数可以保留，也可以如下所示无内容）：</p>":
+            "<p>下面给出记录实时位置数据的完整可复制程序。其中 <code>log_pos_callback</code> 更新位置估计，<code>param_deck_flow</code> 检查 Flow deck 是否已连接。</p>",
+            "<p>再新定义加入一个名字为move_box_limit的函数，放在主函数中，同样地参考程序如下：</p>":
+            "<p>下面给出包含 <code>move_box_limit</code> 的完整可复制程序。运行前请确认位置日志能够正常更新，并由一名组员负责急停。</p>",
+        }
+    else:
+        paragraph_replacements = {
+            "<p>Write the existing program as shown in the figure below. (The previous param_deck_flow function can be retained), then run the program, the drone will take off and hover for 3 seconds before landing. Lines 21 to 23 will control the flight process, and line 14 sets the default takeoff altitude. These parameters can be changed appropriately to observe the effect.</p>":
+            "<p>Replace <code>motion_flying.py</code> with the complete copyable version below. The drone takes off, hovers for 3 seconds, and then lands automatically. <code>DEFAULT_HEIGHT</code> sets the default takeoff height; keep it low for the first test and confirm the emergency-stop procedure.</p>",
+            "<p>We then add the following function before the main function and replace the function to be called in the last line of the program with this function. (For example, replace the take_off_simple function just called in line 42 of the figure above with the current move_linear_simple function). The function of this function is that after the drone takes off, it hovers for one second, moves forward 0.5 meters, hovers for another second, retreats 0.5 meters, hovers for another second, and then lands. We materialize an object mc through the motioncommander class, and realize the forward and backward movement of the drone by calling the member functions forward and back of mc.</p>":
+            "<p>Add the copyable <code>move_linear_simple</code> function below before the main function, and replace the final <code>take_off_simple(scf)</code> call with <code>move_linear_simple(scf)</code>. After takeoff, the drone hovers for 1 second, moves forward 0.5 m, hovers again, moves back 0.5 m, and then lands.</p>",
+            "<p>Going a step further, we replace the content of the function with the following:</p>":
+            "<p>To demonstrate turning and returning, replace <code>move_linear_simple</code> with the copyable version below:</p>",
+            "<p>According to what we have learned about printing the flight data of the drone in real-time operation in the terminal, refer to the following code (the take_off_simple(scf) function and the param_deck_flow(name, value_str) function can be retained or have no content as shown below):</p>":
+            "<p>The complete copyable program below records live position data. <code>log_pos_callback</code> updates the position estimate, while <code>param_deck_flow</code> checks whether the Flow deck is connected.</p>",
+            "<p>Define and add a new function named move_box_limit, put it in the main function, and refer to the program as follows:</p>":
+            "<p>The complete copyable program below includes <code>move_box_limit</code>. Before running it, confirm that position logging updates correctly and assign one team member to emergency-stop duty.</p>",
+            "<p>Then redefine and add a function named move_box_limit and place it in the main function. The same reference program is as follows:</p>":
+            "<p>The complete copyable program below includes <code>move_box_limit</code>. Before running it, confirm that position logging updates correctly and assign one team member to emergency-stop duty.</p>",
+        }
+    for old_text, new_text in paragraph_replacements.items():
+        body = body.replace(old_text, new_text)
+    return body
+
+
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
     if manual.slug == "manual-01-vm":
         return apply_vm_manual_overrides(lang, body)
+    if manual.slug == "manual-09-cflib":
+        return apply_cflib_copyable_code_overrides(lang, body)
     if manual.slug != "manual-03-crazyflie-setup":
         return body
     if lang == "zh":
@@ -1724,7 +1859,11 @@ li{margin:7px 0;padding-left:2px}
 .numbered-list{padding-left:1.55rem}
 code{background:var(--code);border:1px solid #d6dde3;border-radius:4px;padding:1px 5px;font-family:Consolas,"SFMono-Regular","Cascadia Mono","Liberation Mono",monospace;font-size:.92em}
 pre{background:var(--code);border:1px solid #d6dde3;border-radius:6px;overflow-x:auto;overflow-y:visible;padding:16px 18px;margin:18px 0 24px;line-height:1.55}
+pre.has-copy-button{position:relative;padding-top:48px}
 pre code{display:block;border:0;padding:0;background:transparent;font-size:14px;white-space:pre}
+.copy-code{position:absolute;top:9px;right:10px;border:1px solid #b9c4cc;border-radius:4px;background:#fff;color:#33404a;padding:4px 10px;font:600 12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.copy-code:hover{border-color:var(--accent);color:var(--accent-dark)}
+.copy-code:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 table{width:100%;border-collapse:collapse;margin:18px 0 24px;background:var(--paper);font-size:15px}
 td,th{border:1px solid var(--border);padding:9px 11px;vertical-align:top}
 figure{margin:24px 0 30px;text-align:center;overflow-x:auto}
@@ -1760,6 +1899,7 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 
 SCRIPT = """
 const toggle=document.getElementById('menu-toggle');if(toggle){toggle.addEventListener('click',()=>document.body.classList.toggle('nav-open'))}const search=document.getElementById('doc-search');const navItems=Array.from(document.querySelectorAll('#nav-list li'));if(search){search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();navItems.forEach(item=>{const text=item.textContent.toLowerCase();item.classList.toggle('hidden-by-search',q&&!text.includes(q))})})}
+const isZh=document.documentElement.lang.toLowerCase().startsWith('zh');document.querySelectorAll('pre code').forEach(code=>{const pre=code.parentElement;if(!pre||pre.querySelector('.copy-code'))return;pre.classList.add('has-copy-button');const button=document.createElement('button');button.type='button';button.className='copy-code';button.textContent=isZh?'复制':'Copy';button.setAttribute('aria-label',isZh?'复制代码':'Copy code');button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code.textContent);button.textContent=isZh?'已复制':'Copied'}catch(error){const range=document.createRange();range.selectNodeContents(code);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);button.textContent=isZh?'请按 Ctrl+C':'Press Ctrl+C'}setTimeout(()=>{button.textContent=isZh?'复制':'Copy'},1600)});pre.appendChild(button)})
 """.strip() + "\n"
 
 

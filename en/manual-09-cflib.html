@@ -57,7 +57,7 @@
 <pre><code>touch connect_log_param.py</code></pre>
 <figure><img src="../assets/images-en/manual-09-cflib/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Click the created file directly on the graphical interface to directly edit it graphically. If you have some spare time, you can also choose your own editor.</p>
-<figure><img src="../assets/images-en/manual-09-cflib/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
+
 <p>For a python program, we first import the standard python library in lines 1 and 2, and then import the cflib library in lines 4 to 6. This section of the experiment will also mainly introduce you to some usages of the cflib library. In this section of the experiment, we will understand how to use the python language to call the cflib library and use the wireless module crazyradio to connect to the drone.</p>
 <p>In line 11 we define a function called simple_connect. The main content of the function is to output the characters &quot;Yeah, I&#x27;m connected! :D&quot; to the terminal, then the program keeps sleeping for 3 seconds, and then outputs the characters &quot;Now I will disconnect :&#x27;(&quot;.</p>
 <p>On line 17, we start our python main program. First, on line 19, we call the cflib library function to initialize the drone equipment. Then, on line 21, we will create a synchronous Crazyflie instance with a specified link_uri and create it through a wireless connection. Starting from line 21, the main program we set will be executed here. If there are no looping program statements to keep the program executing, the synchronous Crazyflie instance will be automatically destroyed after the statements are executed in sequence, the wireless connection will be disconnected, and the program will end.</p>
@@ -103,7 +103,6 @@ def simple_log_async(scf, logconf):
     logconf.start()
     time.sleep(5)
     logconf.stop()
-(...)
 if __name__ == &#x27;__main__&#x27;:
     # Initialize the low-level drivers
     cflib.crtp.init_drivers()
@@ -116,7 +115,7 @@ if __name__ == &#x27;__main__&#x27;:
 <p>Compare what this program adds compared to the previous program. When running this program, the terminal will cyclically output the three parameters of roll, pitch and yaw of the drone within 5 seconds. At this time, if you hold the drone in your hand and change its posture, you will observe the changes in the terminal output parameters.</p>
 <p>The Roll (roll), Pitch (pitch) and Yaw (yaw) of a quad-rotor UAV are the three core parameters that describe its spatial attitude, corresponding to the rotational motion of the UAV around the X-axis, Y-axis and Z-axis respectively.</p>
 <figure><img src="../assets/images/manual-09-cflib/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<figure><img src="../assets/images/manual-09-cflib/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
+
 <p>Meet motion commander</p>
 <p>In the previous lesson, we ran a simple python program for taking off and landing a drone. This experiment will lead you to understand the details of the python program in detail. Similarly, use the touch command to create a file named motion_flying.py.</p>
 <pre><code>touch motion_flying.py</code></pre>
@@ -148,20 +147,84 @@ if __name__ == &#x27;__main__&#x27;:
         scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,
                                          cb=param_deck_flow)
         time.sleep(1)</code></pre>
-<figure><img src="../assets/images/manual-09-cflib/005.png" alt="manual image" loading="lazy" decoding="async"></figure>
+
 <p>As you can see, we imported the motioncommander module in cflib on line 10. We will call this module to fly the drone. For detailed class functions, refer to the source archive in the Course Materials Package: <code>course-materials/05_source_references/crazyflie-lib-python-master.zip</code>.</p>
 <p>The main function of this python program is to detect whether the flowdeck module is installed on the current drone during the initialization process of the drone. This module helps the drone locate its own height and detect flight speed.</p>
 <h3>Take-off function</h3>
-<p>Write the existing program as shown in the figure below. (The previous param_deck_flow function can be retained), then run the program, the drone will take off and hover for 3 seconds before landing. Lines 21 to 23 will control the flight process, and line 14 sets the default takeoff altitude. These parameters can be changed appropriately to observe the effect.</p>
-<figure><img src="../assets/images/manual-09-cflib/006.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<p>Replace <code>motion_flying.py</code> with the complete copyable version below. The drone takes off, hovers for 3 seconds, and then lands automatically. <code>DEFAULT_HEIGHT</code> sets the default takeoff height; keep it low for the first test and confirm the emergency-stop procedure.</p>
+<pre><code>import logging
+import sys
+import time
+from threading import Event
+
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
+from cflib.utils import uri_helper
+
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
+DEFAULT_HEIGHT = 0.5
+deck_attached_event = Event()
+
+logging.basicConfig(level=logging.ERROR)
+
+
+def param_deck_flow(_, value_str):
+    value = int(value_str)
+    print(value)
+    if value:
+        deck_attached_event.set()
+        print(&#x27;Deck is attached!&#x27;)
+    else:
+        print(&#x27;Deck is NOT attached!&#x27;)
+
+
+def take_off_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(3)
+        mc.stop()
+
+
+if __name__ == &#x27;__main__&#x27;:
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
+        scf.cf.param.add_update_callback(
+            group=&#x27;deck&#x27;,
+            name=&#x27;bcFlow2&#x27;,
+            cb=param_deck_flow,
+        )
+        time.sleep(1)
+
+        if not deck_attached_event.wait(timeout=5):
+            print(&#x27;No flow deck detected!&#x27;)
+            sys.exit(1)
+
+        scf.cf.platform.send_arming_request(True)
+        time.sleep(1.0)
+        take_off_simple(scf)</code></pre>
 <h3>Forward, turn and reverse</h3>
-<p>We then add the following function before the main function and replace the function to be called in the last line of the program with this function. (For example, replace the take_off_simple function just called in line 42 of the figure above with the current move_linear_simple function). The function of this function is that after the drone takes off, it hovers for one second, moves forward 0.5 meters, hovers for another second, retreats 0.5 meters, hovers for another second, and then lands. We materialize an object mc through the motioncommander class, and realize the forward and backward movement of the drone by calling the member functions forward and back of mc.</p>
-<figure><img src="../assets/images/manual-09-cflib/007.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Going a step further, we replace the content of the function with the following:</p>
-<figure><img src="../assets/images/manual-09-cflib/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<p>Add the copyable <code>move_linear_simple</code> function below before the main function, and replace the final <code>take_off_simple(scf)</code> call with <code>move_linear_simple(scf)</code>. After takeoff, the drone hovers for 1 second, moves forward 0.5 m, hovers again, moves back 0.5 m, and then lands.</p>
+<pre><code>def move_linear_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.back(0.5)
+        time.sleep(1)</code></pre>
+<p>To demonstrate turning and returning, replace <code>move_linear_simple</code> with the copyable version below:</p>
+<pre><code>def move_linear_simple(scf):
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)
+        mc.turn_left(180)
+        time.sleep(1)
+        mc.forward(0.5)
+        time.sleep(1)</code></pre>
 <p>Observe the operation of the drone to see if it returns to the place where it took off.</p>
 <h3>Record flight data</h3>
-<p>According to what we have learned about printing the flight data of the drone in real-time operation in the terminal, refer to the following code (the take_off_simple(scf) function and the param_deck_flow(name, value_str) function can be retained or have no content as shown below):</p>
+<p>The complete copyable program below records live position data. <code>log_pos_callback</code> updates the position estimate, while <code>param_deck_flow</code> checks whether the Flow deck is connected.</p>
 <pre><code>import logging
 import sys
 import time
@@ -224,8 +287,8 @@ if __name__ == &#x27;__main__&#x27;:
         logconf.stop()</code></pre>
 <p>Executing the code again, you can see that the terminal is constantly outputting its flight parameters while the drone is flying.</p>
 <h3>Wandering back and forth</h3>
-<figure><img src="../assets/images-en/manual-09-cflib/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Then redefine and add a function named move_box_limit and place it in the main function. The same reference program is as follows:</p>
+
+<p>The complete copyable program below includes <code>move_box_limit</code>. Before running it, confirm that position logging updates correctly and assign one team member to emergency-stop duty.</p>
 <pre><code>import logging
 import sys
 import time
@@ -244,11 +307,13 @@ logging.basicConfig(level=logging.ERROR)
 position_estimate = [0, 0]
 def move_box_limit(scf):
     with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        while (1):
+        mc.start_forward()
+        while True:
             if position_estimate[0] &gt; BOX_LIMIT:
                 mc.start_back()
             elif position_estimate[0] &lt; -BOX_LIMIT:
                 mc.start_forward()
+            time.sleep(0.1)
 def move_linear_simple(scf):
     with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
         time.sleep(1)

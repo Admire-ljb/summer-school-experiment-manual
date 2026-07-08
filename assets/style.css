@@ -40,7 +40,11 @@ li{margin:7px 0;padding-left:2px}
 .numbered-list{padding-left:1.55rem}
 code{background:var(--code);border:1px solid #d6dde3;border-radius:4px;padding:1px 5px;font-family:Consolas,"SFMono-Regular","Cascadia Mono","Liberation Mono",monospace;font-size:.92em}
 pre{background:var(--code);border:1px solid #d6dde3;border-radius:6px;overflow-x:auto;overflow-y:visible;padding:16px 18px;margin:18px 0 24px;line-height:1.55}
+pre.has-copy-button{position:relative;padding-top:48px}
 pre code{display:block;border:0;padding:0;background:transparent;font-size:14px;white-space:pre}
+.copy-code{position:absolute;top:9px;right:10px;border:1px solid #b9c4cc;border-radius:4px;background:#fff;color:#33404a;padding:4px 10px;font:600 12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.copy-code:hover{border-color:var(--accent);color:var(--accent-dark)}
+.copy-code:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 table{width:100%;border-collapse:collapse;margin:18px 0 24px;background:var(--paper);font-size:15px}
 td,th{border:1px solid var(--border);padding:9px 11px;vertical-align:top}
 figure{margin:24px 0 30px;text-align:center;overflow-x:auto}
