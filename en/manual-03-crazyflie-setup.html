@@ -50,15 +50,20 @@
 <h2>2. Experimental preparation</h2>
 <p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS. And you need to have the Linux system operating experience accumulated in the previous experiments.</p>
 <h2>3. Experimental steps</h2>
-<h3>Experiment 1: Copy the cfclient software installation package to the workspace folder of the virtual machine and proceed with the installation steps.</h3>
-<p>The cfclient software package is located at <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>. Directly use the graphical operation method to drag this archive into the file interface of the Linux virtual machine from the file interface of the host Windows.</p>
-<figure><img src="../assets/images-en/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Double-click <code>crazyflie-clients-python-master.zip</code> and click extract to extract it to the file directory.</p>
-<figure><img src="../assets/images-en/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>At this point click the green extract button</p>
-<figure><img src="../assets/images-en/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Click to enter the decompressed directory, right-click on a blank space on the interface and select open in terminal to call out the terminal.</p>
-<figure><img src="../assets/images-en/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<h3>Experiment 1: Use Git to obtain the specified cfclient version and install it</h3>
+<p>Install cfclient with Git and fix the source to the official Bitcraze <code>2024.11</code> version so that the source and version are explicit. Open a terminal in the virtual machine, enter <code>workspace</code>, and get the source code:</p>
+<pre><code>mkdir -p ~/workspace
+cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-clients-python.git
+cd crazyflie-clients-python
+git checkout 2024.11</code></pre>
+
+<p>If the repository has already been cloned, do not download it again. Enter the existing directory, run <code>git fetch --tags</code>, and then run <code>git checkout 2024.11</code>. Confirm that the current terminal directory is <code>~/workspace/crazyflie-clients-python</code>; run the dependency and <code>cfclient</code> installation commands from this directory.</p>
+
+
+
+
+
 <p>Then, first we install some necessary dependencies. First, copy and paste the following command directly into the terminal:</p>
 <pre><code>sudo apt-get install python3 python3-pip python3-pyqt5 python3-pyqt5.qtsvg</code></pre>
 <p>Press the Enter key to enter the command, and then you may be asked to enter the user password to obtain permissions (the content and number of passwords entered during this process are not visible), and enter Y to continue the installation process.</p>

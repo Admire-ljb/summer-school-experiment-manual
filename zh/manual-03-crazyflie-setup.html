@@ -48,15 +48,20 @@
 <h2>二、实验准备</h2>
 <p>实验2已经配置好ROS的Ubuntu20.04虚拟机。并且需要具备前几门实验已经积累的linux系统操作经验。</p>
 <h2>三、实验步骤</h2>
-<h3>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</h3>
-<p>cfclient 软件安装包位于 <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>。直接用图形化操作的方法，在主机windows的文件界面将该压缩包拖动进linux虚拟机的文件界面即可。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>再双击 <code>crazyflie-clients-python-master.zip</code>，点击extract解压至该文件目录下。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>此时再点击绿色的extract按键</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>点击进入解压好的目录中，右键界面空白处选择open in terminal呼出终端。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<h3>实验一：使用 Git 获取 cfclient 指定版本并安装</h3>
+<p>本节使用 Git 安装 cfclient，并固定到 Bitcraze 官方仓库的 <code>2024.11</code> 版本，避免来源和版本不一致。打开虚拟机终端，先进入 workspace 并获取源码：</p>
+<pre><code>mkdir -p ~/workspace
+cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-clients-python.git
+cd crazyflie-clients-python
+git checkout 2024.11</code></pre>
+
+<p>如果已经克隆过该仓库，不需要重新下载；进入已有目录后执行 <code>git fetch --tags</code>，再执行 <code>git checkout 2024.11</code>。确认当前终端目录为 <code>~/workspace/crazyflie-clients-python</code>，后续依赖安装和 <code>cfclient</code> 安装命令均在该目录中执行。</p>
+
+
+
+
+
 <p>然后，首先我们先安装一些必要的依赖，首先直接复制如下命令粘贴至终端：</p>
 <pre><code>sudo apt-get install python3 python3-pip python3-pyqt5 python3-pyqt5.qtsvg</code></pre>
 <p>按回车键输入命令，然后可能会要求输入用户密码以获得权限（此过程中已输入的密码内容和数量不可见），以及输入Y继续安装流程。</p>

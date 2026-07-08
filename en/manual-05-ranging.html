@@ -70,7 +70,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址&#x27;)
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)
 if len(sys.argv) &gt; 1:
     URI = sys.argv[1]
 # Only output errors from the logging framework
@@ -97,14 +97,14 @@ if __name__ == &#x27;__main__&#x27;:
                 VELOCITY = 0.3
                 velocity_x = 0.3
                 velocity_y = 0.0
-                while keep_flying: # 只要可以继续飞行就循环执行
-                     # 检查上方有没有障碍物
+                while keep_flying: # Continue the loop while flight is allowed
+                     # Check whether an obstacle is above the drone
                     if is_close(multiranger.up):
-                        keep_flying = False #有障碍物！停止飞行
-                     # 检查前方有没有障碍物
+                        keep_flying = False # Obstacle detected; stop flying
+                     # Check whether an obstacle is in front of the drone
                     if is_close(multiranger.front):
-                        keep_flying = False  #有障碍物！停止飞行
-# 命令无人机以设定速度飞行
+                        keep_flying = False  # Obstacle detected; stop flying
+# Command the drone to fly at the configured speed
                     motion_commander.start_linear_motion(
                         velocity_x, velocity_y, 0)
                     time.sleep(0.1)

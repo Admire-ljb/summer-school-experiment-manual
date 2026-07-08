@@ -94,7 +94,7 @@ Block = ParagraphBlock | TableBlock
 MANUALS = [
     Manual("manual-01-vm", 1, "\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a", "Virtual Machine Installation and Configuration", "Day1_\u5b9e\u9a8c\u624b\u518c1-\u5b89\u88c5\u914d\u7f6e\u865a\u62df\u673a.docx", "Configure VMware Workstation and install Ubuntu 20.04 as the standard operating environment for all subsequent experiments.", ("Windows host computer with sufficient memory and disk space.", "Course Materials Package: course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe.", "Course Materials Package: course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso."), ("Install VMware Workstation and verify that the new virtual-machine wizard is available.", "Create an Ubuntu virtual machine with appropriate CPU, memory, disk, and NAT network settings.", "Install Ubuntu, perform first-boot setup, install VMware Tools, and create a clean snapshot."), ("Confirm network access from Ubuntu.", "Verify screen scaling and host-to-guest file transfer.", "Restore the clean snapshot once to confirm recovery is available.")),
     Manual("manual-02-ros", 2, "\u914d\u7f6e\u8ba4\u77e5 ROS", "ROS Configuration and Basic Concepts", "Day1_\u5b9e\u9a8c\u624b\u518c2-\u914d\u7f6e\u8ba4\u77e5ROS.docx", "Install ROS and establish the basic concepts used by later robot-control experiments.", ("Ubuntu virtual machine from Manual 1.", "Network access for package installation.", "Terminal access and basic Linux command familiarity."), ("Run the FishROS script from Course Materials Package: course-materials/02_scripts_and_code/04_fishros_install.sh.", "Start roscore and run turtlesim-related commands.", "Use ROS tools to inspect nodes, topics, graphs, and message data."), ("Explain package, node, topic, publisher, and subscriber roles.", "Run turtlesim and teleoperation successfully.", "Use rqt_graph, rqt_plot, rosnode, and rostopic for observation.")),
-    Manual("manual-03-crazyflie-setup", 3, "\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8 Crazyflie \u65e0\u4eba\u673a", "Initial Crazyflie Configuration and Operation", "Day1_\u5b9e\u9a8c\u624b\u518c3-\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8crazyfile\u65e0\u4eba\u673a.docx", "Prepare the Crazyflie software and hardware connection path for safe first operation.", ("Ubuntu/ROS environment from the previous manuals.", "Crazyflie aircraft, battery, USB cable, and Crazyradio.", "Course Materials Package: course-materials/05_source_references/crazyflie-clients-python-master.zip, cflib, and required Python dependencies."), ("Install the Crazyflie client and required libraries.", "Configure USB permissions and radio connection settings.", "Connect to the aircraft and run conservative first-control tests."), ("Crazyflie client starts correctly.", "USB and radio connection can detect the aircraft.", "A short scripted test can be explained and stopped safely.")),
+    Manual("manual-03-crazyflie-setup", 3, "\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8 Crazyflie \u65e0\u4eba\u673a", "Initial Crazyflie Configuration and Operation", "Day1_\u5b9e\u9a8c\u624b\u518c3-\u521d\u6b21\u914d\u7f6e\u4e0e\u9a71\u52a8crazyfile\u65e0\u4eba\u673a.docx", "Prepare the Crazyflie software and hardware connection path for safe first operation.", ("Ubuntu/ROS environment from the previous manuals.", "Crazyflie aircraft, battery, USB cable, and Crazyradio.", "Git, internet access, and the Bitcraze crazyflie-clients-python repository checked out at tag 2024.11; cflib and required Python dependencies."), ("Install the Crazyflie client and required libraries.", "Configure USB permissions and radio connection settings.", "Connect to the aircraft and run conservative first-control tests."), ("Crazyflie client starts correctly.", "USB and radio connection can detect the aircraft.", "A short scripted test can be explained and stopped safely.")),
     Manual("manual-04-multiranger", 4, "\u591a\u5411\u6d4b\u8ddd\u4f20\u611f\u5668\u5b9e\u9a8c", "Multi-ranger Sensor Experiment", "Day2_\u5b9e\u9a8c\u624b\u518c1-multiranger.docx", "Read multi-direction distance measurements and connect sensor readings to basic flight behavior.", ("Crazyflie with Multi-ranger deck.", "Working cflib environment.", "Clear indoor test area with simple obstacles."), ("Connect to Crazyflie through cflib.", "Read front, back, left, right, up, and down range values.", "Use threshold rules to generate simple reactive movement."), ("Range values change consistently when obstacles move.", "Students can identify which sensor direction triggered a response.", "The reactive behavior remains inside the safety area.")),
     Manual("manual-05-ranging", 5, "\u6d4b\u8ddd\u8fdb\u9636", "Advanced Ranging Experiment", "Day2_\u5b9e\u9a8c\u624b\u518c2-\u6d4b\u8ddd\u8fdb\u9636.docx", "Extend basic range reading into mission rules and obstacle-aware flight actions.", ("Crazyflie and Multi-ranger deck.", "Validated range-reading script.", "Instructor-confirmed test area."), ("Collect range readings under several obstacle configurations.", "Implement obstacle-triggered actions such as landing, backing away, or bouncing.", "Adjust thresholds and speeds conservatively."), ("The program exits through a safe stop condition.", "Sensor logs support the observed behavior.", "The selected thresholds can be justified from the measurements.")),
     Manual("manual-06-complex-map", 6, "\u590d\u6742\u5730\u56fe\u98de\u884c\u4e0e\u5efa\u56fe", "Complex-map Flight and Mapping", "Day2_\u5b9e\u9a8c\u624b\u518c3-\u590d\u6742\u5730\u56fe\u98de\u884c\u4e0e\u5efa\u56fe.docx", "Use controlled flight and range sensing to explore a more complex obstacle map.", ("Prepared obstacle area.", "Crazyflie with relevant sensing deck.", "Mapping or logging script from the manual."), ("Inspect the map constraints and permitted flight area.", "Run the flight or mapping procedure slowly enough for stable data collection.", "Review the generated obstacle points or map-like output."), ("The flight remains within the allowed area.", "The map output reflects major walls or obstacle regions.", "Failure cases are documented with likely causes.")),
@@ -579,8 +579,23 @@ CODE_COMPLETIONS = {
 }
 
 
+CODE_TEXT_REPLACEMENTS = {
+    "radio://0/60/2M/注意改成对的硬件地址": "radio://0/60/2M/E7E7E7E7E1",
+    "radio://0/80/2M/注意改成对的硬件地址": "radio://0/80/2M/E7E7E7E7E2",
+    "radio://0/80/2M/E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E3",
+    "radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E7E3",
+    "# 只要可以继续飞行就循环执行": "# Continue the loop while flight is allowed",
+    "# 检查上方有没有障碍物": "# Check whether an obstacle is above the drone",
+    "#有障碍物！停止飞行": "# Obstacle detected; stop flying",
+    "# 检查前方有没有障碍物": "# Check whether an obstacle is in front of the drone",
+    "# 命令无人机以设定速度飞行": "# Command the drone to fly at the configured speed",
+}
+
+
 def normalize_code_text(code: str) -> str:
     code = code.replace("\u00a0", " ")
+    for source, replacement in CODE_TEXT_REPLACEMENTS.items():
+        code = code.replace(source, replacement)
     for placeholder, replacement in CODE_COMPLETIONS.items():
         code = code.replace(placeholder, replacement)
     return code
@@ -1310,13 +1325,23 @@ def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str
         },
         "manual-03-crazyflie-setup": {
             "<p>直接用图形化操作的方法，在主机windows的文件界面将软件包拖动进linux虚拟机的文件界面即可。</p>":
-            "<p>cfclient 软件安装包位于 <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>。直接用图形化操作的方法，在主机windows的文件界面将该压缩包拖动进linux虚拟机的文件界面即可。</p>",
+            """<p>本节使用 Git 安装 cfclient，并固定到 Bitcraze 官方仓库的 <code>2024.11</code> 版本，避免来源和版本不一致。打开虚拟机终端，先进入 workspace 并获取源码：</p>
+<pre><code>mkdir -p ~/workspace
+cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-clients-python.git
+cd crazyflie-clients-python
+git checkout 2024.11</code></pre>""",
             "<p>Directly use the graphical operation method to drag the software package into the file interface of the Linux virtual machine from the file interface of the host windows.</p>":
-            "<p>The cfclient software package is located at <code>course-materials/05_source_references/crazyflie-clients-python-master.zip</code>. Directly use the graphical operation method to drag this archive into the file interface of the Linux virtual machine from the file interface of the host Windows.</p>",
+            """<p>Install cfclient with Git and fix the source to the official Bitcraze <code>2024.11</code> version so that the source and version are explicit. Open a terminal in the virtual machine, enter <code>workspace</code>, and get the source code:</p>
+<pre><code>mkdir -p ~/workspace
+cd ~/workspace
+git clone https://github.com/bitcraze/crazyflie-clients-python.git
+cd crazyflie-clients-python
+git checkout 2024.11</code></pre>""",
             "<p>再双击该压缩包，点击extract解压至该文件目录下。</p>":
-            "<p>再双击 <code>crazyflie-clients-python-master.zip</code>，点击extract解压至该文件目录下。</p>",
+            "<p>如果已经克隆过该仓库，不需要重新下载；进入已有目录后执行 <code>git fetch --tags</code>，再执行 <code>git checkout 2024.11</code>。确认当前终端目录为 <code>~/workspace/crazyflie-clients-python</code>，后续依赖安装和 <code>cfclient</code> 安装命令均在该目录中执行。</p>",
             "<p>Double-click the compressed package and click extract to extract it to the file directory.</p>":
-            "<p>Double-click <code>crazyflie-clients-python-master.zip</code> and click extract to extract it to the file directory.</p>",
+            "<p>If the repository has already been cloned, do not download it again. Enter the existing directory, run <code>git fetch --tags</code>, and then run <code>git checkout 2024.11</code>. Confirm that the current terminal directory is <code>~/workspace/crazyflie-clients-python</code>; run the dependency and <code>cfclient</code> installation commands from this directory.</p>",
             "<p>具体的无人机基础认知教程可参考该官方网址：Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
             "<p>具体的无人机基础认知教程可直接打开 Bitcraze 官方教程：</p>\n<pre><code>https://www.bitcraze.io/documentation/tutorials/getting-started-with-crazyflie-2-x/</code></pre>",
             "<p>For specific basic drone cognition tutorials, please refer to this official website: Getting started with the Crazyflie 2.0 or Crazyflie 2.1(+) | Bitcraze</p>":
@@ -1457,6 +1482,25 @@ def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
         return apply_vm_manual_overrides(lang, body)
     if manual.slug != "manual-03-crazyflie-setup":
         return body
+    if lang == "zh":
+        cleanup_pairs = {
+            "<h3>实验一：将cfclient的软件安装包拷贝到虚拟机的workspace文件夹中进行安装步骤</h3>": "<h3>实验一：使用 Git 获取 cfclient 指定版本并安装</h3>",
+            "<p>此时再点击绿色的extract按键</p>": "",
+            "<p>点击进入解压好的目录中，右键界面空白处选择open in terminal呼出终端。</p>": "",
+        }
+        image_root = "images"
+    else:
+        cleanup_pairs = {
+            "<h3>Experiment 1: Copy the cfclient software installation package to the workspace folder of the virtual machine and proceed with the installation steps.</h3>": "<h3>Experiment 1: Use Git to obtain the specified cfclient version and install it</h3>",
+            "<p>At this point click the green extract button</p>": "",
+            "<p>Click to enter the decompressed directory, right-click on a blank space on the interface and select open in terminal to call out the terminal.</p>": "",
+        }
+        image_root = "images-en"
+    for old_text, new_text in cleanup_pairs.items():
+        body = body.replace(old_text, new_text)
+    for index in range(1, 5):
+        figure = f'<figure><img src="../assets/{image_root}/manual-03-crazyflie-setup/{index:03d}.png" alt="manual image" loading="lazy" decoding="async"></figure>'
+        body = body.replace(figure, "")
     image = '<figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>'
     if lang == "zh":
         old = f'''<p>\u518d\u8f93\u5165\u4ee5\u4e0b\u547d\u4ee4\u66f4\u65b0\u8f6f\u4ef6\u5de5\u5177\uff1a</p>
