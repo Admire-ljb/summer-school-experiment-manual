@@ -50,28 +50,26 @@ DEMO_MATERIALS = {
             "name": "ranging-simple-arena.jpg",
             "zh_title": "简单围栏测距场地",
             "en_title": "Simple Ranging Arena",
-            "zh_text": "用于展示 Multi-ranger 在封闭测试区中读取墙面距离，并在真机测试时保持安全边界。",
-            "en_text": "Use this real-flight scene to demonstrate how the Multi-ranger reads wall distances inside a bounded test area while keeping the drone within a safe boundary.",
-        },
-    ],
-    "manual-05-ranging": [
-        {
-            "source": "advanced-ranging-overhead-arena.jpg",
-            "name": "advanced-ranging-overhead-arena.jpg",
-            "zh_title": "围栏场地俯视记录",
-            "en_title": "Overhead Arena Record",
-            "zh_text": "用于记录阈值调整、后退、降落或避障动作的现场效果，便于对照传感器日志复盘。",
-            "en_text": "Use this overhead view to record threshold tuning, backing-away, landing, or obstacle-avoidance behavior and compare it with sensor logs.",
+            "zh_text": "封闭围栏用于形成稳定的测距边界。测试时可对照无人机与挡板之间的距离变化，检查前、后、左、右方向测距值是否随场地关系同步变化。",
+            "en_text": "The enclosed arena provides stable ranging boundaries. During testing, compare the drone-to-baffle distance changes with the front, back, left, and right range readings to check whether the sensor values match the arena geometry.",
         },
     ],
     "manual-06-complex-map": [
         {
-            "source": "complex-map-real-flight.jpg",
-            "name": "complex-map-real-flight.jpg",
-            "zh_title": "复杂地图真机场地",
-            "en_title": "Real Complex-map Arena",
-            "zh_text": "模块化挡板与纹理地面组成复杂地图，可用于点云建图、障碍区域识别和安全航线验证。",
-            "en_text": "This modular baffle field with a textured floor can be used for point-cloud mapping, obstacle-region recognition, and safe-route verification.",
+            "source": "complex-mapping-arena-reference.jpg",
+            "name": "complex-mapping-arena-reference.jpg",
+            "zh_title": "复杂建图场地",
+            "en_title": "Complex Mapping Arena",
+            "zh_text": "场地由外圈挡板和内部障碍组成，适合用于检查无人机在复杂边界中的测距覆盖、航线约束和建图完整性。",
+            "en_text": "The arena consists of outer baffles and internal obstacles. It is suitable for checking ranging coverage, route constraints, and mapping completeness in a complex bounded environment.",
+        },
+        {
+            "source": "mapping-pointcloud-result.jpg",
+            "name": "mapping-pointcloud-result.jpg",
+            "zh_title": "点云建图结果",
+            "en_title": "Point-cloud Mapping Result",
+            "zh_text": "点云轮廓应与场地外边界和内部挡板位置相对应。局部离散点可作为测距噪声、姿态扰动或遮挡影响的记录，复盘时应结合飞行轨迹一并判断。",
+            "en_text": "The point-cloud contour should correspond to the outer boundary and internal baffle positions. Local scattered points can record ranging noise, attitude disturbance, or occlusion effects, and should be interpreted together with the flight trajectory during review.",
         },
     ],
     "manual-11-integrated-practice": [
@@ -80,18 +78,18 @@ DEMO_MATERIALS = {
             "name": "integrated-maze-overview.jpg",
             "zh_title": "综合路线场地总览",
             "en_title": "Integrated Route Arena Overview",
-            "zh_text": "多通道迷宫布局适合作为分段测试、路线复盘和团队真机演示素材。",
-            "en_text": "The multi-corridor maze layout is suitable for staged testing, route review, and team real-flight demonstration.",
+            "zh_text": "多通道场地可用于将综合任务拆分为起飞、直线段、转向段、避障段和返航段，并逐段记录实际飞行表现。",
+            "en_text": "The multi-corridor arena can be used to divide an integrated task into takeoff, straight-line, turning, obstacle-avoidance, and return segments, with real-flight behavior recorded for each segment.",
         },
     ],
     "manual-13-project-demo": [
         {
             "source": "competition-real-flight-demo.jpg",
             "name": "competition-real-flight-demo.jpg",
-            "zh_title": "比赛真机演示场景",
-            "en_title": "Competition Real-flight Scene",
-            "zh_text": "用于展示无人机在比赛型复杂场地中的起飞、穿越、避障与返航验证效果。",
-            "en_text": "Use this scene to demonstrate takeoff, traversal, obstacle avoidance, and return verification in a competition-style arena.",
+            "zh_title": "比赛场地飞行记录",
+            "en_title": "Competition Arena Flight Record",
+            "zh_text": "比赛型场地记录用于核对起飞区域、通道通过、障碍避让和返航降落等关键环节，评价时应以现场完成情况、日志和视频记录共同作为依据。",
+            "en_text": "The competition-style arena record is used to check key stages such as takeoff area, corridor traversal, obstacle avoidance, and return landing. Evaluation should combine on-site completion, logs, and video records.",
         },
     ],
 }
@@ -1792,14 +1790,41 @@ def demo_material_section(manual: Manual, lang: str) -> str:
     items = DEMO_MATERIALS.get(manual.slug)
     if not items:
         return ""
+    section_meta = {
+        "manual-04-multiranger": {
+            "zh_heading": "现场测试场地",
+            "en_heading": "On-site Test Setup",
+            "zh_intro": "本场地用于验证 Multi-ranger 各方向测距读数与挡板相对位置之间的对应关系。",
+            "en_intro": "This setup is used to verify the correspondence between Multi-ranger readings and the relative positions of the baffles.",
+        },
+        "manual-06-complex-map": {
+            "zh_heading": "建图结果参考",
+            "en_heading": "Mapping Result Reference",
+            "zh_intro": "复盘建图实验时，可将现场场地结构与点云输出进行对照，重点检查外边界、内部挡板和异常散点。",
+            "en_intro": "When reviewing the mapping experiment, compare the physical arena structure with the point-cloud output, focusing on the outer boundary, internal baffles, and abnormal scattered points.",
+        },
+        "manual-11-integrated-practice": {
+            "zh_heading": "综合路线场地参考",
+            "en_heading": "Integrated Route Arena Reference",
+            "zh_intro": "路线复盘时应将任务拆分为若干连续动作段，分别检查每一段的控制结果和误差来源。",
+            "en_intro": "During route review, split the task into continuous action segments and check the control result and error source of each segment.",
+        },
+        "manual-13-project-demo": {
+            "zh_heading": "比赛场地记录",
+            "en_heading": "Competition Arena Record",
+            "zh_intro": "比赛评价应结合现场飞行、终端日志和影像记录，核对关键通行点与安全边界。",
+            "en_intro": "Competition evaluation should combine on-site flight, terminal logs, and visual records to check key passing points and safety boundaries.",
+        },
+    }
+    meta = section_meta.get(manual.slug, {})
     if lang == "zh":
-        heading = "真机演示素材"
-        intro = "以下图片可作为课堂演示、真机展示或实验报告中的现场效果参考。"
+        heading = meta.get("zh_heading", "现场记录")
+        intro = meta.get("zh_intro", "")
         title_key = "zh_title"
         text_key = "zh_text"
     else:
-        heading = "Real-flight Demonstration Materials"
-        intro = "The following images can be used as classroom demonstrations, real-flight display materials, or on-site references in lab reports."
+        heading = meta.get("en_heading", "On-site Record")
+        intro = meta.get("en_intro", "")
         title_key = "en_title"
         text_key = "en_text"
     figures: list[str] = []
@@ -1811,12 +1836,9 @@ def demo_material_section(manual: Manual, lang: str) -> str:
             f'<figure class="demo-figure"><img src="{html.escape(src)}" alt="{html.escape(title)}" loading="lazy" decoding="async">'
             f'<figcaption><strong>{html.escape(title)}</strong><span>{html.escape(description)}</span></figcaption></figure>'
         )
-    return (
-        f"\n<h2>{html.escape(heading)}</h2>\n"
-        f"<p>{html.escape(intro)}</p>\n"
-        + "\n".join(figures)
-    )
-
+    intro_html = f"<p>{html.escape(intro)}</p>\n" if intro else ""
+    heading_html = f"\n<h2>{html.escape(heading)}</h2>\n"
+    return heading_html + intro_html + "\n".join(figures)
 
 def final_test_image_src(lang: str) -> str:
     image_root = "images-en" if lang == "en" else "images"
@@ -1978,7 +2000,9 @@ table{width:100%;border-collapse:collapse;margin:18px 0 24px;background:var(--pa
 td,th{border:1px solid var(--border);padding:9px 11px;vertical-align:top}
 figure{margin:24px 0 30px;text-align:center;overflow-x:auto}
 figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;object-fit:contain;margin:0 auto;background:var(--paper);border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.demo-figure figcaption{max-width:760px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
+.demo-figure{max-width:720px;margin:22px auto 28px}
+.demo-figure img{max-width:100%;max-height:62vh}
+.demo-figure figcaption{max-width:680px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .demo-figure figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .demo-figure figcaption span{display:block}
 .admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}
