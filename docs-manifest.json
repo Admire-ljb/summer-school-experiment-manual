@@ -305,67 +305,80 @@
     "manual-01-vm": {
       "paragraphs": 134,
       "tables": 0,
-      "images": 22
+      "images": 22,
+      "videos": 0
     },
     "manual-02-ros": {
       "paragraphs": 91,
       "tables": 0,
-      "images": 24
+      "images": 24,
+      "videos": 0
     },
     "manual-03-crazyflie-setup": {
       "paragraphs": 167,
       "tables": 0,
-      "images": 24
+      "images": 24,
+      "videos": 0
     },
     "manual-04-multiranger": {
       "paragraphs": 145,
       "tables": 0,
-      "images": 5
+      "images": 5,
+      "videos": 0
     },
     "manual-05-ranging": {
       "paragraphs": 160,
       "tables": 0,
-      "images": 2
+      "images": 2,
+      "videos": 1
     },
     "manual-06-complex-map": {
       "paragraphs": 30,
       "tables": 0,
-      "images": 6
+      "images": 6,
+      "videos": 1
     },
     "manual-07-autonomous-mapping-review": {
       "paragraphs": 33,
       "tables": 0,
-      "images": 2
+      "images": 2,
+      "videos": 0
     },
     "manual-08-path-planning": {
       "paragraphs": 104,
       "tables": 0,
-      "images": 31
+      "images": 31,
+      "videos": 0
     },
     "manual-09-cflib": {
       "paragraphs": 229,
       "tables": 0,
-      "images": 9
+      "images": 9,
+      "videos": 0
     },
     "manual-10-motion-commander": {
       "paragraphs": 85,
       "tables": 0,
-      "images": 12
+      "images": 12,
+      "videos": 0
     },
     "manual-11-integrated-practice": {
       "paragraphs": 13,
       "tables": 0,
-      "images": 2
+      "images": 2,
+      "videos": 0
     },
     "manual-12-position-commander": {
       "paragraphs": 101,
       "tables": 0,
-      "images": 7
+      "images": 7,
+      "videos": 0
     },
     "manual-13-project-demo": {
       "paragraphs": 65,
       "tables": 0,
-      "images": 3
+      "images": 3,
+      "videos": 1
     }
   }
 }

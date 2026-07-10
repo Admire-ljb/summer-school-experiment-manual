@@ -94,6 +94,9 @@ python3 multiranger_pointcloud.py</code></pre><p>运行前请确认 Crazyflie、
 <p>复盘建图实验时，可将现场场地结构与点云输出进行对照，重点检查外边界、内部挡板和异常散点。</p>
 <figure class="demo-figure"><img src="../assets/images/manual-06-complex-map/complex-mapping-arena-reference.jpg" alt="复杂建图场地" loading="lazy" decoding="async"><figcaption><strong>复杂建图场地</strong><span>场地由外圈挡板和内部障碍组成，适合用于检查无人机在复杂边界中的测距覆盖、航线约束和建图完整性。</span></figcaption></figure>
 <figure class="demo-figure"><img src="../assets/images/manual-06-complex-map/mapping-pointcloud-result.jpg" alt="点云建图结果" loading="lazy" decoding="async"><figcaption><strong>点云建图结果</strong><span>点云轮廓应与场地外边界和内部挡板位置相对应。局部离散点可作为测距噪声、姿态扰动或遮挡影响的记录，复盘时应结合飞行轨迹一并判断。</span></figcaption></figure>
+<h2>飞行过程记录</h2>
+<p>飞行视频用于记录采样路径与障碍关系，便于与建图结果交叉核验。</p>
+<figure class="demo-video"><video controls muted playsinline preload="metadata"><source src="../assets/videos/manual-06-complex-map/complex-map-overview-flight.mp4" type="video/mp4"></video><figcaption><strong>复杂场地飞行过程</strong><span>该记录可与点云结果对照，检查采样区域是否覆盖外圈边界与内部障碍，并定位点云缺口或异常散点的来源。</span></figcaption></figure>
       </div>
     </article>
   </main>

@@ -54,6 +54,11 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .demo-figure figcaption{max-width:680px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .demo-figure figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .demo-figure figcaption span{display:block}
+.demo-video{max-width:720px;margin:22px auto 28px}
+.demo-video video{display:block;width:100%;max-height:62vh;background:#111;border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.demo-video figcaption{max-width:680px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
+.demo-video figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
+.demo-video figcaption span{display:block}
 .admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}
 .admonition.warning{border-left-color:#c45f18;background:#fff5eb}
 .admonition-title{font-weight:700;margin-bottom:6px}

@@ -97,6 +97,9 @@ python3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confir
 <p>When reviewing the mapping experiment, compare the physical arena structure with the point-cloud output, focusing on the outer boundary, internal baffles, and abnormal scattered points.</p>
 <figure class="demo-figure"><img src="../assets/images-en/manual-06-complex-map/complex-mapping-arena-reference.jpg" alt="Complex Mapping Arena" loading="lazy" decoding="async"><figcaption><strong>Complex Mapping Arena</strong><span>The arena consists of outer baffles and internal obstacles. It is suitable for checking ranging coverage, route constraints, and mapping completeness in a complex bounded environment.</span></figcaption></figure>
 <figure class="demo-figure"><img src="../assets/images-en/manual-06-complex-map/mapping-pointcloud-result.jpg" alt="Point-cloud Mapping Result" loading="lazy" decoding="async"><figcaption><strong>Point-cloud Mapping Result</strong><span>The point-cloud contour should correspond to the outer boundary and internal baffle positions. Local scattered points can record ranging noise, attitude disturbance, or occlusion effects, and should be interpreted together with the flight trajectory during review.</span></figcaption></figure>
+<h2>Flight Process Record</h2>
+<p>The flight video records the relationship between the sampling path and obstacles, so it can be cross-checked with the mapping result.</p>
+<figure class="demo-video"><video controls muted playsinline preload="metadata"><source src="../assets/videos/manual-06-complex-map/complex-map-overview-flight.mp4" type="video/mp4"></video><figcaption><strong>Complex-area Flight Process</strong><span>This record can be compared with the point-cloud result to check whether the sampled area covers the outer boundary and internal obstacles, and to locate the source of point-cloud gaps or abnormal scattered points.</span></figcaption></figure>
       </div>
     </article>
   </main>

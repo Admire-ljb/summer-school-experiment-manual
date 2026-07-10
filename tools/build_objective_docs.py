@@ -33,6 +33,7 @@ ASSET_DIR = ROOT / "assets"
 ASSET_SOURCE_DIR = ASSET_DIR / "source"
 IMAGE_DIR = ASSET_DIR / "images"
 IMAGE_EN_DIR = ASSET_DIR / "images-en"
+VIDEO_DIR = ASSET_DIR / "videos"
 IMAGE_EN_CURATED_DIR = ASSET_DIR / "images-en-curated"
 TRANSLATION_CACHE = ROOT / "tools" / "translation-cache.zh-en.json"
 IMAGE_OCR_CACHE = ROOT / "tools" / "image-ocr-cache.json"
@@ -43,6 +44,7 @@ FINAL_TEST_EN_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-en
 CFCLIENT_TOOLCHAIN_IMAGE_SOURCE = ASSET_SOURCE_DIR / "manual-03-cfclient-python38-toolchain.png"
 CFCLIENT_TOOLCHAIN_IMAGE_NAME = "009.png"
 DEMO_MATERIAL_SOURCE_DIR = ASSET_SOURCE_DIR / "demo-materials"
+DEMO_VIDEO_SOURCE_DIR = ASSET_SOURCE_DIR / "demo-videos"
 DEMO_MATERIALS = {
     "manual-04-multiranger": [
         {
@@ -93,6 +95,39 @@ DEMO_MATERIALS = {
         },
     ],
 }
+DEMO_VIDEOS = {
+    "manual-05-ranging": [
+        {
+            "source": "manual-05-ranging/ranging-enclosed-flight.mp4",
+            "name": "ranging-enclosed-flight.mp4",
+            "zh_title": "封闭场地避障飞行记录",
+            "en_title": "Enclosed-area Obstacle-avoidance Flight Record",
+            "zh_text": "该记录用于核对无人机在围栏边界附近的速度、转向和安全距离变化，并与测距阈值日志对应分析。",
+            "en_text": "This record is used to check speed, turning, and safety-distance changes near the enclosure boundary, and to compare them with the ranging-threshold logs.",
+        },
+    ],
+    "manual-06-complex-map": [
+        {
+            "source": "manual-06-complex-map/complex-map-overview-flight.mp4",
+            "name": "complex-map-overview-flight.mp4",
+            "zh_title": "复杂场地飞行过程",
+            "en_title": "Complex-area Flight Process",
+            "zh_text": "该记录可与点云结果对照，检查采样区域是否覆盖外圈边界与内部障碍，并定位点云缺口或异常散点的来源。",
+            "en_text": "This record can be compared with the point-cloud result to check whether the sampled area covers the outer boundary and internal obstacles, and to locate the source of point-cloud gaps or abnormal scattered points.",
+        },
+    ],
+    "manual-13-project-demo": [
+        {
+            "source": "manual-13-project-demo/competition-route-flight.mp4",
+            "name": "competition-route-flight.mp4",
+            "zh_title": "综合任务飞行记录",
+            "en_title": "Integrated-task Flight Record",
+            "zh_text": "该记录用于复盘通道通过、障碍绕行和返航降落等关键动作，评价时应结合现场完成情况与程序日志。",
+            "en_text": "This record is used to review key actions such as corridor traversal, obstacle detour, and return landing. Evaluation should combine on-site completion with program logs.",
+        },
+    ],
+}
+
 MAX_IMAGE_WIDTH = 1440
 MAX_IMAGE_HEIGHT = 1200
 OCR_MAX_IMAGE_SIDE = 800
@@ -160,13 +195,14 @@ MANUALS = [
 
 
 def clean_output() -> None:
-    for path in [ROOT / "zh", ROOT / "en", IMAGE_DIR, IMAGE_EN_DIR]:
+    for path in [ROOT / "zh", ROOT / "en", IMAGE_DIR, IMAGE_EN_DIR, VIDEO_DIR]:
         if path.exists():
             shutil.rmtree(path)
     (ROOT / "zh").mkdir(parents=True, exist_ok=True)
     (ROOT / "en").mkdir(parents=True, exist_ok=True)
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
     IMAGE_EN_DIR.mkdir(parents=True, exist_ok=True)
+    VIDEO_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def copy_final_test_images() -> None:
@@ -201,6 +237,20 @@ def copy_demo_material_images() -> int:
                 out_dir = image_root / slug
                 out_dir.mkdir(parents=True, exist_ok=True)
                 (out_dir / item["name"]).write_bytes(data)
+            copied += 1
+    return copied
+
+
+def copy_demo_videos() -> int:
+    copied = 0
+    for slug, items in DEMO_VIDEOS.items():
+        for item in items:
+            source = DEMO_VIDEO_SOURCE_DIR / item["source"]
+            if not source.exists():
+                raise FileNotFoundError(f"Missing demo video source: {source}")
+            out_dir = VIDEO_DIR / slug
+            out_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, out_dir / item["name"])
             copied += 1
     return copied
 
@@ -1840,6 +1890,60 @@ def demo_material_section(manual: Manual, lang: str) -> str:
     heading_html = f"\n<h2>{html.escape(heading)}</h2>\n"
     return heading_html + intro_html + "\n".join(figures)
 
+def demo_video_src(slug: str, item: dict[str, str]) -> str:
+    return f"../assets/videos/{slug}/{item['name']}"
+
+
+def demo_video_section(manual: Manual, lang: str) -> str:
+    items = DEMO_VIDEOS.get(manual.slug)
+    if not items:
+        return ""
+    section_meta = {
+        "manual-05-ranging": {
+            "zh_heading": "飞行记录参考",
+            "en_heading": "Flight Record Reference",
+            "zh_intro": "复盘测距进阶实验时，应将飞行动作、测距阈值和安全边界一并核对。",
+            "en_intro": "When reviewing the advanced ranging experiment, check flight actions, ranging thresholds, and safety boundaries together.",
+        },
+        "manual-06-complex-map": {
+            "zh_heading": "飞行过程记录",
+            "en_heading": "Flight Process Record",
+            "zh_intro": "飞行视频用于记录采样路径与障碍关系，便于与建图结果交叉核验。",
+            "en_intro": "The flight video records the relationship between the sampling path and obstacles, so it can be cross-checked with the mapping result.",
+        },
+        "manual-13-project-demo": {
+            "zh_heading": "综合任务飞行记录",
+            "en_heading": "Integrated-task Flight Record",
+            "zh_intro": "视频记录用于核对路线完成情况、安全边界和评分依据。",
+            "en_intro": "The video record is used to check route completion, safety boundaries, and scoring evidence.",
+        },
+    }
+    meta = section_meta.get(manual.slug, {})
+    if lang == "zh":
+        heading = meta.get("zh_heading", "飞行记录")
+        intro = meta.get("zh_intro", "")
+        title_key = "zh_title"
+        text_key = "zh_text"
+    else:
+        heading = meta.get("en_heading", "Flight Record")
+        intro = meta.get("en_intro", "")
+        title_key = "en_title"
+        text_key = "en_text"
+    figures: list[str] = []
+    for item in items:
+        title = item[title_key]
+        description = item[text_key]
+        src = demo_video_src(manual.slug, item)
+        figures.append(
+            f'<figure class="demo-video"><video controls muted playsinline preload="metadata">'
+            f'<source src="{html.escape(src)}" type="video/mp4"></video>'
+            f'<figcaption><strong>{html.escape(title)}</strong><span>{html.escape(description)}</span></figcaption></figure>'
+        )
+    intro_html = f"<p>{html.escape(intro)}</p>\n" if intro else ""
+    heading_html = f"\n<h2>{html.escape(heading)}</h2>\n"
+    return heading_html + intro_html + "\n".join(figures)
+
+
 def final_test_image_src(lang: str) -> str:
     image_root = "images-en" if lang == "en" else "images"
     return f"../assets/{image_root}/{FINAL_TEST_SLUG}/{FINAL_TEST_IMAGE_NAME}"
@@ -1909,7 +2013,7 @@ def write_pages() -> dict[str, dict[str, int]]:
     for manual in MANUALS:
         blocks, stats = extract_manual(manual)
         extracted[manual.slug] = (manual, blocks, stats)
-        manifest[manual.slug] = stats
+        manifest[manual.slug] = {**stats, "videos": 0}
         translation_texts.update(collect_translation_texts(blocks))
 
     image_ocr = collect_image_ocr(extracted)
@@ -1919,9 +2023,13 @@ def write_pages() -> dict[str, dict[str, int]]:
     copy_final_test_images()
     copy_cfclient_toolchain_image()
     copy_demo_material_images()
+    copy_demo_videos()
     for slug, items in DEMO_MATERIALS.items():
         if slug in manifest:
             manifest[slug]["images"] += len(items)
+    for slug, items in DEMO_VIDEOS.items():
+        if slug in manifest:
+            manifest[slug]["videos"] += len(items)
 
     for manual, blocks, _stats in extracted.values():
         if manual.slug == FINAL_TEST_SLUG:
@@ -1938,6 +2046,8 @@ def write_pages() -> dict[str, dict[str, int]]:
         en_body = apply_course_material_overrides(manual, "en", en_body)
         zh_body += demo_material_section(manual, "zh")
         en_body += demo_material_section(manual, "en")
+        zh_body += demo_video_section(manual, "zh")
+        en_body += demo_video_section(manual, "en")
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
         (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, en_body, manual.slug), encoding="utf-8")
     return manifest
@@ -2005,6 +2115,11 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .demo-figure figcaption{max-width:680px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .demo-figure figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .demo-figure figcaption span{display:block}
+.demo-video{max-width:720px;margin:22px auto 28px}
+.demo-video video{display:block;width:100%;max-height:62vh;background:#111;border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.demo-video figcaption{max-width:680px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
+.demo-video figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
+.demo-video figcaption span{display:block}
 .admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}
 .admonition.warning{border-left-color:#c45f18;background:#fff5eb}
 .admonition-title{font-weight:700;margin-bottom:6px}
@@ -2113,7 +2228,9 @@ def main() -> None:
     write_index("zh")
     write_index("en")
     write_root_files(manifest)
-    print(f"Built {len(MANUALS)} objective manuals with {sum(item['images'] for item in manifest.values())} images.")
+    image_count = sum(item["images"] for item in manifest.values())
+    video_count = sum(item.get("videos", 0) for item in manifest.values())
+    print(f"Built {len(MANUALS)} objective manuals with {image_count} images and {video_count} videos.")
 
 
 if __name__ == "__main__":
