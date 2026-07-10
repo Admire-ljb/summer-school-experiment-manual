@@ -42,6 +42,59 @@ FINAL_TEST_ZH_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-zh
 FINAL_TEST_EN_SOURCE = ASSET_SOURCE_DIR / "manual-13-final-comprehensive-test-en.png"
 CFCLIENT_TOOLCHAIN_IMAGE_SOURCE = ASSET_SOURCE_DIR / "manual-03-cfclient-python38-toolchain.png"
 CFCLIENT_TOOLCHAIN_IMAGE_NAME = "009.png"
+DEMO_MATERIAL_SOURCE_DIR = ASSET_SOURCE_DIR / "demo-materials"
+DEMO_MATERIALS = {
+    "manual-04-multiranger": [
+        {
+            "source": "ranging-simple-arena.jpg",
+            "name": "ranging-simple-arena.jpg",
+            "zh_title": "简单围栏测距场地",
+            "en_title": "Simple Ranging Arena",
+            "zh_text": "用于展示 Multi-ranger 在封闭测试区中读取墙面距离，并在真机测试时保持安全边界。",
+            "en_text": "Use this real-flight scene to demonstrate how the Multi-ranger reads wall distances inside a bounded test area while keeping the drone within a safe boundary.",
+        },
+    ],
+    "manual-05-ranging": [
+        {
+            "source": "advanced-ranging-overhead-arena.jpg",
+            "name": "advanced-ranging-overhead-arena.jpg",
+            "zh_title": "围栏场地俯视记录",
+            "en_title": "Overhead Arena Record",
+            "zh_text": "用于记录阈值调整、后退、降落或避障动作的现场效果，便于对照传感器日志复盘。",
+            "en_text": "Use this overhead view to record threshold tuning, backing-away, landing, or obstacle-avoidance behavior and compare it with sensor logs.",
+        },
+    ],
+    "manual-06-complex-map": [
+        {
+            "source": "complex-map-real-flight.jpg",
+            "name": "complex-map-real-flight.jpg",
+            "zh_title": "复杂地图真机场地",
+            "en_title": "Real Complex-map Arena",
+            "zh_text": "模块化挡板与纹理地面组成复杂地图，可用于点云建图、障碍区域识别和安全航线验证。",
+            "en_text": "This modular baffle field with a textured floor can be used for point-cloud mapping, obstacle-region recognition, and safe-route verification.",
+        },
+    ],
+    "manual-11-integrated-practice": [
+        {
+            "source": "integrated-maze-overview.jpg",
+            "name": "integrated-maze-overview.jpg",
+            "zh_title": "综合路线场地总览",
+            "en_title": "Integrated Route Arena Overview",
+            "zh_text": "多通道迷宫布局适合作为分段测试、路线复盘和团队真机演示素材。",
+            "en_text": "The multi-corridor maze layout is suitable for staged testing, route review, and team real-flight demonstration.",
+        },
+    ],
+    "manual-13-project-demo": [
+        {
+            "source": "competition-real-flight-demo.jpg",
+            "name": "competition-real-flight-demo.jpg",
+            "zh_title": "比赛真机演示场景",
+            "en_title": "Competition Real-flight Scene",
+            "zh_text": "用于展示无人机在比赛型复杂场地中的起飞、穿越、避障与返航验证效果。",
+            "en_text": "Use this scene to demonstrate takeoff, traversal, obstacle avoidance, and return verification in a competition-style arena.",
+        },
+    ],
+}
 MAX_IMAGE_WIDTH = 1440
 MAX_IMAGE_HEIGHT = 1200
 OCR_MAX_IMAGE_SIDE = 800
@@ -136,6 +189,22 @@ def copy_cfclient_toolchain_image() -> None:
     out_dir = IMAGE_DIR / "manual-03-crazyflie-setup"
     out_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(CFCLIENT_TOOLCHAIN_IMAGE_SOURCE, out_dir / CFCLIENT_TOOLCHAIN_IMAGE_NAME)
+
+
+def copy_demo_material_images() -> int:
+    copied = 0
+    for slug, items in DEMO_MATERIALS.items():
+        for item in items:
+            source = DEMO_MATERIAL_SOURCE_DIR / item["source"]
+            if not source.exists():
+                raise FileNotFoundError(f"Missing demo material image source: {source}")
+            data = optimize_image_bytes(source.read_bytes(), source.suffix.lower() or ".jpg")
+            for image_root in [IMAGE_DIR, IMAGE_EN_DIR]:
+                out_dir = image_root / slug
+                out_dir.mkdir(parents=True, exist_ok=True)
+                (out_dir / item["name"]).write_bytes(data)
+            copied += 1
+    return copied
 
 
 def relationship_map(zf: zipfile.ZipFile) -> dict[str, str]:
@@ -1714,6 +1783,41 @@ python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre
     return body
 
 
+def demo_material_image_src(slug: str, item: dict[str, str], lang: str) -> str:
+    image_root = "images-en" if lang == "en" else "images"
+    return f"../assets/{image_root}/{slug}/{item['name']}"
+
+
+def demo_material_section(manual: Manual, lang: str) -> str:
+    items = DEMO_MATERIALS.get(manual.slug)
+    if not items:
+        return ""
+    if lang == "zh":
+        heading = "真机演示素材"
+        intro = "以下图片可作为课堂演示、真机展示或实验报告中的现场效果参考。"
+        title_key = "zh_title"
+        text_key = "zh_text"
+    else:
+        heading = "Real-flight Demonstration Materials"
+        intro = "The following images can be used as classroom demonstrations, real-flight display materials, or on-site references in lab reports."
+        title_key = "en_title"
+        text_key = "en_text"
+    figures: list[str] = []
+    for item in items:
+        title = item[title_key]
+        description = item[text_key]
+        src = demo_material_image_src(manual.slug, item, lang)
+        figures.append(
+            f'<figure class="demo-figure"><img src="{html.escape(src)}" alt="{html.escape(title)}" loading="lazy" decoding="async">'
+            f'<figcaption><strong>{html.escape(title)}</strong><span>{html.escape(description)}</span></figcaption></figure>'
+        )
+    return (
+        f"\n<h2>{html.escape(heading)}</h2>\n"
+        f"<p>{html.escape(intro)}</p>\n"
+        + "\n".join(figures)
+    )
+
+
 def final_test_image_src(lang: str) -> str:
     image_root = "images-en" if lang == "en" else "images"
     return f"../assets/{image_root}/{FINAL_TEST_SLUG}/{FINAL_TEST_IMAGE_NAME}"
@@ -1792,6 +1896,10 @@ def write_pages() -> dict[str, dict[str, int]]:
     image_map = build_english_images(image_ocr, cache)
     copy_final_test_images()
     copy_cfclient_toolchain_image()
+    copy_demo_material_images()
+    for slug, items in DEMO_MATERIALS.items():
+        if slug in manifest:
+            manifest[slug]["images"] += len(items)
 
     for manual, blocks, _stats in extracted.values():
         if manual.slug == FINAL_TEST_SLUG:
@@ -1806,6 +1914,8 @@ def write_pages() -> dict[str, dict[str, int]]:
         en_body = apply_manual_overrides(manual, "en", en_body)
         zh_body = apply_course_material_overrides(manual, "zh", zh_body)
         en_body = apply_course_material_overrides(manual, "en", en_body)
+        zh_body += demo_material_section(manual, "zh")
+        en_body += demo_material_section(manual, "en")
         (ROOT / "zh" / f"{manual.slug}.html").write_text(layout("zh", manual.zh_title, zh_body, manual.slug), encoding="utf-8")
         (ROOT / "en" / f"{manual.slug}.html").write_text(layout("en", manual.en_title, en_body, manual.slug), encoding="utf-8")
     return manifest
@@ -1868,6 +1978,9 @@ table{width:100%;border-collapse:collapse;margin:18px 0 24px;background:var(--pa
 td,th{border:1px solid var(--border);padding:9px 11px;vertical-align:top}
 figure{margin:24px 0 30px;text-align:center;overflow-x:auto}
 figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;object-fit:contain;margin:0 auto;background:var(--paper);border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.demo-figure figcaption{max-width:760px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
+.demo-figure figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
+.demo-figure figcaption span{display:block}
 .admonition{border-left:4px solid var(--accent);background:#eef7fc;padding:12px 16px;margin:18px 0}
 .admonition.warning{border-left-color:#c45f18;background:#fff5eb}
 .admonition-title{font-weight:700;margin-bottom:6px}

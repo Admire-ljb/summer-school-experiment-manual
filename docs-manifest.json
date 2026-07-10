@@ -320,17 +320,17 @@
     "manual-04-multiranger": {
       "paragraphs": 145,
       "tables": 0,
-      "images": 4
+      "images": 5
     },
     "manual-05-ranging": {
       "paragraphs": 160,
       "tables": 0,
-      "images": 2
+      "images": 3
     },
     "manual-06-complex-map": {
       "paragraphs": 30,
       "tables": 0,
-      "images": 4
+      "images": 5
     },
     "manual-07-autonomous-mapping-review": {
       "paragraphs": 33,
@@ -355,7 +355,7 @@
     "manual-11-integrated-practice": {
       "paragraphs": 13,
       "tables": 0,
-      "images": 1
+      "images": 2
     },
     "manual-12-position-commander": {
       "paragraphs": 101,
@@ -365,7 +365,7 @@
     "manual-13-project-demo": {
       "paragraphs": 65,
       "tables": 0,
-      "images": 2
+      "images": 3
     }
   }
 }
