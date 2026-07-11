@@ -74,16 +74,6 @@ DEMO_MATERIALS = {
             "en_text": "The point-cloud contour should correspond to the outer boundary and internal baffle positions. Local scattered points can record ranging noise, attitude disturbance, or occlusion effects, and should be interpreted together with the flight trajectory during review.",
         },
     ],
-    "manual-11-integrated-practice": [
-        {
-            "source": "integrated-maze-overview.jpg",
-            "name": "integrated-maze-overview.jpg",
-            "zh_title": "综合路线场地总览",
-            "en_title": "Integrated Route Arena Overview",
-            "zh_text": "多通道场地可用于将综合任务拆分为起飞、直线段、转向段、避障段和返航段，并逐段记录实际飞行表现。",
-            "en_text": "The multi-corridor arena can be used to divide an integrated task into takeoff, straight-line, turning, obstacle-avoidance, and return segments, with real-flight behavior recorded for each segment.",
-        },
-    ],
     "manual-13-project-demo": [
         {
             "source": "competition-real-flight-demo.jpg",
@@ -114,6 +104,16 @@ DEMO_VIDEOS = {
             "en_title": "Complex-area Flight Process",
             "zh_text": "该记录可与点云结果对照，检查采样区域是否覆盖外圈边界与内部障碍，并定位点云缺口或异常散点的来源。",
             "en_text": "This record can be compared with the point-cloud result to check whether the sampled area covers the outer boundary and internal obstacles, and to locate the source of point-cloud gaps or abnormal scattered points.",
+        },
+    ],
+    "manual-11-integrated-practice": [
+        {
+            "source": "manual-11-integrated-practice/speed-trial-flight.mp4",
+            "name": "speed-trial-flight.mp4",
+            "zh_title": "竞速测试场地飞行记录",
+            "en_title": "Speed Trial Arena Flight Record",
+            "zh_text": "记录展示了无人机在多通道场地中的路线通过过程。复盘时可结合用时、碰撞情况、转向位置和日志数据判断路线策略是否稳定。",
+            "en_text": "The record shows the drone traversing a multi-corridor arena. During review, combine elapsed time, contact events, turning positions, and log data to judge whether the route strategy is stable.",
         },
     ],
     "manual-13-project-demo": [
@@ -1853,12 +1853,6 @@ def demo_material_section(manual: Manual, lang: str) -> str:
             "zh_intro": "复盘建图实验时，可将现场场地结构与点云输出进行对照，重点检查外边界、内部挡板和异常散点。",
             "en_intro": "When reviewing the mapping experiment, compare the physical arena structure with the point-cloud output, focusing on the outer boundary, internal baffles, and abnormal scattered points.",
         },
-        "manual-11-integrated-practice": {
-            "zh_heading": "综合路线场地参考",
-            "en_heading": "Integrated Route Arena Reference",
-            "zh_intro": "路线复盘时应将任务拆分为若干连续动作段，分别检查每一段的控制结果和误差来源。",
-            "en_intro": "During route review, split the task into continuous action segments and check the control result and error source of each segment.",
-        },
         "manual-13-project-demo": {
             "zh_heading": "比赛场地记录",
             "en_heading": "Competition Arena Record",
@@ -1910,6 +1904,12 @@ def demo_video_section(manual: Manual, lang: str) -> str:
             "en_heading": "Flight Process Record",
             "zh_intro": "飞行视频用于记录采样路径与障碍关系，便于与建图结果交叉核验。",
             "en_intro": "The flight video records the relationship between the sampling path and obstacles, so it can be cross-checked with the mapping result.",
+        },
+        "manual-11-integrated-practice": {
+            "zh_heading": "竞速测试实验记录",
+            "en_heading": "Speed Trial Experiment Record",
+            "zh_intro": "该视频用于记录阶段综合实践中的竞速路线测试，重点核对通道通过、转向稳定性、速度控制和安全边界。",
+            "en_intro": "This video records the speed-trial route test in the integrated practice, focusing on corridor traversal, turning stability, speed control, and safety boundaries.",
         },
         "manual-13-project-demo": {
             "zh_heading": "综合任务飞行记录",
