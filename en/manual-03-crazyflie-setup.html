@@ -51,14 +51,14 @@
 <p>Experiment 2 has configured the Ubuntu20.04 virtual machine of ROS. And you need to have the Linux system operating experience accumulated in the previous experiments.</p>
 <h2>3. Experimental steps</h2>
 <h3>Experiment 1: Use Git to obtain the specified cfclient version and install it</h3>
-<p>Install cfclient with Git and fix the source to the official Bitcraze <code>2024.11</code> version so that the source and version are explicit. Open a terminal in the virtual machine, enter <code>workspace</code>, and get the source code:</p>
+<p>Install cfclient with Git and use Bitcraze release <code>2024.7.1</code>, the last official release compatible with the Python 3.8 provided by Ubuntu 20.04. Releases <code>2024.10</code> and later require Python 3.10 and are not compatible with the course virtual machine. Open a terminal in the virtual machine, enter <code>workspace</code>, and get the source code:</p>
 <pre><code>mkdir -p ~/workspace
 cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-clients-python.git
 cd crazyflie-clients-python
-git checkout 2024.11</code></pre>
+git checkout 2024.7.1</code></pre>
 
-<p>If the repository has already been cloned, do not download it again. Enter the existing directory, run <code>git fetch --tags</code>, and then run <code>git checkout 2024.11</code>. Confirm that the current terminal directory is <code>~/workspace/crazyflie-clients-python</code>; run the dependency and <code>cfclient</code> installation commands from this directory.</p>
+<p>If the repository has already been cloned, do not download it again. Enter the existing directory, run <code>git fetch --tags</code>, and then run <code>git checkout 2024.7.1</code>. Confirm that the current terminal directory is <code>~/workspace/crazyflie-clients-python</code>; run the dependency and <code>cfclient</code> installation commands from this directory.</p>
 
 
 
@@ -75,11 +75,10 @@ git checkout 2024.11</code></pre>
 <p>Then enter the following command to configure the software source used by pip3:</p>
 <pre><code>pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/008.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Then update the Python packaging tools. In Ubuntu 20.04 with Python 3.8, upgrading directly to the newest <code>setuptools</code> can conflict with an older <code>importlib_metadata</code> package and later cause <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code>. Keep <code>setuptools</code> below 71 and install <code>importlib_metadata</code> and <code>testresources</code> explicitly.</p>
-<pre><code>python3 -m pip install --user --upgrade pip wheel importlib_metadata testresources
-python3 -m pip install --user --upgrade &quot;setuptools&lt;71&quot;</code></pre>
+<p>Ubuntu 20.04 uses Python 3.8 by default, so the packaging tools should not be upgraded without version limits. A combination of <code>setuptools 71.x</code> and an older <code>importlib_metadata</code> can cause <code>AttributeError: module &#x27;importlib_metadata&#x27; has no attribute &#x27;EntryPoints&#x27;</code> during the later installation. Newer releases of <code>pip</code> and <code>testresources</code> have also dropped Python 3.8 support. The following command installs a compatible, reproducible set of versions. <code>testresources</code> satisfies a <code>launchpadlib</code> dependency and is separate from the <code>EntryPoints</code> issue.</p>
+<pre><code>python3 -m pip install --user --upgrade &quot;pip==24.3.1&quot; &quot;setuptools==70.3.0&quot; &quot;wheel==0.45.1&quot; &quot;importlib-metadata==8.5.0&quot; &quot;testresources==2.0.1&quot;</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/009.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<div class="admonition warning"><p class="admonition-title">Troubleshooting</p><p>If you already ran the old command and see the <code>EntryPoints</code> error during <code>pip3 install -e .</code>, run the two tool-fix commands above first. Then return to the <code>crazyflie-clients-python</code> directory and continue with the installation command below.</p></div>
+<div class="admonition warning"><p class="admonition-title">Troubleshooting</p><p>If you previously ran an unbounded upgrade command and see the <code>EntryPoints</code> error during <code>python3 -m pip install --user -e .</code>, rerun the pinned-version command above. After it succeeds, return to the <code>crazyflie-clients-python</code> directory and continue with the installation command below.</p></div>
 <p>Finally, enter the following command to complete the overall software dependency installation:</p>
 <pre><code>python3 -m pip install --user -e .</code></pre>
 <p>After the installation is complete without errors, restart the virtual machine and enter the cfclient command. If the following interface appears, it means the environment configuration is installed successfully.</p>

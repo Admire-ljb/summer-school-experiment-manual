@@ -57,7 +57,7 @@
       "preparation": [
         "Ubuntu/ROS environment from the previous manuals.",
         "Crazyflie aircraft, battery, USB cable, and Crazyradio.",
-        "Git, internet access, and the Bitcraze crazyflie-clients-python repository checked out at tag 2024.11; cflib and required Python dependencies."
+        "Git, internet access, and the Bitcraze crazyflie-clients-python repository checked out at tag 2024.7.1 for Python 3.8 compatibility; cflib and required Python dependencies."
       ],
       "procedure": [
         "Install the Crazyflie client and required libraries.",
