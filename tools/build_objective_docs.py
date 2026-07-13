@@ -697,10 +697,10 @@ CODE_COMPLETIONS = {
 
 
 CODE_TEXT_REPLACEMENTS = {
-    "radio://0/60/2M/注意改成对的硬件地址": "radio://0/60/2M/E7E7E7E7E1",
-    "radio://0/80/2M/注意改成对的硬件地址": "radio://0/80/2M/E7E7E7E7E2",
-    "radio://0/80/2M/E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E3",
-    "radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E7E3",
+    "radio://0/60/2M/注意改成对的硬件地址": "radio://0/80/2M/E7E7E7E7E7",
+    "radio://0/80/2M/注意改成对的硬件地址": "radio://0/80/2M/E7E7E7E7E7",
+    "radio://0/80/2M/E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E7E7",
+    "radio://0/80/2M/E7E7E7E7E3改成正确的硬件地址": "radio://0/80/2M/E7E7E7E7E7",
     "# 只要可以继续飞行就循环执行": "# Continue the loop while flight is allowed",
     "# 检查上方有没有障碍物": "# Check whether an obstacle is above the drone",
     "#有障碍物！停止飞行": "# Obstacle detected; stop flying",
@@ -712,6 +712,11 @@ CODE_TEXT_REPLACEMENTS = {
 def normalize_code_text(code: str) -> str:
     code = code.replace("\u00a0", " ")
     code = code.replace("\n(...)\n", "\n")
+    code = code.replace(
+        "\nif len(sys.argv) > 1:\n"
+        "    URI = sys.argv[1]",
+        "",
+    )
     code = code.replace(
         "def move_box_limit(scf):\n"
         "    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:\n"
@@ -1348,8 +1353,9 @@ def wall_following_examples(lang: str) -> str:
 <pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"
 python3 multiranger_wall_following.py</code></pre>
-<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；将脚本中的 <code>URI</code> 或环境变量 <code>CFLIB_URI</code> 设置为所在小组分配的完整 radio URI；首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
+<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是所在小组分配的完整 radio URI。官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>，不需要修改脚本内的默认地址。首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
 '''
     return '''
 <div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
@@ -1364,8 +1370,9 @@ python3 multiranger_wall_following.py</code></pre>
 <pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"
 python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. Set <code>URI</code> in the script or the <code>CFLIB_URI</code> environment variable to the full radio URI assigned to your group. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
 '''
 
 
@@ -1727,6 +1734,115 @@ if __name__ == '__main__':
     return body
 
 
+GROUP_URI_MANUALS = {
+    "manual-04-multiranger",
+    "manual-05-ranging",
+    "manual-06-complex-map",
+    "manual-07-autonomous-mapping-review",
+    "manual-09-cflib",
+    "manual-10-motion-commander",
+    "manual-11-integrated-practice",
+    "manual-12-position-commander",
+    "manual-13-project-demo",
+}
+
+
+def group_uri_reminder(lang: str) -> str:
+    if lang == "zh":
+        return '''
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+'''
+    return '''
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+'''
+
+
+def apply_group_uri_overrides(manual: Manual, lang: str, body: str) -> str:
+    generic_uri = "radio://0/80/2M/E7E7E7E7E7"
+    encoded_uri = "radio://0/80/2M/E7E7E7E7E7"
+
+    body = body.replace(
+        "from cflib.positioning.motion_commander import MotionCommander\n"
+        "URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI",
+        "from cflib.positioning.motion_commander import MotionCommander\n"
+        "from cflib.utils import uri_helper\n"
+        f"URI = uri_helper.uri_from_env(default=&#x27;{encoded_uri}&#x27;)",
+    )
+    body = body.replace(
+        "# URI to the Crazyflie to connect to\n"
+        "uri = &#x27;radio://0/80/2M/E7E7E7E7E7&#x27;",
+        "from cflib.utils import uri_helper\n\n"
+        f"uri = uri_helper.uri_from_env(default=&#x27;{encoded_uri}&#x27;)",
+    )
+    body = re.sub(
+        r"uri_helper\.uri_from_env\(default=&#x27;radio://0/[0-9]+/(?:2M|1M|250K)/[0-9A-Fa-f]{10}&#x27;\)",
+        f"uri_helper.uri_from_env(default=&#x27;{generic_uri}&#x27;)",
+        body,
+    )
+
+    if manual.slug == "manual-06-complex-map":
+        body = body.replace(
+            "cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud\n"
+            "python3 multiranger_pointcloud.py",
+            "cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud\n"
+            "echo &quot;$CFLIB_URI&quot;\n"
+            "python3 multiranger_pointcloud.py",
+        )
+        if lang == "zh":
+            body = body.replace(
+                "<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；该示例需要图形界面和 Python 可视化依赖",
+                "<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是本组完整 URI；官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>。该示例需要图形界面和 Python 可视化依赖",
+            )
+        else:
+            body = body.replace(
+                "<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. This example requires a graphical desktop and Python visualization dependencies",
+                "<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>. This example requires a graphical desktop and Python visualization dependencies",
+            )
+
+    if manual.slug == "manual-03-crazyflie-setup":
+        if lang == "zh":
+            old = "<p>同时将要运行的python脚本放入workspace文件夹下，双击test.py脚本文件进行编辑，修改第14行的URI地址，与当前crazyradio的地址一致，修改完之后点击save按钮后退出。</p>"
+            new = "<p>将 <code>test.py</code> 放入 <code>workspace</code> 文件夹。脚本通过 <code>uri_helper.uri_from_env()</code> 读取已经保存的 <code>CFLIB_URI</code>，不再在代码中手工填写小组地址。运行前先执行 <code>echo &quot;$CFLIB_URI&quot;</code>，确认输出与本组完整 URI 一致。</p>"
+            body = body.replace(
+                "<p>并且扫描到crazyradio之后，记住其radio的地址，如图所示为：//0/80/2M</p>",
+                "<p>使用 Crazyradio 扫描和连接前，确认 cfclient 地址栏中的接口、channel、速率和 address 与本组完整 URI 一致；不能只核对 <code>//0/80/2M</code> 这一部分。</p>",
+            )
+        else:
+            old = "<p>At the same time, put the python script to be run into the workspace folder, double-click the test.py script file to edit, modify the URI address on line 14 to be consistent with the current crazyradio address, click the save button after modification and exit.</p>"
+            new = "<p>Place <code>test.py</code> in the <code>workspace</code> folder. The script reads the saved <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>, so the group address is not entered manually in the code. Before running, use <code>echo &quot;$CFLIB_URI&quot;</code> and confirm that the output matches the complete URI assigned to the group.</p>"
+            body = body.replace(
+                "<p>And after scanning crazyradio, remember its radio address, as shown in the picture: //0/80/2M</p>",
+                "<p>Before scanning and connecting through Crazyradio, confirm that the interface, channel, data rate, and address in the cfclient address field match the group&apos;s complete URI. Checking only <code>//0/80/2M</code> is not sufficient.</p>",
+            )
+        body = body.replace(old, new)
+        body = re.sub(
+            r'<figure><img src="\.\./assets/(?:images|images-en)/manual-03-crazyflie-setup/024\.png" alt="manual image" loading="lazy" decoding="async"></figure>',
+            "",
+            body,
+        )
+        return body
+
+    if manual.slug not in GROUP_URI_MANUALS:
+        return body
+    reminder = group_uri_reminder(lang)
+    sentinel = "运行前确认小组 URI" if lang == "zh" else "Confirm the Group URI Before Running"
+    if sentinel not in body:
+        body = re.sub(
+            r'(<h1>.*?</h1>(?:<p class="subtitle">.*?</p>)?)',
+            lambda match: match.group(1) + reminder,
+            body,
+            count=1,
+            flags=re.DOTALL,
+        )
+    return body
+
+
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
     if manual.slug == "manual-01-vm":
         return apply_vm_manual_overrides(lang, body)
@@ -1785,7 +1901,16 @@ def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
 <tr><td>11\u7ec4 / K\u7ec4</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
 <tr><td>12\u7ec4 / L\u7ec4</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
-<p>\u914d\u7f6e\u65f6\u5148\u7528 USB \u5355\u72ec\u8fde\u63a5\u4e00\u67b6\u65e0\u4eba\u673a\uff0c\u5728 cfclient \u4e2d\u8fde\u63a5 <code>usb://0</code>\uff0c\u8fdb\u5165 <code>Connect - Configure 2.x</code>\uff0c\u5199\u5165\u8be5\u7ec4\u5206\u914d\u7684 Radio channel \u548c Radio address\uff0c\u4fdd\u5b58\u540e\u91cd\u542f\u65e0\u4eba\u673a\u3002\u4e4b\u540e\u8be5\u7ec4\u7684 cfclient \u5730\u5740\u680f\u548c\u6240\u6709 Python \u811a\u672c\u90fd\u5e94\u4f7f\u7528\u540c\u4e00\u4e2a\u5b8c\u6574 URI\u3002</p>
+<p>\u914d\u7f6e\u65f6\u5148\u7528 USB \u5355\u72ec\u8fde\u63a5\u4e00\u67b6\u65e0\u4eba\u673a\uff0c\u5728 cfclient \u4e2d\u8fde\u63a5 <code>usb://0</code>\uff0c\u8fdb\u5165 <code>Connect - Configure 2.x</code>\uff0c\u5199\u5165\u8be5\u7ec4\u5206\u914d\u7684 Radio channel \u548c Radio address\uff0c\u4fdd\u5b58\u540e\u91cd\u542f\u65e0\u4eba\u673a\u3002\u8fd9\u4e2a\u64cd\u4f5c\u53ea\u4fee\u6539\u65e0\u4eba\u673a\u7684\u65e0\u7ebf\u914d\u7f6e\uff0c\u4e0d\u4f1a\u81ea\u52a8\u540c\u6b65\u5230 Python \u4ee3\u7801\u6216\u865a\u62df\u673a\u3002</p>
+<h4>\u5c06\u5b8c\u6574 URI \u4fdd\u5b58\u5230\u865a\u62df\u673a</h4>
+<p>\u6bcf\u7ec4\u5728\u81ea\u5df1\u7684\u865a\u62df\u673a\u4e2d\u6267\u884c\u4e00\u6b21\u4e0b\u9762\u7684\u547d\u4ee4\u3002\u7ec8\u7aef\u51fa\u73b0\u63d0\u793a\u540e\uff0c\u4ece\u4e0a\u8868\u590d\u5236\u5e76\u7c98\u8d34\u672c\u7ec4\u7684\u5b8c\u6574 URI\uff0c\u4e0d\u8981\u53ea\u8f93\u5165 address\uff1a</p>
+<pre><code>read -r -p "Paste group URI: " CFLIB_URI
+export CFLIB_URI
+printf "export CFLIB_URI='%s'\\n" "$CFLIB_URI" &gt;&gt; ~/.bashrc
+echo "$CFLIB_URI"</code></pre>
+<p>\u8be5\u547d\u4ee4\u5c06\u5b8c\u6574 URI \u4fdd\u5b58\u4e3a <code>CFLIB_URI</code> \u73af\u5883\u53d8\u91cf\uff0c\u4ee5\u540e\u6253\u5f00\u65b0\u7ec8\u7aef\u4e5f\u4f1a\u81ea\u52a8\u751f\u6548\u3002\u540e\u7eed\u5b9e\u9a8c\u4e2d\u7684\u4ee3\u7801\u7edf\u4e00\u901a\u8fc7 <code>uri_helper.uri_from_env()</code> \u8bfb\u53d6\u8be5\u53d8\u91cf\uff0c\u65e0\u9700\u5728\u6bcf\u4e2a\u811a\u672c\u4e2d\u91cd\u590d\u4fee\u6539\u5730\u5740\u3002\u5982\u679c\u7ec4\u522b URI \u53d1\u751f\u53d8\u5316\uff0c\u8bf7\u5728 <code>~/.bashrc</code> \u4e2d\u66f4\u65b0 <code>export CFLIB_URI=...</code> \u8fd9\u4e00\u884c\u3002</p>
+<p>\u4e5f\u53ef\u4ee5\u4ec5\u5bf9\u67d0\u4e00\u6b21\u8fd0\u884c\u4e34\u65f6\u6307\u5b9a URI\u3002\u4e0b\u9762\u4ee5 6 \u7ec4\u8fd0\u884c <code>test.py</code> \u4e3a\u4f8b\uff0c\u4f7f\u7528\u65f6\u5fc5\u987b\u66ff\u6362\u4e3a\u672c\u7ec4 URI \u548c\u5b9e\u9645\u811a\u672c\u540d\uff1a</p>
+<pre><code>CFLIB_URI='radio://0/60/2M/E7E7E7E7A6' python3 test.py</code></pre>
 <div class="admonition warning"><p class="admonition-title">\u8bfe\u5802\u6ce8\u610f\u4e8b\u9879</p><p>\u540c\u4e00\u623f\u95f4\u591a\u7ec4\u5b9e\u9a8c\u65f6\uff0c\u4fe1\u9053\u5c3d\u91cf\u62c9\u5f00\uff0c\u4f8b\u5982\u95f4\u9694 10\uff1b\u6bcf\u67b6\u65e0\u4eba\u673a\u548c\u6bcf\u53f0\u7535\u8111\u65c1\u5e94\u8d34\u4e0a\u7ec4\u522b\u3001channel\u3001address \u548c\u5b8c\u6574 URI\u3002\u6b63\u5f0f\u98de\u884c\u524d\u5148\u9010\u7ec4\u5355\u72ec\u6d4b\u8bd5\u8fde\u63a5\uff0c\u786e\u8ba4\u4e0d\u4f1a\u626b\u63cf\u6216\u8fde\u63a5\u5230\u5176\u4ed6\u7ec4\u65e0\u4eba\u673a\u3002</p></div>
 '''
         if "radio://0/120/2M/E7E7E7E7AC" not in body:
@@ -1821,7 +1946,16 @@ def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
 <tr><td>Group 11 / K</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
 <tr><td>Group 12 / L</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
-<p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. After that, the cfclient address field and all Python scripts for that group should use the same complete URI.</p>
+<p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. This changes only the radio configuration stored on the drone; it does not automatically update Python code or the virtual machine.</p>
+<h4>Save the Complete URI in the Virtual Machine</h4>
+<p>Run the following commands once in each group&apos;s virtual machine. When prompted, copy and paste the group&apos;s complete URI from the table above. Do not enter only the address:</p>
+<pre><code>read -r -p "Paste group URI: " CFLIB_URI
+export CFLIB_URI
+printf "export CFLIB_URI='%s'\\n" "$CFLIB_URI" &gt;&gt; ~/.bashrc
+echo "$CFLIB_URI"</code></pre>
+<p>The complete URI is stored in the <code>CFLIB_URI</code> environment variable and will be loaded automatically in new terminals. Code in later experiments reads it through <code>uri_helper.uri_from_env()</code>, so the address does not need to be edited in every script. If the assigned URI changes, update the <code>export CFLIB_URI=...</code> line in <code>~/.bashrc</code>.</p>
+<p>A URI can also be supplied for one run only. The following example runs <code>test.py</code> for Group 6; replace both the URI and script name before use:</p>
+<pre><code>CFLIB_URI='radio://0/60/2M/E7E7E7E7A6' python3 test.py</code></pre>
 <div class="admonition warning"><p class="admonition-title">Classroom note</p><p>For multi-group experiments in one room, keep channels well separated, for example by 10 channels. Label each drone and computer with its group, channel, address, and full URI. Before formal flight, test each group one by one and confirm that it does not scan or connect to another group&apos;s drone.</p></div>
 '''
     if "Radio Planning for Multi-group Experiments" not in body:
@@ -2040,6 +2174,8 @@ def write_pages() -> dict[str, dict[str, int]]:
         en_body = apply_course_material_overrides(manual, "en", en_body)
         zh_body = apply_manual_overrides(manual, "zh", zh_body)
         en_body = apply_manual_overrides(manual, "en", en_body)
+        zh_body = apply_group_uri_overrides(manual, "zh", zh_body)
+        en_body = apply_group_uri_overrides(manual, "en", en_body)
         zh_body = apply_course_material_overrides(manual, "zh", zh_body)
         en_body = apply_course_material_overrides(manual, "en", en_body)
         zh_body += demo_material_section(manual, "zh")

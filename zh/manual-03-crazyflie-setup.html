@@ -149,7 +149,16 @@ sudo udevadm trigger</code></pre>
 <tr><td>11组 / K组</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
 <tr><td>12组 / L组</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
-<p>配置时先用 USB 单独连接一架无人机，在 cfclient 中连接 <code>usb://0</code>，进入 <code>Connect - Configure 2.x</code>，写入该组分配的 Radio channel 和 Radio address，保存后重启无人机。之后该组的 cfclient 地址栏和所有 Python 脚本都应使用同一个完整 URI。</p>
+<p>配置时先用 USB 单独连接一架无人机，在 cfclient 中连接 <code>usb://0</code>，进入 <code>Connect - Configure 2.x</code>，写入该组分配的 Radio channel 和 Radio address，保存后重启无人机。这个操作只修改无人机的无线配置，不会自动同步到 Python 代码或虚拟机。</p>
+<h4>将完整 URI 保存到虚拟机</h4>
+<p>每组在自己的虚拟机中执行一次下面的命令。终端出现提示后，从上表复制并粘贴本组的完整 URI，不要只输入 address：</p>
+<pre><code>read -r -p "Paste group URI: " CFLIB_URI
+export CFLIB_URI
+printf "export CFLIB_URI='%s'\n" "$CFLIB_URI" &gt;&gt; ~/.bashrc
+echo "$CFLIB_URI"</code></pre>
+<p>该命令将完整 URI 保存为 <code>CFLIB_URI</code> 环境变量，以后打开新终端也会自动生效。后续实验中的代码统一通过 <code>uri_helper.uri_from_env()</code> 读取该变量，无需在每个脚本中重复修改地址。如果组别 URI 发生变化，请在 <code>~/.bashrc</code> 中更新 <code>export CFLIB_URI=...</code> 这一行。</p>
+<p>也可以仅对某一次运行临时指定 URI。下面以 6 组运行 <code>test.py</code> 为例，使用时必须替换为本组 URI 和实际脚本名：</p>
+<pre><code>CFLIB_URI='radio://0/60/2M/E7E7E7E7A6' python3 test.py</code></pre>
 <div class="admonition warning"><p class="admonition-title">课堂注意事项</p><p>同一房间多组实验时，信道尽量拉开，例如间隔 10；每架无人机和每台电脑旁应贴上组别、channel、address 和完整 URI。正式飞行前先逐组单独测试连接，确认不会扫描或连接到其他组无人机。</p></div>
 <h3>实验四：使用python脚本让无人机自主起飞</h3>
 <h3>核心部件</h3>
@@ -157,10 +166,10 @@ sudo udevadm trigger</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>确保前面的操作已经可以使用crazyradio以无线的方式连接到无人机，</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>并且扫描到crazyradio之后，记住其radio的地址，如图所示为：//0/80/2M</p>
+<p>使用 Crazyradio 扫描和连接前，确认 cfclient 地址栏中的接口、channel、速率和 address 与本组完整 URI 一致；不能只核对 <code>//0/80/2M</code> 这一部分。</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>同时将要运行的python脚本放入workspace文件夹下，双击test.py脚本文件进行编辑，修改第14行的URI地址，与当前crazyradio的地址一致，修改完之后点击save按钮后退出。</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<p>将 <code>test.py</code> 放入 <code>workspace</code> 文件夹。脚本通过 <code>uri_helper.uri_from_env()</code> 读取已经保存的 <code>CFLIB_URI</code>，不再在代码中手工填写小组地址。运行前先执行 <code>echo &quot;$CFLIB_URI&quot;</code>，确认输出与本组完整 URI 一致。</p>
+
 <p>再安装最后一个所需的依赖，在终端中输入如下命令：</p>
 <pre><code>pip3 install cflib</code></pre>
 <p>然后在终端中输入python3 test.py命令运行该脚本，脚本开始运行后，先等待一段时间的初始化，通过无线的方式向无人机发送指令，无人机接收到指令后进行相印的飞行动作。</p>
@@ -172,7 +181,8 @@ import time
 import cflib.crtp
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
-URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+from cflib.utils import uri_helper
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 if __name__ == &#x27;__main__&#x27;:

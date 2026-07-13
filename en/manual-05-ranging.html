@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-05-ranging.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 5: Advanced Ranging Experiment</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>Continue to familiarize yourself with the programming methods related to the multiranger sensor in the cflib library.</p>
 <p>Use multiranger sensors to achieve more interesting flight missions</p>
@@ -70,9 +75,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
@@ -137,7 +140,7 @@ from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 DEFAULT_HEIGHT = 0.35
 BOX_LIMIT = 0.3
 deck_attached_event = Event()
@@ -221,8 +224,9 @@ if __name__ == &#x27;__main__&#x27;:
 <pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"
 python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. Set <code>URI</code> in the script or the <code>CFLIB_URI</code> environment variable to the full radio URI assigned to your group. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
 
 <p>This code mainly implements the function of the drone walking along the wall to achieve the purpose of exploring along the wall. Students can use this to experience the concept of autonomous exploration by the drone and pave the way for subsequent courses.</p>
 

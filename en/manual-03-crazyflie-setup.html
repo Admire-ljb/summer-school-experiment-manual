@@ -151,7 +151,16 @@ sudo udevadm trigger</code></pre>
 <tr><td>Group 11 / K</td><td>110</td><td><code>E7E7E7E7AB</code></td><td><code>radio://0/110/2M/E7E7E7E7AB</code></td></tr>
 <tr><td>Group 12 / L</td><td>120</td><td><code>E7E7E7E7AC</code></td><td><code>radio://0/120/2M/E7E7E7E7AC</code></td></tr>
 </tbody></table>
-<p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. After that, the cfclient address field and all Python scripts for that group should use the same complete URI.</p>
+<p>To configure a drone, connect one Crazyflie by USB, connect to <code>usb://0</code> in cfclient, open <code>Connect - Configure 2.x</code>, write the assigned Radio channel and Radio address, save the settings, and restart the drone. This changes only the radio configuration stored on the drone; it does not automatically update Python code or the virtual machine.</p>
+<h4>Save the Complete URI in the Virtual Machine</h4>
+<p>Run the following commands once in each group&apos;s virtual machine. When prompted, copy and paste the group&apos;s complete URI from the table above. Do not enter only the address:</p>
+<pre><code>read -r -p "Paste group URI: " CFLIB_URI
+export CFLIB_URI
+printf "export CFLIB_URI='%s'\n" "$CFLIB_URI" &gt;&gt; ~/.bashrc
+echo "$CFLIB_URI"</code></pre>
+<p>The complete URI is stored in the <code>CFLIB_URI</code> environment variable and will be loaded automatically in new terminals. Code in later experiments reads it through <code>uri_helper.uri_from_env()</code>, so the address does not need to be edited in every script. If the assigned URI changes, update the <code>export CFLIB_URI=...</code> line in <code>~/.bashrc</code>.</p>
+<p>A URI can also be supplied for one run only. The following example runs <code>test.py</code> for Group 6; replace both the URI and script name before use:</p>
+<pre><code>CFLIB_URI='radio://0/60/2M/E7E7E7E7A6' python3 test.py</code></pre>
 <div class="admonition warning"><p class="admonition-title">Classroom note</p><p>For multi-group experiments in one room, keep channels well separated, for example by 10 channels. Label each drone and computer with its group, channel, address, and full URI. Before formal flight, test each group one by one and confirm that it does not scan or connect to another group&apos;s drone.</p></div>
 <h3>Experiment 4: Use python script to make drone take off autonomously</h3>
 <h3>Core components</h3>
@@ -159,10 +168,10 @@ sudo udevadm trigger</code></pre>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/021.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Make sure that the previous operation has allowed you to use crazyradio to connect to the drone wirelessly.</p>
 <figure><img src="../assets/images/manual-03-crazyflie-setup/022.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>And after scanning crazyradio, remember its radio address, as shown in the picture: //0/80/2M</p>
+<p>Before scanning and connecting through Crazyradio, confirm that the interface, channel, data rate, and address in the cfclient address field match the group&apos;s complete URI. Checking only <code>//0/80/2M</code> is not sufficient.</p>
 <figure><img src="../assets/images-en/manual-03-crazyflie-setup/023.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>At the same time, put the python script to be run into the workspace folder, double-click the test.py script file to edit, modify the URI address on line 14 to be consistent with the current crazyradio address, click the save button after modification and exit.</p>
-<figure><img src="../assets/images/manual-03-crazyflie-setup/024.png" alt="manual image" loading="lazy" decoding="async"></figure>
+<p>Place <code>test.py</code> in the <code>workspace</code> folder. The script reads the saved <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>, so the group address is not entered manually in the code. Before running, use <code>echo &quot;$CFLIB_URI&quot;</code> and confirm that the output matches the complete URI assigned to the group.</p>
+
 <p>Then install the last required dependency and enter the following command in the terminal:</p>
 <pre><code>pip3 install cflib</code></pre>
 <p>Then enter the python3 test.py command in the terminal to run the script. After the script starts running, it waits for a period of initialization and sends instructions to the drone wirelessly. After receiving the instructions, the drone performs corresponding flight movements.</p>
@@ -173,7 +182,8 @@ import time
 import cflib.crtp
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
-URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+from cflib.utils import uri_helper
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 if __name__ == &#x27;__main__&#x27;:

@@ -40,7 +40,12 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>自主建图+复习</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-07-autonomous-mapping-review.html">English</a></div>
-        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p><h2>一、实验目标</h2>
+        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p>
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+<h2>一、实验目标</h2>
 <p>在前序实验中，同学们已经体验了操控无人机进行建图。本节课将进一步编写预定代码，让无人机自主飞行，并对复杂地图环境进行建模。</p>
 <p>同时，本节课也会帮助大家回顾前三天学习内容，为综合项目展示任务做准备。</p>
 <h2>二、实验准备</h2>

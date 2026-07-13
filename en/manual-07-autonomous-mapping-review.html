@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-07-autonomous-mapping-review.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 7: Autonomous Mapping and Review</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>In the pre-experiments, students have already experienced controlling drones for mapping. In this lesson, you will further write predetermined code to allow the drone to fly autonomously and model complex map environments.</p>
 <p>At the same time, this class will also help everyone review the learning content in the first three days and prepare for the comprehensive project presentation task.</p>

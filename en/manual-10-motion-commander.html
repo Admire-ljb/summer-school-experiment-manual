@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-10-motion-commander.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 10: Advanced Motion Commander Programming</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>Learn various sub-functions under the Motion Commander class to control the drone</p>
 <p>Combine the sub-functions learned above to let the drone make some fancy flying movements</p>
@@ -60,7 +65,8 @@ import time
 import cflib.crtp
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
-URI = &#x27;radio://0/80/250K&#x27;  #Change to your cf2&#x27;s URI
+from cflib.utils import uri_helper
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 if __name__ == &#x27;__main__&#x27;:

@@ -40,7 +40,12 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>多向测距传感器实验</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-04-multiranger.html">English</a></div>
-        <h1>实验 4: 多向测距传感器实验</h1><p class="subtitle">Multi-ranger Sensor Experiment</p><h2>一、实验目标</h2>
+        <h1>实验 4: 多向测距传感器实验</h1><p class="subtitle">Multi-ranger Sensor Experiment</p>
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+<h2>一、实验目标</h2>
 <p>学习新的传感器multiranger的原理。</p>
 <p>学习cflib库中multiranger传感器相关的编程方法。</p>
 <h2>二、实验准备</h2>
@@ -80,9 +85,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/60/2M/E7E7E7E7E1&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
@@ -134,9 +137,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E2&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):

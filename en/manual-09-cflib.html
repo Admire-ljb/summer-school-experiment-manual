@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-09-cflib.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 9: cflib Programming</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>Learn to connect to Crazyflie via a python script.</p>
 <p>Learn the basics of programming with the cflib library.</p>
@@ -66,8 +71,9 @@ import time
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-# URI to the Crazyflie to connect to
-uri = &#x27;radio://0/80/2M/E7E7E7E7E7&#x27;
+from cflib.utils import uri_helper
+
+uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 def simple_connect():
     print(&quot;Yeah, I&#x27;m connected! :D&quot;)
     time.sleep(3)
@@ -90,8 +96,9 @@ from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncLogger import SyncLogger
-# URI to the Crazyflie to connect to
-uri = &#x27;radio://0/80/2M/E7E7E7E7E7&#x27;
+from cflib.utils import uri_helper
+
+uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def log_stab_callback(timestamp, data, logconf):

@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-06-complex-map.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 6: Complex-map Flight and Mapping</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>Continue to familiarize yourself with the programming methods related to the multiranger sensor in the cflib library.</p>
 <p>Use multiranger sensors to achieve more interesting flight missions</p>
@@ -73,8 +78,9 @@
 <pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"
 python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. Set <code>URI</code> in the script or the <code>CFLIB_URI</code> environment variable to the full radio URI assigned to your group. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
 
 <p>As shown in the figure below, lines 75 to 77 in the multiranger_wall_following.py file</p>
 <figure><img src="../assets/images/manual-06-complex-map/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -87,7 +93,8 @@ python3 multiranger_wall_following.py</code></pre>
 <div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> comes from Bitcraze's official <code>crazyflie-demos</code> repository. Use the file in the official repository as the source of record; this manual lists the source link and classroom usage steps.</p><ul><li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py">official file link</a></li></ul></div><p>Recommended usage in the virtual machine:</p><pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud
-python3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly. This example requires a graphical desktop and Python visualization dependencies; if dependencies are missing, install <code>numpy</code>, <code>vispy</code>, and <code>PyQt6</code> according to the official README. Run the first test in a safe area and confirm that the drone lands normally after the visualization window is closed.</p>
+echo &quot;$CFLIB_URI&quot;
+python3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>. This example requires a graphical desktop and Python visualization dependencies; if dependencies are missing, install <code>numpy</code>, <code>vispy</code>, and <code>PyQt6</code> according to the official README. Run the first test in a safe area and confirm that the drone lands normally after the visualization window is closed.</p>
 <figure><img src="../assets/images/manual-06-complex-map/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>After running this program, you will use the keyboard to manually control the drone to fly in an obstacle environment and sense the surrounding environment. Use the direction keys to control the flight direction of the drone. The drone will rise to the default height of 0.3m. The a and d keys are used to control the drone&#x27;s steering slowly, the z and x keys are used to control the drone&#x27;s steering quickly, and the height is controlled by the w and s keys. Since the multiranger&#x27;s sampling speed is limited, if the drone flies too fast, the sampled environment map may not be clear. Therefore, if you want to get a clearer point cloud map, you can slightly slow down the drone&#x27;s flight speed to get a clearer point cloud map.</p>
 <figure><img src="../assets/images/manual-06-complex-map/004.png" alt="manual image" loading="lazy" decoding="async"></figure>

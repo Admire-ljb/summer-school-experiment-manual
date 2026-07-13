@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-04-multiranger.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 4: Multi-ranger Sensor Experiment</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Experimental goals</h2>
 <p>Learn the principles of the new sensor multiranger.</p>
 <p>Learn the programming methods related to the multiranger sensor in the cflib library.</p>
@@ -81,9 +86,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/60/2M/E7E7E7E7E1&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
@@ -135,9 +138,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E2&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):

@@ -40,7 +40,12 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>阶段综合实践</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-11-integrated-practice.html">English</a></div>
-        <h1>实验 11: 阶段综合实践</h1><p class="subtitle">Integrated Practice</p><h2>一、阶段综合实践说明</h2>
+        <h1>实验 11: 阶段综合实践</h1><p class="subtitle">Integrated Practice</p>
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+<h2>一、阶段综合实践说明</h2>
 <p>本次阶段综合实践用于检验同学们对 Crazyflie 无人机基础操控、飞行函数调用和任务流程组织的掌握程度。只要能够通过编程让无人机完成指定飞行动作，或基本完成主要动作并能说明实现思路，即可视为完成本次实践。鼓励大家以小组形式协作调试，注意现场秩序和飞行安全。</p>
 <h2>二、实践任务</h2>
 <p>本次实践设置两个任务，完成任意一个即可视为完成阶段综合实践。</p>

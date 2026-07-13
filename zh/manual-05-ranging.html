@@ -40,7 +40,12 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>测距进阶</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-05-ranging.html">English</a></div>
-        <h1>实验 5: 测距进阶</h1><p class="subtitle">Advanced Ranging Experiment</p><h2>一、实验目标</h2>
+        <h1>实验 5: 测距进阶</h1><p class="subtitle">Advanced Ranging Experiment</p>
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+<h2>一、实验目标</h2>
 <p>继续熟悉cflib库中multiranger传感器相关的编程方法。</p>
 <p>使用multiranger传感器实现更多有趣的飞行任务</p>
 <h2>二、实验准备</h2>
@@ -68,9 +73,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)
-if len(sys.argv) &gt; 1:
-    URI = sys.argv[1]
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def is_close(range):
@@ -135,7 +138,7 @@ from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E3&#x27;)
+URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 DEFAULT_HEIGHT = 0.35
 BOX_LIMIT = 0.3
 deck_attached_event = Event()
@@ -219,8 +222,9 @@ if __name__ == &#x27;__main__&#x27;:
 <pre><code>cd ~/workspace
 git clone https://github.com/bitcraze/crazyflie-demos.git
 cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"
 python3 multiranger_wall_following.py</code></pre>
-<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常；将脚本中的 <code>URI</code> 或环境变量 <code>CFLIB_URI</code> 设置为所在小组分配的完整 radio URI；首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
+<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是所在小组分配的完整 radio URI。官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>，不需要修改脚本内的默认地址。首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
 
 <p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
 <h2>飞行记录参考</h2>

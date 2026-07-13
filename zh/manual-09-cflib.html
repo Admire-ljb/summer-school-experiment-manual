@@ -40,7 +40,12 @@
       <div class="rst-content">
         <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>cflib 库编程</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
         <div class="language-switch"><span>中文</span><a href="../en/manual-09-cflib.html">English</a></div>
-        <h1>实验 9: cflib 库编程</h1><p class="subtitle">cflib Programming</p><h2>一、实验目标</h2>
+        <h1>实验 9: cflib 库编程</h1><p class="subtitle">cflib Programming</p>
+<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
+<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
+<h2>一、实验目标</h2>
 <p>学习通过 python脚本连接到Crazyflie。</p>
 <p>学习cflib库的编程基础。</p>
 <p>学习使用无线连接的方式在终端中监控飞行数据。</p>
@@ -64,8 +69,9 @@ import time
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-# URI to the Crazyflie to connect to
-uri = &#x27;radio://0/80/2M/E7E7E7E7E7&#x27;
+from cflib.utils import uri_helper
+
+uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 def simple_connect():
     print(&quot;Yeah, I&#x27;m connected! :D&quot;)
     time.sleep(3)
@@ -88,8 +94,9 @@ from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncLogger import SyncLogger
-# URI to the Crazyflie to connect to
-uri = &#x27;radio://0/80/2M/E7E7E7E7E7&#x27;
+from cflib.utils import uri_helper
+
+uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 def log_stab_callback(timestamp, data, logconf):

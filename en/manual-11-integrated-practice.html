@@ -42,6 +42,11 @@
         <div class="language-switch"><a href="../zh/manual-11-integrated-practice.html">Chinese</a><span>English</span></div>
         
 <h1>Experiment 11: Integrated Practice</h1>
+<div class="admonition"><p class="admonition-title">Confirm the Group URI Before Running</p>
+<p>Python scripts in this experiment read the complete radio URI assigned in Experiment 3 from the <code>CFLIB_URI</code> environment variable. Do not copy the group address into every code file. In each new terminal, check it first:</p>
+<pre><code>echo "$CFLIB_URI"</code></pre>
+<p>The output must exactly match the complete URI on the group label, including the interface, channel, data rate, and address. If it is empty or incorrect, repeat the “Save the complete URI in the virtual machine” step in Experiment 3 before running the script.</p></div>
+
 <h2>1. Stage integrated practice instructions</h2>
 <p>The comprehensive practice at this stage is used to test students&#x27; mastery of the basic control of the Crazyflie drone, flight function calls and task process organization. As long as the drone can complete specified flight actions through programming, or basically complete the main actions and explain the implementation ideas, this practice can be regarded as completed. Encourage everyone to collaborate in debugging in groups and pay attention to on-site order and flight safety.</p>
 <h2>2. Practice tasks</h2>
