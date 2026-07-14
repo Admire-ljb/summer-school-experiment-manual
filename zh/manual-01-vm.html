@@ -46,7 +46,7 @@
 <p>理解虚拟机的核心概念（如硬件隔离、快照管理）及其在开发测试中的应用场景。</p>
 <h2>二、实验准备</h2>
 <h3>硬件要求</h3>
-<p>物理机配置：建议16GB以上内存，并保证能够为虚拟机分配100GB磁盘空间。虚拟机统一按8GB内存、100GB磁盘配置，后续扩展实验也优先复用该环境。</p>
+<p>物理机配置：建议16GB以上内存，并在安装前预留约40GB以上可用磁盘空间。虚拟机统一配置为8GB内存、最大60GB可增长虚拟磁盘；不要勾选“立即分配所有磁盘空间”，宿主机只会按虚拟机实际写入量逐步占用空间。课程期间应留意宿主机剩余空间，并只保留必要的初始快照和当前快照。</p>
 <h3>软件资源（从course-materials获取）</h3>
 <p>VMware Workstation Pro 16：<code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>
 <p>Ubuntu 20.04 LTS Desktop版镜像文件：<code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>
@@ -101,7 +101,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images/manual-01-vm/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>选择创建新虚拟磁盘，点击下一步</p>
 <figure><img src="../assets/images/manual-01-vm/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>磁盘容量设置为100GB，后续实验会继续使用该虚拟机环境。设置完成后点击下一步</p>
+<p>磁盘最大容量设置为60GB，不勾选“立即分配所有磁盘空间”，保持“将虚拟磁盘拆分成多个文件”即可。虚拟磁盘会按实际使用量增长，不会在创建时立即占用60GB；下图中的30GB仅用于展示设置位置，本课程请输入60GB。设置完成后点击下一步。</p>
 <figure><img src="../assets/images/manual-01-vm/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>此页面直接点击下一步</p>
 <figure><img src="../assets/images/manual-01-vm/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -117,7 +117,7 @@ sudo reboot</code></pre>
 <p>保留至少8GB内存给物理机。</p>
 <p>磁盘：</p>
 <p>类型：SCSI（推荐）</p>
-<p>容量：分配100GB，选择“存储为单个文件”。</p>
+<p>容量：最大60GB，不立即分配全部空间；保持“将虚拟磁盘拆分成多个文件”即可。</p>
 <p>网络：默认NAT模式（自动获取IP，可访问外网）。</p>
 <h3>加载ISO镜像</h3>
 <p>在虚拟机设置中，选择CD/DVD驱动器，加载course-materials中的 <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code>。</p>
@@ -131,7 +131,7 @@ sudo reboot</code></pre>
 <p>分区设置：</p>
 <p>选择“其他选项”，手动创建分区表。</p>
 <p>分区方案：</p>
-<p>/（根目录）：50GB，EXT4文件系统。</p>
+<p>/（根目录）：40GB，EXT4文件系统。</p>
 <p>/home（用户目录）：剩余空间，EXT4文件系统。</p>
 <p>Swap（交换分区）：4GB（内存不足时备用）。</p>
 <p>用户信息：设置用户名（如student）、密码（需牢记）。</p>

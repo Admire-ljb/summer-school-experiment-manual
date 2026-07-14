@@ -48,7 +48,7 @@
 <p>Understand the core concepts of virtual machines (such as hardware isolation, snapshot management) and their application scenarios in development and testing.</p>
 <h2>2. Experimental preparation</h2>
 <h3>Hardware requirements</h3>
-<p>Physical machine configuration: more than 16GB of memory is recommended, and the host should be able to allocate a 100GB virtual disk. Configure the virtual machine with 8GB of memory and a 100GB disk; the same environment should be reused for later extended experiments whenever possible.</p>
+<p>Physical machine configuration: more than 16GB of memory and about 40GB or more of available host storage before installation are recommended. Configure the virtual machine with 8GB of memory and a growable virtual disk with a 60GB maximum. Do not select &quot;Allocate all disk space now&quot;; host storage is consumed gradually as data is written to the virtual machine. Monitor free host storage during the course and retain only the necessary clean and current snapshots.</p>
 <h3>Software resources (from the Course Materials Package)</h3>
 <p>VMware Workstation Pro 16: <code>course-materials/04_virtual_machine_resources/VMware-workstation-full-16.2.5-20904516.exe</code></p>
 <p>Ubuntu 20.04 LTS Desktop image file: <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code></p>
@@ -103,7 +103,7 @@ sudo reboot</code></pre>
 <figure><img src="../assets/images-en/manual-01-vm/011.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Select Create a new virtual disk and click Next</p>
 <figure><img src="../assets/images-en/manual-01-vm/012.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>Set the disk capacity to 100GB. Later experiments will continue to use this virtual-machine environment. Then click Next.</p>
+<p>Set the maximum disk capacity to 60GB, do not select &quot;Allocate all disk space now&quot;, and keep &quot;Split virtual disk into multiple files&quot;. The disk grows with actual use and does not immediately occupy 60GB. The 30GB value in the following image only indicates where the setting is located; enter 60GB for this course. Then click Next.</p>
 <figure><img src="../assets/images-en/manual-01-vm/013.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Just click Next on this page</p>
 <figure><img src="../assets/images-en/manual-01-vm/014.png" alt="manual image" loading="lazy" decoding="async"></figure>
@@ -119,7 +119,7 @@ sudo reboot</code></pre>
 <p>Reserve at least 8GB of memory for the host machine.</p>
 <p>disk:</p>
 <p>Type: SCSI (recommended)</p>
-<p>Capacity: allocate 100GB and select &quot;Store as single file&quot;.</p>
+<p>Capacity: maximum 60GB; do not allocate all space immediately, and keep &quot;Split virtual disk into multiple files&quot;.</p>
 <p>Network: Default NAT mode (automatically obtains IP and can access the external network).</p>
 <h3>Load ISO image</h3>
 <p>In the virtual machine settings, select the CD/DVD drive and load <code>course-materials/04_virtual_machine_resources/ubuntu-20.04.6-desktop-amd64.iso</code> from the Course Materials Package.</p>
@@ -133,7 +133,7 @@ sudo reboot</code></pre>
 <p>Partition settings:</p>
 <p>Select &quot;Other options&quot; to create the partition table manually.</p>
 <p>Partitioning scheme:</p>
-<p>/ (root directory): 50GB, EXT4 file system.</p>
+<p>/ (root directory): 40GB, EXT4 file system.</p>
 <p>/home (user directory): remaining space, EXT4 file system.</p>
 <p>Swap (swap partition): 4GB (spare when memory is insufficient).</p>
 <p>User information: Set username (such as student) and password (need to remember).</p>
