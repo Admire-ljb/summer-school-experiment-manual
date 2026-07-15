@@ -72,15 +72,17 @@ python3 auto_multiranger_pointcloud.py</code></pre>
 <h3>探索与抗缝隙干扰逻辑</h3>
 <ul>
 <li>测距数据以 10 Hz 读取，并通过滑动中值滤波抑制单帧跳变；点云按 2.5 cm 网格去重，减少孤立噪点。</li>
-<li>侧向距离突然变远时不会立即转弯。该方向必须连续保持开阔，并随无人机移动形成至少约 0.30 m 的有效开口宽度，才会被判定为可进入分支。</li>
-<li>无人机每前进约 0.45 m 会停止并向左右各偏转 15° 检查前方宽度；两个探测方向均达到约 0.75 m 净空时才继续前进。窄挡板拼缝通常不能同时通过这两次检查。</li>
+<li>侧向距离突然变远时不会立即转弯。该方向必须连续保持开阔，并随无人机移动形成至少约 0.24 m 的有效开口宽度，才会被判定为可进入分支；普通通道侧壁距离不会被当作开口。</li>
+<li>无人机每前进约 0.25 m 会停止并向左右各偏转 12° 检查前方宽度；两个探测方向均达到约 0.52 m 净空时才继续前进。该几何关系适配约 0.40-0.50 m 的单通道，同时仍可排除厘米级挡板拼缝。</li>
+<li>在左右侧壁都位于 0.45 m 以内时，脚本根据左右测距差加入不超过 0.035 m/s 的横向修正，使无人机保持在窄通道中部；若单侧距离小于 0.10 m，则停止前进并向另一侧平移 0.04 m。</li>
 <li>多个方向可通行时，脚本比较前方、左侧和右侧目标网格的访问次数，优先进入访问较少的方向；前方受阻时只使用已经确认的侧向开口或已飞过的后方路径。</li>
 </ul>
 <h3>运行参数与停止条件</h3>
 <ul>
 <li><code>FORWARD_SPEED_MPS = 0.12</code>：默认低速探索速度。</li>
-<li><code>FORWARD_STOP_DISTANCE_M = 0.50</code>：前方停止距离。</li>
-<li><code>SIDE_OPEN_MIN_WIDTH_M = 0.30</code>：侧向开口的最小连续宽度；若挡板缝隙仍造成误判，应适当增大。</li>
+<li><code>FORWARD_STOP_DISTANCE_M = 0.32</code>、<code>FRONT_EMERGENCY_DISTANCE_M = 0.18</code>：前方正常停止距离和紧急距离。</li>
+<li><code>SIDE_EMERGENCY_DISTANCE_M = 0.10</code>：侧向紧急距离。该值与侧向开口判定分开，避免在 0.40-0.50 m 通道内误触发。</li>
+<li><code>SIDE_OPEN_DISTANCE_M = 0.60</code>、<code>SIDE_OPEN_MIN_WIDTH_M = 0.24</code>：侧向分支的最小探测深度和连续宽度；若挡板缝隙仍造成误判，应优先增大宽度阈值。</li>
 <li><code>MAX_RADIUS_FROM_START_M = 1.80</code>、<code>MAX_FLIGHT_TIME_S = 120</code>：相对起点的最大活动半径和最长飞行时间，必须按实际场地调整。</li>
 </ul>
 <div class="admonition"><p class="admonition-title">安全要求</p><p>Multi-ranger 是单点 ToF 测距装置，量程结果会受到目标表面和环境光等条件影响，抗缝隙处理只能降低误判概率，不能替代封闭场地和人工监护。首次运行时清空场地并安排一名组员专门观察飞行；按 <code>Escape</code> 或关闭地图窗口会请求停止探索并降落。若探测仍不稳定，应降低速度、增大开口宽度阈值或加装连续无缝挡板，不得依靠软件强行穿越可疑开口。硬件量程说明可直接查看 <a href="https://www.bitcraze.io/documentation/hardware/multi_ranger_deck/multi_ranger_deck-datasheet.pdf">Multi-ranger deck datasheet</a>。</p></div>
@@ -144,19 +146,28 @@ MIN_RANGE_M = 0.08
 SENSOR_OUT_OF_RANGE_M = 4.0
 FILTER_WINDOW = 5
 FILTER_MIN_SAMPLES = 3
-EMERGENCY_DISTANCE_M = 0.22
-FORWARD_STOP_DISTANCE_M = 0.50
-TURN_CLEARANCE_M = 0.55
+FRONT_EMERGENCY_DISTANCE_M = 0.18
+SIDE_EMERGENCY_DISTANCE_M = 0.10
+SIDE_RECOVERY_CLEARANCE_M = 0.16
+SIDE_RECOVERY_STEP_M = 0.04
+SIDE_RECOVERY_SPEED_MPS = 0.08
+FORWARD_STOP_DISTANCE_M = 0.32
+TURN_CLEARANCE_M = 0.30
+
+# Keep the aircraft near the centre of a 0.40-0.50 m channel.
+CORRIDOR_WALL_MAX_M = 0.45
+CORRIDOR_CENTERING_GAIN = 0.65
+MAX_LATERAL_SPEED_MPS = 0.035
 
 # A side opening is accepted only after it has a useful measured width.
-SIDE_OPEN_DISTANCE_M = 0.85
-SIDE_OPEN_MIN_WIDTH_M = 0.30
+SIDE_OPEN_DISTANCE_M = 0.60
+SIDE_OPEN_MIN_WIDTH_M = 0.24
 SIDE_OPEN_MIN_SAMPLES = 5
 
 # A two-angle probe rejects a narrow seam directly in front of the sensor.
-PROBE_ANGLE_DEG = 15.0
-PROBE_CLEAR_DISTANCE_M = 0.75
-PROBE_INTERVAL_M = 0.45
+PROBE_ANGLE_DEG = 12.0
+PROBE_CLEAR_DISTANCE_M = 0.52
+PROBE_INTERVAL_M = 0.25
 PROBE_SAMPLE_COUNT = 3
 FILTER_SETTLE_S = 0.45
 MAX_CONSECUTIVE_PROBE_FAILURES = 3
@@ -507,21 +518,31 @@ class MappingDemo:
                 print(&quot;Maximum distance from the start reached; landing in place.&quot;)
                 break
 
-            emergency = [
-                value
-                for value in snapshot.raw_m.values()
-                if value is not None and value &lt; EMERGENCY_DISTANCE_M
-            ]
-            if emergency:
+            front_raw_m = snapshot.raw_m[&quot;front&quot;]
+            if (
+                front_raw_m is not None
+                and front_raw_m &lt; FRONT_EMERGENCY_DISTANCE_M
+            ):
                 if moving_forward:
                     mc.stop()
                     moving_forward = False
                 direction = self._select_turn(snapshot)
                 if direction is None:
-                    print(&quot;Emergency clearance unavailable; landing in place.&quot;)
+                    print(&quot;Front emergency clearance unavailable; landing in place.&quot;)
                     break
-                print(&quot;Emergency obstacle response: turn %s.&quot; % direction)
+                print(&quot;Front emergency response: turn %s.&quot; % direction)
                 self._execute_turn(mc, direction)
+                progress_anchor = self._snapshot()
+                progress_time = time.monotonic()
+                continue
+
+            if self._side_emergency(snapshot):
+                if moving_forward:
+                    mc.stop()
+                    moving_forward = False
+                if not self._recover_side_clearance(mc, snapshot):
+                    print(&quot;Side clearance cannot be recovered; landing in place.&quot;)
+                    break
                 progress_anchor = self._snapshot()
                 progress_time = time.monotonic()
                 continue
@@ -599,8 +620,14 @@ class MappingDemo:
                 progress_time = time.monotonic()
                 continue
 
-            if not moving_forward:
-                mc.start_forward(FORWARD_SPEED_MPS)
+            lateral_speed_mps = self._corridor_centering_speed(snapshot)
+            starting_motion = not moving_forward
+            mc.start_linear_motion(
+                FORWARD_SPEED_MPS,
+                lateral_speed_mps,
+                0.0,
+            )
+            if starting_motion:
                 moving_forward = True
                 progress_anchor = snapshot
                 progress_time = now
@@ -616,6 +643,49 @@ class MappingDemo:
             math.hypot(snapshot.x - self._origin[0], snapshot.y - self._origin[1])
             &gt; MAX_RADIUS_FROM_START_M
         )
+
+    @staticmethod
+    def _side_emergency(snapshot: SensorSnapshot) -&gt; bool:
+        return any(
+            snapshot.raw_m[direction] is not None
+            and snapshot.raw_m[direction] &lt; SIDE_EMERGENCY_DISTANCE_M
+            for direction in (&quot;left&quot;, &quot;right&quot;)
+        )
+
+    def _recover_side_clearance(
+        self, mc: MotionCommander, snapshot: SensorSnapshot
+    ) -&gt; bool:
+        left_m = snapshot.raw_m[&quot;left&quot;]
+        right_m = snapshot.raw_m[&quot;right&quot;]
+        if left_m is not None and left_m &lt; SIDE_EMERGENCY_DISTANCE_M:
+            if right_m is None or right_m &lt; SIDE_RECOVERY_CLEARANCE_M:
+                return False
+            print(&quot;Too close on the left; shifting right.&quot;)
+            mc.right(SIDE_RECOVERY_STEP_M, velocity=SIDE_RECOVERY_SPEED_MPS)
+        elif right_m is not None and right_m &lt; SIDE_EMERGENCY_DISTANCE_M:
+            if left_m is None or left_m &lt; SIDE_RECOVERY_CLEARANCE_M:
+                return False
+            print(&quot;Too close on the right; shifting left.&quot;)
+            mc.left(SIDE_RECOVERY_STEP_M, velocity=SIDE_RECOVERY_SPEED_MPS)
+        else:
+            return True
+        self._reset_filters()
+        time.sleep(FILTER_SETTLE_S)
+        return True
+
+    @staticmethod
+    def _corridor_centering_speed(snapshot: SensorSnapshot) -&gt; float:
+        left_m = snapshot.filtered_m[&quot;left&quot;]
+        right_m = snapshot.filtered_m[&quot;right&quot;]
+        if left_m is None or right_m is None:
+            return 0.0
+        if not (
+            SIDE_EMERGENCY_DISTANCE_M &lt;= left_m &lt;= CORRIDOR_WALL_MAX_M
+            and SIDE_EMERGENCY_DISTANCE_M &lt;= right_m &lt;= CORRIDOR_WALL_MAX_M
+        ):
+            return 0.0
+        correction = CORRIDOR_CENTERING_GAIN * (left_m - right_m)
+        return max(-MAX_LATERAL_SPEED_MPS, min(MAX_LATERAL_SPEED_MPS, correction))
 
     def _probe_due(self, snapshot: SensorSnapshot) -&gt; bool:
         if self._last_probe_pos is None:
