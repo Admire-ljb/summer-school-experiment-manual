@@ -1,93 +1,5 @@
-<!doctype html>
-<html lang="zh">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>自主建图+复习 - 掌上无人机实验手册</title>
-  <link rel="stylesheet" href="../assets/style.css">
-</head>
-<body>
-  <aside class="wy-nav-side">
-    <div class="wy-side-scroll">
-      <div class="wy-side-nav-search">
-        <a class="icon-home" href="index.html">掌上无人机实验手册</a>
-        <div class="version">latest</div>
-        <input id="doc-search" type="search" placeholder="搜索文档" aria-label="搜索文档">
-      </div>
-      <nav class="wy-menu">
-        <p class="caption">目录</p>
-        <ul id="nav-list"><li><a class="" href="index.html">首页</a></li>
-<li><a class="" href="manual-01-vm.html"><span>实验 1</span>安装配置虚拟机</a></li>
-<li><a class="" href="manual-02-ros.html"><span>实验 2</span>配置认知 ROS</a></li>
-<li><a class="" href="manual-03-crazyflie-setup.html"><span>实验 3</span>初次配置与驱动 Crazyflie 无人机</a></li>
-<li><a class="" href="manual-04-multiranger.html"><span>实验 4</span>多向测距传感器实验</a></li>
-<li><a class="" href="manual-05-ranging.html"><span>实验 5</span>测距进阶</a></li>
-<li><a class="" href="manual-06-complex-map.html"><span>实验 6</span>复杂地图飞行与建图</a></li>
-<li><a class="active" href="manual-07-autonomous-mapping-review.html"><span>实验 7</span>自主建图+复习</a></li>
-<li><a class="" href="manual-08-path-planning.html"><span>实验 8</span>路径规划仿真</a></li>
-<li><a class="" href="manual-09-cflib.html"><span>实验 9</span>cflib 库编程</a></li>
-<li><a class="" href="manual-10-motion-commander.html"><span>实验 10</span>运动控制接口进阶编程</a></li>
-<li><a class="" href="manual-11-integrated-practice.html"><span>实验 11</span>阶段综合实践</a></li>
-<li><a class="" href="manual-12-position-commander.html"><span>实验 12</span>位置控制接口实验</a></li>
-<li class="nav-group">比赛说明</li>
-<li><a class="" href="manual-13-project-demo.html"><span>比赛说明</span>综合比赛说明</a></li></ul>
-      </nav>
-    </div>
-  </aside>
-  <main class="wy-nav-content-wrap">
-    <div class="mobile-bar"><button id="menu-toggle" aria-label="Toggle navigation">&#9776;</button><span>掌上无人机实验手册</span></div>
-    <article class="wy-nav-content">
-      <div class="rst-content">
-        <div class="breadcrumbs"><a href="index.html">Docs</a><span>&rsaquo;</span><span>自主建图+复习</span><a class="github-link" href="https://github.com/Admire-ljb/summer-school-experiment-manual">在 GitHub 上查看</a></div>
-        <div class="language-switch"><span>中文</span><a href="../en/manual-07-autonomous-mapping-review.html">English</a></div>
-        <h1>实验 7: 自主建图+复习</h1><p class="subtitle">Autonomous Mapping and Review</p>
-<div class="admonition"><p class="admonition-title">运行前确认小组 URI</p>
-<p>本实验的 Python 脚本统一从环境变量 <code>CFLIB_URI</code> 读取实验 3 中分配的完整 radio URI，不需要把小组地址重复写入每个代码文件。打开新终端后先执行：</p>
-<pre><code>echo "$CFLIB_URI"</code></pre>
-<p>输出必须与本组标签上的完整 URI 完全一致，包括接口编号、channel、速率和 address。若输出为空或不正确，请返回实验 3 的“将完整 URI 保存到虚拟机”步骤重新设置；确认无误后再运行本实验脚本。</p></div>
-<h2>一、实验目标</h2>
-<p>在前序实验中，同学们已经体验了操控无人机进行建图。本节课将进一步编写预定代码，让无人机自主飞行，并对复杂地图环境进行建模。</p>
-<p>同时，本节课也会帮助大家回顾前三天学习内容，为综合项目展示任务做准备。</p>
-<h2>二、实验准备</h2>
-<p>之前已经配置好连接到无人机的客户端的虚拟机系统。并且需要具备前几门实验已经积累的linux系统操作经验。再需要一点的python编程基础。</p>
-<p>本实验中需要用到的硬件设备：</p>
-<ul>
-<li>Crazyflie 2.0</li>
-<li>Crazyradio PA</li>
-<li>Flow deck</li>
-<li>Multiranger deck</li>
-</ul>
-<h2>三、实验步骤</h2>
-<p>本次实验将主要进行python脚本的运行，编程库参考资料可直接打开 Bitcraze cflib User Guides：</p>
-<pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>
-<p>若在进行实验中遇到困难，可直接打开上述网址进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
-
-<h3>实验：Multi-ranger 未知环境自主探索与建图</h3>
-<p>本实验不再预先写入固定飞行轨迹。课程脚本根据 Multi-ranger 的前、后、左、右测距结果在线选择可通行方向，并利用 Flow deck 的位置估计记录已访问网格；飞行过程中持续生成二维障碍点云，达到时间或范围限制后在当前位置降落。</p>
-<p><a href="../assets/code/auto_multiranger_pointcloud.py" download>下载课程代码：auto_multiranger_pointcloud.py</a></p>
-<p>将文件保存到虚拟机的 <code>~/workspace</code>，确认实验 3 配置的小组 URI 后运行：</p>
-<pre><code>cd ~/workspace
-echo "$CFLIB_URI"
-python3 auto_multiranger_pointcloud.py</code></pre>
-<h3>探索与抗缝隙干扰逻辑</h3>
-<ul>
-<li>测距数据以 10 Hz 读取，并通过滑动中值滤波抑制单帧跳变；点云按 2.5 cm 网格去重，减少孤立噪点。</li>
-<li>侧向距离突然变远时不会立即转弯。该方向必须连续保持开阔，并随无人机移动形成至少约 0.30 m 的有效开口宽度，才会被判定为可进入分支。</li>
-<li>无人机每前进约 0.45 m 会停止并向左右各偏转 15° 检查前方宽度；两个探测方向均达到约 0.75 m 净空时才继续前进。窄挡板拼缝通常不能同时通过这两次检查。</li>
-<li>多个方向可通行时，脚本比较前方、左侧和右侧目标网格的访问次数，优先进入访问较少的方向；前方受阻时只使用已经确认的侧向开口或已飞过的后方路径。</li>
-</ul>
-<h3>运行参数与停止条件</h3>
-<ul>
-<li><code>FORWARD_SPEED_MPS = 0.12</code>：默认低速探索速度。</li>
-<li><code>FORWARD_STOP_DISTANCE_M = 0.50</code>：前方停止距离。</li>
-<li><code>SIDE_OPEN_MIN_WIDTH_M = 0.30</code>：侧向开口的最小连续宽度；若挡板缝隙仍造成误判，应适当增大。</li>
-<li><code>MAX_RADIUS_FROM_START_M = 1.80</code>、<code>MAX_FLIGHT_TIME_S = 120</code>：相对起点的最大活动半径和最长飞行时间，必须按实际场地调整。</li>
-</ul>
-<div class="admonition"><p class="admonition-title">安全要求</p><p>Multi-ranger 是单点 ToF 测距装置，量程结果会受到目标表面和环境光等条件影响，抗缝隙处理只能降低误判概率，不能替代封闭场地和人工监护。首次运行时清空场地并安排一名组员专门观察飞行；按 <code>Escape</code> 或关闭地图窗口会请求停止探索并降落。若探测仍不稳定，应降低速度、增大开口宽度阈值或加装连续无缝挡板，不得依靠软件强行穿越可疑开口。硬件量程说明可直接查看 <a href="https://www.bitcraze.io/documentation/hardware/multi_ranger_deck/multi_ranger_deck-datasheet.pdf">Multi-ranger deck datasheet</a>。</p></div>
-<p>以下场地图片用于核对实验环境。点云结果应能够反映外围挡板和内部隔断的主要轮廓；局部缺口、重影和漂移应在实验记录中说明，并结合滤波阈值、飞行速度及 Flow deck 累积误差分析原因。</p>
-<figure><img src="../assets/images/manual-07-autonomous-mapping-review/002.png" alt="自主探索建图实验场地" loading="lazy" decoding="async"></figure>
-<details><summary>查看完整课程代码</summary><pre><code># -*- coding: utf-8 -*-
-&quot;&quot;&quot;Autonomous Multi-ranger exploration and 2-D point-cloud mapping.
+# -*- coding: utf-8 -*-
+"""Autonomous Multi-ranger exploration and 2-D point-cloud mapping.
 
 The Crazyflie explores an unknown indoor enclosure instead of following a
 predefined route. It combines conservative reactive navigation with a small
@@ -100,7 +12,7 @@ visited-cell map. Narrow panel seams are rejected in two ways:
 
 This is a supervised classroom example, not a certified collision-avoidance
 system. Keep one operator ready to close the window or press Escape.
-&quot;&quot;&quot;
+"""
 
 import logging
 import math
@@ -167,25 +79,25 @@ TARGET_LOOKAHEAD_M = 0.55
 MAP_MAX_RANGE_M = 2.00
 MAP_VOXEL_M = 0.025
 
-DIRECTIONS = (&quot;front&quot;, &quot;back&quot;, &quot;left&quot;, &quot;right&quot;)
+DIRECTIONS = ("front", "back", "left", "right")
 DIRECTION_ANGLE_DEG = {
-    &quot;front&quot;: 0.0,
-    &quot;left&quot;: 90.0,
-    &quot;right&quot;: -90.0,
-    &quot;back&quot;: 180.0,
+    "front": 0.0,
+    "left": 90.0,
+    "right": -90.0,
+    "back": 180.0,
 }
 SENSOR_GEOMETRY = {
-    &quot;front&quot;: ((0.03, 0.00), (1.0, 0.0)),
-    &quot;back&quot;: ((-0.03, 0.00), (-1.0, 0.0)),
-    &quot;left&quot;: ((0.00, 0.03), (0.0, 1.0)),
-    &quot;right&quot;: ((0.00, -0.03), (0.0, -1.0)),
+    "front": ((0.03, 0.00), (1.0, 0.0)),
+    "back": ((-0.03, 0.00), (-1.0, 0.0)),
+    "left": ((0.00, 0.03), (0.0, 1.0)),
+    "right": ((0.00, -0.03), (0.0, -1.0)),
 }
 
 
 class GapResistantRangeFilter:
-    &quot;&quot;&quot;Median filter plus travelled-width confirmation for openings.&quot;&quot;&quot;
+    """Median filter plus travelled-width confirmation for openings."""
 
-    def __init__(self) -&gt; None:
+    def __init__(self) -> None:
         self._history: Deque[Optional[float]] = deque(maxlen=FILTER_WINDOW)
         self.raw_m: Optional[float] = None
         self.filtered_m: Optional[float] = None
@@ -194,21 +106,21 @@ class GapResistantRangeFilter:
         self.confirmed_open = False
 
     @staticmethod
-    def decode_mm(raw_mm: object) -&gt; Optional[float]:
+    def decode_mm(raw_mm: object) -> Optional[float]:
         try:
             value = float(raw_mm)
         except (TypeError, ValueError):
             return None
-        if not math.isfinite(value) or value &lt;= 0.0:
+        if not math.isfinite(value) or value <= 0.0:
             return None
         distance_m = value / 1000.0
-        if distance_m &lt; MIN_RANGE_M:
+        if distance_m < MIN_RANGE_M:
             return None
-        if distance_m &gt;= SENSOR_OUT_OF_RANGE_M:
+        if distance_m >= SENSOR_OUT_OF_RANGE_M:
             return SENSOR_OUT_OF_RANGE_M
         return distance_m
 
-    def reset(self) -&gt; None:
+    def reset(self) -> None:
         self._history.clear()
         self.raw_m = None
         self.filtered_m = None
@@ -216,22 +128,22 @@ class GapResistantRangeFilter:
         self.open_travel_m = 0.0
         self.confirmed_open = False
 
-    def update(self, raw_mm: object, travelled_m: float) -&gt; None:
+    def update(self, raw_mm: object, travelled_m: float) -> None:
         self.raw_m = self.decode_mm(raw_mm)
         self._history.append(self.raw_m)
         valid = [value for value in self._history if value is not None]
         self.filtered_m = (
             statistics.median(valid)
-            if len(valid) &gt;= FILTER_MIN_SAMPLES
+            if len(valid) >= FILTER_MIN_SAMPLES
             else None
         )
 
-        if self.filtered_m is not None and self.filtered_m &gt;= SIDE_OPEN_DISTANCE_M:
+        if self.filtered_m is not None and self.filtered_m >= SIDE_OPEN_DISTANCE_M:
             self.open_samples += 1
             self.open_travel_m += max(0.0, min(travelled_m, 0.10))
             self.confirmed_open = (
-                self.open_samples &gt;= SIDE_OPEN_MIN_SAMPLES
-                and self.open_travel_m &gt;= SIDE_OPEN_MIN_WIDTH_M
+                self.open_samples >= SIDE_OPEN_MIN_SAMPLES
+                and self.open_travel_m >= SIDE_OPEN_MIN_WIDTH_M
             )
         else:
             self.open_samples = 0
@@ -252,7 +164,7 @@ class SensorSnapshot:
 
 
 class MappingDemo:
-    def __init__(self, scf: SyncCrazyflie) -&gt; None:
+    def __init__(self, scf: SyncCrazyflie) -> None:
         self._scf = scf
         self._lock = threading.RLock()
         self._stop_event = threading.Event()
@@ -272,22 +184,22 @@ class MappingDemo:
         self._visited_counts: Dict[Tuple[int, int], int] = defaultdict(int)
         self._last_visit_cell: Optional[Tuple[int, int]] = None
         self._point_cells: Dict[Tuple[int, int], Tuple[float, float, float]] = {}
-        self._turn_bias = &quot;left&quot;
+        self._turn_bias = "left"
         self._last_probe_pos: Optional[Tuple[float, float]] = None
 
         self.canvas = scene.SceneCanvas(
-            keys=&quot;interactive&quot;,
+            keys="interactive",
             show=True,
-            title=&quot;Crazyflie Multi-ranger Autonomous Exploration&quot;,
+            title="Crazyflie Multi-ranger Autonomous Exploration",
         )
         self.canvas.events.close.connect(self._on_canvas_close)
         self.canvas.events.key_press.connect(self._on_key_press)
         self.view = self.canvas.central_widget.add_view()
-        self.view.bgcolor = &quot;#ffffff&quot;
+        self.view.bgcolor = "#ffffff"
         self.view.camera = TurntableCamera(
             fov=10.0,
             distance=5.0,
-            up=&quot;+z&quot;,
+            up="+z",
             center=(0.0, 0.0, 0.0),
         )
         scene.visuals.XYZAxis(parent=self.view.scene)
@@ -299,60 +211,60 @@ class MappingDemo:
             height=0.10,
             depth=0.03,
             color=(0.9, 0.15, 0.10, 1.0),
-            edge_color=&quot;black&quot;,
+            edge_color="black",
         )
         self.view.add(self.ship)
 
         self._display_timer = vispy_app.Timer(
-            &quot;auto&quot;, connect=self._update_display, start=True
+            "auto", connect=self._update_display, start=True
         )
         self._start_logging()
 
-    def _start_logging(self) -&gt; None:
-        self._log_config = LogConfig(name=&quot;Mapping&quot;, period_in_ms=LOG_PERIOD_MS)
+    def _start_logging(self) -> None:
+        self._log_config = LogConfig(name="Mapping", period_in_ms=LOG_PERIOD_MS)
         for name in DIRECTIONS:
-            self._log_config.add_variable(&quot;range.%s&quot; % name, &quot;uint16_t&quot;)
-        self._log_config.add_variable(&quot;stateEstimate.x&quot;, &quot;float&quot;)
-        self._log_config.add_variable(&quot;stateEstimate.y&quot;, &quot;float&quot;)
-        self._log_config.add_variable(&quot;stateEstimate.yaw&quot;, &quot;float&quot;)
+            self._log_config.add_variable("range.%s" % name, "uint16_t")
+        self._log_config.add_variable("stateEstimate.x", "float")
+        self._log_config.add_variable("stateEstimate.y", "float")
+        self._log_config.add_variable("stateEstimate.yaw", "float")
         self._scf.cf.log.add_config(self._log_config)
         self._log_config.data_received_cb.add_callback(self._data_received)
-        if hasattr(self._log_config, &quot;error_cb&quot;):
+        if hasattr(self._log_config, "error_cb"):
             self._log_config.error_cb.add_callback(self._log_error)
         self._log_config.start()
 
-    def start_flight(self) -&gt; None:
+    def start_flight(self) -> None:
         self._flight_thread = threading.Thread(
             target=self._flight_worker,
-            name=&quot;multiranger-exploration&quot;,
+            name="multiranger-exploration",
             daemon=False,
         )
         self._flight_thread.start()
 
-    def request_stop(self) -&gt; None:
+    def request_stop(self) -> None:
         self._stop_event.set()
 
-    def wait_for_flight(self) -&gt; None:
+    def wait_for_flight(self) -> None:
         if self._flight_thread is not None:
             self._flight_thread.join()
 
-    def stop_logging(self) -&gt; None:
+    def stop_logging(self) -> None:
         try:
             self._log_config.stop()
         except Exception:
             pass
 
-    def _log_error(self, log_config: LogConfig, message: str) -&gt; None:
-        print(&quot;Logging error: %s&quot; % message)
+    def _log_error(self, log_config: LogConfig, message: str) -> None:
+        print("Logging error: %s" % message)
         self._stop_event.set()
 
-    def _on_canvas_close(self, event: object) -&gt; None:
+    def _on_canvas_close(self, event: object) -> None:
         self.request_stop()
 
-    def _on_key_press(self, event: object) -&gt; None:
-        key = getattr(getattr(event, &quot;key&quot;, None), &quot;name&quot;, &quot;&quot;)
-        if key == &quot;Escape&quot;:
-            print(&quot;Escape pressed: stopping exploration and landing.&quot;)
+    def _on_key_press(self, event: object) -> None:
+        key = getattr(getattr(event, "key", None), "name", "")
+        if key == "Escape":
+            print("Escape pressed: stopping exploration and landing.")
             self.request_stop()
 
     def _data_received(
@@ -360,11 +272,11 @@ class MappingDemo:
         timestamp: int,
         data: Dict[str, float],
         log_config: LogConfig,
-    ) -&gt; None:
+    ) -> None:
         now = time.monotonic()
-        x = float(data[&quot;stateEstimate.x&quot;])
-        y = float(data[&quot;stateEstimate.y&quot;])
-        yaw_deg = float(data[&quot;stateEstimate.yaw&quot;])
+        x = float(data["stateEstimate.x"])
+        y = float(data["stateEstimate.y"])
+        yaw_deg = float(data["stateEstimate.yaw"])
         if not all(math.isfinite(value) for value in (x, y, yaw_deg)):
             return
 
@@ -374,25 +286,25 @@ class MappingDemo:
                 travelled_m = math.hypot(
                     x - self._last_travel_pos[0], y - self._last_travel_pos[1]
                 )
-                if travelled_m &gt; 0.15:
+                if travelled_m > 0.15:
                     travelled_m = 0.0
             self._last_travel_pos = (x, y)
 
             for name in DIRECTIONS:
-                self._filters[name].update(data.get(&quot;range.%s&quot; % name), travelled_m)
+                self._filters[name].update(data.get("range.%s" % name), travelled_m)
 
             self._sample_id += 1
             self._ready_samples += 1
             self._last_log_time = now
             self._current_pos = [x, y, yaw_deg]
-            if self._ready_samples &gt;= FILTER_WINDOW:
+            if self._ready_samples >= FILTER_WINDOW:
                 self._data_ready.set()
 
             if self._is_mapping:
                 self._mark_visited_locked(x, y)
                 self._add_map_points_locked(x, y, yaw_deg)
 
-    def _mark_visited_locked(self, x: float, y: float) -&gt; None:
+    def _mark_visited_locked(self, x: float, y: float) -> None:
         cell = (
             int(round(x / VISITED_CELL_M)),
             int(round(y / VISITED_CELL_M)),
@@ -401,14 +313,14 @@ class MappingDemo:
             self._visited_counts[cell] += 1
             self._last_visit_cell = cell
 
-    def _add_map_points_locked(self, x: float, y: float, yaw_deg: float) -&gt; None:
+    def _add_map_points_locked(self, x: float, y: float, yaw_deg: float) -> None:
         yaw_rad = math.radians(yaw_deg)
         cos_yaw = math.cos(yaw_rad)
         sin_yaw = math.sin(yaw_rad)
 
         for name, (offset, direction) in SENSOR_GEOMETRY.items():
             distance_m = self._filters[name].filtered_m
-            if distance_m is None or not (MIN_RANGE_M &lt; distance_m &lt; MAP_MAX_RANGE_M):
+            if distance_m is None or not (MIN_RANGE_M < distance_m < MAP_MAX_RANGE_M):
                 continue
             body_x = offset[0] + distance_m * direction[0]
             body_y = offset[1] + distance_m * direction[1]
@@ -420,7 +332,7 @@ class MappingDemo:
             )
             self._point_cells.setdefault(voxel, (world_x, world_y, 0.0))
 
-    def _snapshot(self) -&gt; SensorSnapshot:
+    def _snapshot(self) -> SensorSnapshot:
         with self._lock:
             return SensorSnapshot(
                 sample_id=self._sample_id,
@@ -437,24 +349,24 @@ class MappingDemo:
                 },
             )
 
-    def _reset_filters(self) -&gt; None:
+    def _reset_filters(self) -> None:
         with self._lock:
             for range_filter in self._filters.values():
                 range_filter.reset()
 
-    def _flight_worker(self) -&gt; None:
+    def _flight_worker(self) -> None:
         try:
             if not self._data_ready.wait(timeout=6.0):
-                print(&quot;No stable Multi-ranger/position log data; takeoff cancelled.&quot;)
+                print("No stable Multi-ranger/position log data; takeoff cancelled.")
                 return
             initial = self._snapshot()
             if any(initial.filtered_m[name] is None for name in DIRECTIONS):
-                print(&quot;One or more horizontal range sensors are unavailable; takeoff cancelled.&quot;)
+                print("One or more horizontal range sensors are unavailable; takeoff cancelled.")
                 return
 
             self._request_arming(True)
             time.sleep(1.0)
-            print(&quot;Taking off. Close the window or press Escape to land.&quot;)
+            print("Taking off. Close the window or press Escape to land.")
             with MotionCommander(self._scf, default_height=FLIGHT_HEIGHT_M) as mc:
                 time.sleep(1.0)
                 start = self._snapshot()
@@ -464,10 +376,10 @@ class MappingDemo:
                     self._mark_visited_locked(start.x, start.y)
                 self._explore(mc)
                 mc.stop()
-                print(&quot;Exploration complete; landing in place.&quot;)
+                print("Exploration complete; landing in place.")
         except Exception as error:
-            print(&quot;Flight error: %s&quot; % error)
-            print(&quot;MotionCommander will leave its context and request a landing.&quot;)
+            print("Flight error: %s" % error)
+            print("MotionCommander will leave its context and request a landing.")
         finally:
             with self._lock:
                 self._is_mapping = False
@@ -476,17 +388,17 @@ class MappingDemo:
             except Exception:
                 pass
             self._flight_finished.set()
-            print(&quot;Mapping stopped. The map window remains available for inspection.&quot;)
+            print("Mapping stopped. The map window remains available for inspection.")
 
-    def _request_arming(self, armed: bool) -&gt; None:
-        for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+    def _request_arming(self, armed: bool) -> None:
+        for service_name in ("platform", "supervisor"):
             service = getattr(self._scf.cf, service_name, None)
-            request = getattr(service, &quot;send_arming_request&quot;, None)
+            request = getattr(service, "send_arming_request", None)
             if request is not None:
                 request(armed)
                 return
 
-    def _explore(self, mc: MotionCommander) -&gt; None:
+    def _explore(self, mc: MotionCommander) -> None:
         start_time = time.monotonic()
         progress_anchor = self._snapshot()
         progress_time = time.monotonic()
@@ -497,20 +409,20 @@ class MappingDemo:
             now = time.monotonic()
             snapshot = self._snapshot()
 
-            if now - start_time &gt;= MAX_FLIGHT_TIME_S:
-                print(&quot;Maximum flight time reached.&quot;)
+            if now - start_time >= MAX_FLIGHT_TIME_S:
+                print("Maximum flight time reached.")
                 break
-            if now - snapshot.monotonic_time &gt; LOG_TIMEOUT_S:
-                print(&quot;Sensor log is stale; stopping and landing.&quot;)
+            if now - snapshot.monotonic_time > LOG_TIMEOUT_S:
+                print("Sensor log is stale; stopping and landing.")
                 break
             if self._outside_flight_envelope(snapshot):
-                print(&quot;Maximum distance from the start reached; landing in place.&quot;)
+                print("Maximum distance from the start reached; landing in place.")
                 break
 
             emergency = [
                 value
                 for value in snapshot.raw_m.values()
-                if value is not None and value &lt; EMERGENCY_DISTANCE_M
+                if value is not None and value < EMERGENCY_DISTANCE_M
             ]
             if emergency:
                 if moving_forward:
@@ -518,9 +430,9 @@ class MappingDemo:
                     moving_forward = False
                 direction = self._select_turn(snapshot)
                 if direction is None:
-                    print(&quot;Emergency clearance unavailable; landing in place.&quot;)
+                    print("Emergency clearance unavailable; landing in place.")
                     break
-                print(&quot;Emergency obstacle response: turn %s.&quot; % direction)
+                print("Emergency obstacle response: turn %s." % direction)
                 self._execute_turn(mc, direction)
                 progress_anchor = self._snapshot()
                 progress_time = time.monotonic()
@@ -531,17 +443,17 @@ class MappingDemo:
                     snapshot.x - progress_anchor.x,
                     snapshot.y - progress_anchor.y,
                 )
-                if progress &gt;= STUCK_DISTANCE_M:
+                if progress >= STUCK_DISTANCE_M:
                     progress_anchor = snapshot
                     progress_time = now
-                elif now - progress_time &gt;= STUCK_TIMEOUT_S:
+                elif now - progress_time >= STUCK_TIMEOUT_S:
                     mc.stop()
                     moving_forward = False
                     direction = self._select_turn(snapshot)
                     if direction is None:
-                        print(&quot;No progress and no safe turn; landing in place.&quot;)
+                        print("No progress and no safe turn; landing in place.")
                         break
-                    print(&quot;No forward progress; turn %s.&quot; % direction)
+                    print("No forward progress; turn %s." % direction)
                     self._execute_turn(mc, direction)
                     progress_anchor = self._snapshot()
                     progress_time = time.monotonic()
@@ -552,22 +464,22 @@ class MappingDemo:
                 if moving_forward:
                     mc.stop()
                     moving_forward = False
-                print(&quot;Selecting an unvisited %s branch.&quot; % side_branch)
+                print("Selecting an unvisited %s branch." % side_branch)
                 self._execute_turn(mc, side_branch)
                 progress_anchor = self._snapshot()
                 progress_time = time.monotonic()
                 continue
 
-            front_m = snapshot.filtered_m[&quot;front&quot;]
-            if front_m is None or front_m &lt; FORWARD_STOP_DISTANCE_M:
+            front_m = snapshot.filtered_m["front"]
+            if front_m is None or front_m < FORWARD_STOP_DISTANCE_M:
                 if moving_forward:
                     mc.stop()
                     moving_forward = False
                 direction = self._select_turn(snapshot)
                 if direction is None:
-                    print(&quot;No confirmed route is clear; landing in place.&quot;)
+                    print("No confirmed route is clear; landing in place.")
                     break
-                print(&quot;Front blocked; turn %s.&quot; % direction)
+                print("Front blocked; turn %s." % direction)
                 self._execute_turn(mc, direction)
                 progress_anchor = self._snapshot()
                 progress_time = time.monotonic()
@@ -586,9 +498,9 @@ class MappingDemo:
                     continue
 
                 probe_failures += 1
-                print(&quot;Forward width probe rejected the apparent opening.&quot;)
-                if probe_failures &gt;= MAX_CONSECUTIVE_PROBE_FAILURES:
-                    print(&quot;Repeated width-probe failures; landing in place.&quot;)
+                print("Forward width probe rejected the apparent opening.")
+                if probe_failures >= MAX_CONSECUTIVE_PROBE_FAILURES:
+                    print("Repeated width-probe failures; landing in place.")
                     break
                 snapshot = self._snapshot()
                 direction = self._select_turn(snapshot)
@@ -609,15 +521,15 @@ class MappingDemo:
         if moving_forward:
             mc.stop()
 
-    def _outside_flight_envelope(self, snapshot: SensorSnapshot) -&gt; bool:
+    def _outside_flight_envelope(self, snapshot: SensorSnapshot) -> bool:
         if self._origin is None:
             return False
         return (
             math.hypot(snapshot.x - self._origin[0], snapshot.y - self._origin[1])
-            &gt; MAX_RADIUS_FROM_START_M
+            > MAX_RADIUS_FROM_START_M
         )
 
-    def _probe_due(self, snapshot: SensorSnapshot) -&gt; bool:
+    def _probe_due(self, snapshot: SensorSnapshot) -> bool:
         if self._last_probe_pos is None:
             return True
         return (
@@ -625,10 +537,10 @@ class MappingDemo:
                 snapshot.x - self._last_probe_pos[0],
                 snapshot.y - self._last_probe_pos[1],
             )
-            &gt;= PROBE_INTERVAL_M
+            >= PROBE_INTERVAL_M
         )
 
-    def _probe_forward_corridor(self, mc: MotionCommander) -&gt; bool:
+    def _probe_forward_corridor(self, mc: MotionCommander) -> bool:
         mc.turn_left(PROBE_ANGLE_DEG, rate=TURN_RATE_DPS)
         self._reset_filters()
         left_probe = self._sample_front_raw()
@@ -644,39 +556,39 @@ class MappingDemo:
         return (
             left_probe is not None
             and right_probe is not None
-            and left_probe &gt;= PROBE_CLEAR_DISTANCE_M
-            and right_probe &gt;= PROBE_CLEAR_DISTANCE_M
+            and left_probe >= PROBE_CLEAR_DISTANCE_M
+            and right_probe >= PROBE_CLEAR_DISTANCE_M
         )
 
-    def _sample_front_raw(self) -&gt; Optional[float]:
+    def _sample_front_raw(self) -> Optional[float]:
         samples: List[float] = []
         initial = self._snapshot()
         last_sample_id = initial.sample_id
         deadline = time.monotonic() + 0.90
-        while time.monotonic() &lt; deadline and len(samples) &lt; PROBE_SAMPLE_COUNT:
+        while time.monotonic() < deadline and len(samples) < PROBE_SAMPLE_COUNT:
             snapshot = self._snapshot()
             if snapshot.sample_id != last_sample_id:
                 last_sample_id = snapshot.sample_id
-                value = snapshot.raw_m[&quot;front&quot;]
+                value = snapshot.raw_m["front"]
                 if value is not None:
                     samples.append(value)
             time.sleep(0.02)
-        if len(samples) &lt; PROBE_SAMPLE_COUNT:
+        if len(samples) < PROBE_SAMPLE_COUNT:
             return None
         return statistics.median(samples)
 
-    def _select_side_branch(self, snapshot: SensorSnapshot) -&gt; Optional[str]:
+    def _select_side_branch(self, snapshot: SensorSnapshot) -> Optional[str]:
         candidates = [
             direction
-            for direction in (&quot;left&quot;, &quot;right&quot;)
+            for direction in ("left", "right")
             if snapshot.confirmed_open[direction]
             and snapshot.filtered_m[direction] is not None
-            and snapshot.filtered_m[direction] &gt;= SIDE_OPEN_DISTANCE_M
+            and snapshot.filtered_m[direction] >= SIDE_OPEN_DISTANCE_M
         ]
         if not candidates:
             return None
 
-        front_score = self._direction_visit_score(snapshot, &quot;front&quot;)
+        front_score = self._direction_visit_score(snapshot, "front")
         candidates.sort(
             key=lambda direction: (
                 self._direction_visit_score(snapshot, direction),
@@ -684,17 +596,17 @@ class MappingDemo:
             )
         )
         best = candidates[0]
-        if self._direction_visit_score(snapshot, best) &lt;= front_score:
+        if self._direction_visit_score(snapshot, best) <= front_score:
             return best
         return None
 
-    def _select_turn(self, snapshot: SensorSnapshot) -&gt; Optional[str]:
+    def _select_turn(self, snapshot: SensorSnapshot) -> Optional[str]:
         side_candidates = [
             direction
-            for direction in (&quot;left&quot;, &quot;right&quot;)
+            for direction in ("left", "right")
             if snapshot.confirmed_open[direction]
             and snapshot.filtered_m[direction] is not None
-            and snapshot.filtered_m[direction] &gt;= TURN_CLEARANCE_M
+            and snapshot.filtered_m[direction] >= TURN_CLEARANCE_M
         ]
         if side_candidates:
             side_candidates.sort(
@@ -705,14 +617,14 @@ class MappingDemo:
             )
             return side_candidates[0]
 
-        back_m = snapshot.filtered_m[&quot;back&quot;]
-        if back_m is not None and back_m &gt;= TURN_CLEARANCE_M:
-            return &quot;back&quot;
+        back_m = snapshot.filtered_m["back"]
+        if back_m is not None and back_m >= TURN_CLEARANCE_M:
+            return "back"
         return None
 
     def _direction_visit_score(
         self, snapshot: SensorSnapshot, direction: str
-    ) -&gt; int:
+    ) -> int:
         angle_rad = math.radians(
             snapshot.yaw_deg + DIRECTION_ANGLE_DEG[direction]
         )
@@ -725,23 +637,23 @@ class MappingDemo:
         with self._lock:
             return self._visited_counts.get(cell, 0)
 
-    def _execute_turn(self, mc: MotionCommander, direction: str) -&gt; None:
+    def _execute_turn(self, mc: MotionCommander, direction: str) -> None:
         mc.stop()
-        if direction == &quot;left&quot;:
+        if direction == "left":
             mc.turn_left(90.0, rate=TURN_RATE_DPS)
-            self._turn_bias = &quot;right&quot;
-        elif direction == &quot;right&quot;:
+            self._turn_bias = "right"
+        elif direction == "right":
             mc.turn_right(90.0, rate=TURN_RATE_DPS)
-            self._turn_bias = &quot;left&quot;
-        elif direction == &quot;back&quot;:
+            self._turn_bias = "left"
+        elif direction == "back":
             mc.turn_left(180.0, rate=TURN_RATE_DPS)
         else:
-            raise ValueError(&quot;Unsupported turn direction: %s&quot; % direction)
+            raise ValueError("Unsupported turn direction: %s" % direction)
         self._last_probe_pos = None
         self._reset_filters()
         time.sleep(FILTER_SETTLE_S)
 
-    def _update_display(self, event: object) -&gt; None:
+    def _update_display(self, event: object) -> None:
         with self._lock:
             x, y, _yaw = self._current_pos
             points = list(self._point_cells.values())
@@ -755,36 +667,36 @@ class MappingDemo:
             )
 
 
-def wait_for_flow_deck(scf: SyncCrazyflie) -&gt; bool:
+def wait_for_flow_deck(scf: SyncCrazyflie) -> bool:
     attached = threading.Event()
 
-    def flow_callback(name: str, value: str) -&gt; None:
+    def flow_callback(name: str, value: str) -> None:
         if int(value):
             attached.set()
 
     scf.cf.param.add_update_callback(
-        group=&quot;deck&quot;, name=&quot;bcFlow2&quot;, cb=flow_callback
+        group="deck", name="bcFlow2", cb=flow_callback
     )
     time.sleep(1.0)
     return attached.wait(timeout=5.0)
 
 
-def get_group_uri() -&gt; str:
-    uri = uri_helper.uri_from_env(default=&quot;&quot;)
+def get_group_uri() -> str:
+    uri = uri_helper.uri_from_env(default="")
     if not uri:
         raise RuntimeError(
-            &quot;CFLIB_URI is empty. Complete Experiment 3 and open a new terminal.&quot;
+            "CFLIB_URI is empty. Complete Experiment 3 and open a new terminal."
         )
     return uri
 
 
-def main() -&gt; None:
+def main() -> None:
     uri = get_group_uri()
-    print(&quot;Using URI: %s&quot; % uri)
+    print("Using URI: %s" % uri)
     cflib.crtp.init_drivers()
-    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache="./cache")) as scf:
         if not wait_for_flow_deck(scf):
-            raise RuntimeError(&quot;Flow deck was not detected; takeoff cancelled.&quot;)
+            raise RuntimeError("Flow deck was not detected; takeoff cancelled.")
         demo = MappingDemo(scf)
         demo.start_flight()
         try:
@@ -795,24 +707,5 @@ def main() -&gt; None:
             demo.stop_logging()
 
 
-if __name__ == &quot;__main__&quot;:
+if __name__ == "__main__":
     main()
-</code></pre></details>
-<h2>复习</h2>
-<p>各位同学，本次暑期学校的前三天实践已经进入综合整理阶段。本节课不再新增大量实验，而是鼓励大家复习之前学习到的内容，针对还不熟悉的环节查漏补缺，为后续综合项目展示做好准备。</p>
-<p>本节课也会把前三天使用到的实验手册和代码打包整理好，供大家继续调试和复盘。同学们可以回忆本次暑期学校已经学习到的内容，例如：</p>
-<p>如何在windows电脑上运行linux虚拟机？</p>
-<p>Linux系统的基础操作</p>
-<p>Crazyflie无人机的基本信息</p>
-<p>如何在linux系统上搭建crazyflie无人机的运行环境？</p>
-<p>Crazyflie无人机的基本编程库的使用</p>
-<p>Crazyflie无人机的传感器原理和应用</p>
-<p>无人机自主探索的基础理论</p>
-<p>列出以上知识点供大家启发</p>
-<p>后续综合项目展示会以实践方式展开，期望同学们把学到的理论落实到可运行的无人机任务中。展示内容将分为创意板块和竞速板块，具体任务都来自前三天实验手册涉及的知识点；完成基础任务即可达到展示要求，实现效果更好的小组会获得更高评价。</p>
-      </div>
-    </article>
-  </main>
-  <script src="../assets/site.js"></script>
-</body>
-</html>

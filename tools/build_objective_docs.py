@@ -1843,9 +1843,85 @@ def apply_group_uri_overrides(manual: Manual, lang: str, body: str) -> str:
     return body
 
 
+def autonomous_mapping_section(lang: str) -> str:
+    code_path = ROOT / "assets" / "code" / "auto_multiranger_pointcloud.py"
+    escaped_code = html.escape(code_path.read_text(encoding="utf-8"))
+    if lang == "zh":
+        return f'''
+<h3>实验：Multi-ranger 未知环境自主探索与建图</h3>
+<p>本实验不再预先写入固定飞行轨迹。课程脚本根据 Multi-ranger 的前、后、左、右测距结果在线选择可通行方向，并利用 Flow deck 的位置估计记录已访问网格；飞行过程中持续生成二维障碍点云，达到时间或范围限制后在当前位置降落。</p>
+<p><a href="../assets/code/auto_multiranger_pointcloud.py" download>下载课程代码：auto_multiranger_pointcloud.py</a></p>
+<p>将文件保存到虚拟机的 <code>~/workspace</code>，确认实验 3 配置的小组 URI 后运行：</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 auto_multiranger_pointcloud.py</code></pre>
+<h3>探索与抗缝隙干扰逻辑</h3>
+<ul>
+<li>测距数据以 10 Hz 读取，并通过滑动中值滤波抑制单帧跳变；点云按 2.5 cm 网格去重，减少孤立噪点。</li>
+<li>侧向距离突然变远时不会立即转弯。该方向必须连续保持开阔，并随无人机移动形成至少约 0.30 m 的有效开口宽度，才会被判定为可进入分支。</li>
+<li>无人机每前进约 0.45 m 会停止并向左右各偏转 15° 检查前方宽度；两个探测方向均达到约 0.75 m 净空时才继续前进。窄挡板拼缝通常不能同时通过这两次检查。</li>
+<li>多个方向可通行时，脚本比较前方、左侧和右侧目标网格的访问次数，优先进入访问较少的方向；前方受阻时只使用已经确认的侧向开口或已飞过的后方路径。</li>
+</ul>
+<h3>运行参数与停止条件</h3>
+<ul>
+<li><code>FORWARD_SPEED_MPS = 0.12</code>：默认低速探索速度。</li>
+<li><code>FORWARD_STOP_DISTANCE_M = 0.50</code>：前方停止距离。</li>
+<li><code>SIDE_OPEN_MIN_WIDTH_M = 0.30</code>：侧向开口的最小连续宽度；若挡板缝隙仍造成误判，应适当增大。</li>
+<li><code>MAX_RADIUS_FROM_START_M = 1.80</code>、<code>MAX_FLIGHT_TIME_S = 120</code>：相对起点的最大活动半径和最长飞行时间，必须按实际场地调整。</li>
+</ul>
+<div class="admonition"><p class="admonition-title">安全要求</p><p>Multi-ranger 是单点 ToF 测距装置，量程结果会受到目标表面和环境光等条件影响，抗缝隙处理只能降低误判概率，不能替代封闭场地和人工监护。首次运行时清空场地并安排一名组员专门观察飞行；按 <code>Escape</code> 或关闭地图窗口会请求停止探索并降落。若探测仍不稳定，应降低速度、增大开口宽度阈值或加装连续无缝挡板，不得依靠软件强行穿越可疑开口。硬件量程说明可直接查看 <a href="https://www.bitcraze.io/documentation/hardware/multi_ranger_deck/multi_ranger_deck-datasheet.pdf">Multi-ranger deck datasheet</a>。</p></div>
+<p>以下场地图片用于核对实验环境。点云结果应能够反映外围挡板和内部隔断的主要轮廓；局部缺口、重影和漂移应在实验记录中说明，并结合滤波阈值、飞行速度及 Flow deck 累积误差分析原因。</p>
+<figure><img src="../assets/images/manual-07-autonomous-mapping-review/002.png" alt="自主探索建图实验场地" loading="lazy" decoding="async"></figure>
+<details><summary>查看完整课程代码</summary><pre><code>{escaped_code}</code></pre></details>
+'''
+    return f'''
+<h3>Experiment: Multi-ranger Exploration and Mapping in an Unknown Environment</h3>
+<p>This experiment no longer uses a predefined flight trajectory. The course script selects traversable directions online from the front, back, left, and right Multi-ranger measurements and uses Flow-deck position estimates to record visited cells. It builds a two-dimensional obstacle point cloud during flight and lands in place when the time or area limit is reached.</p>
+<p><a href="../assets/code/auto_multiranger_pointcloud.py" download>Download the course script: auto_multiranger_pointcloud.py</a></p>
+<p>Save the file in <code>~/workspace</code>, verify the group URI configured in Experiment 3, and run:</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 auto_multiranger_pointcloud.py</code></pre>
+<h3>Exploration and panel-gap rejection</h3>
+<ul>
+<li>Range data is read at 10 Hz and processed by a sliding median filter to suppress single-frame jumps. Point-cloud samples are deduplicated on a 2.5 cm grid to reduce isolated noise.</li>
+<li>A sudden long side measurement does not trigger a turn. The direction must remain open while the aircraft travels across at least about 0.30 m of useful opening width before it is accepted as a branch.</li>
+<li>After approximately every 0.45 m of forward travel, the aircraft stops and probes 15° to each side. It continues only when both probe headings provide about 0.75 m of clearance. A narrow panel seam will normally fail at least one of these checks.</li>
+<li>When several directions are traversable, the script compares visit counts for the forward, left, and right target cells and prefers the less-visited direction. When the front is blocked, it uses only a confirmed side opening or the previously travelled path behind the aircraft.</li>
+</ul>
+<h3>Operating parameters and stopping conditions</h3>
+<ul>
+<li><code>FORWARD_SPEED_MPS = 0.12</code>: default low exploration speed.</li>
+<li><code>FORWARD_STOP_DISTANCE_M = 0.50</code>: forward stopping distance.</li>
+<li><code>SIDE_OPEN_MIN_WIDTH_M = 0.30</code>: minimum continuous side-opening width; increase it if panel seams still cause false detections.</li>
+<li><code>MAX_RADIUS_FROM_START_M = 1.80</code> and <code>MAX_FLIGHT_TIME_S = 120</code>: maximum radius from the start and maximum flight time. Adjust both to the actual test area.</li>
+</ul>
+<div class="admonition"><p class="admonition-title">Safety requirements</p><p>The Multi-ranger uses single-point ToF measurements, and measured range depends on target surfaces and ambient-light conditions. Gap rejection reduces the probability of a false opening but does not replace an enclosed test area or a supervising operator. Clear the area for the first run and assign one team member to watch the aircraft. Pressing <code>Escape</code> or closing the map window requests an exploration stop and landing. If detection remains unstable, reduce speed, increase the opening-width threshold, or use continuous gap-free barriers; do not force the aircraft through an uncertain opening. See the direct <a href="https://www.bitcraze.io/documentation/hardware/multi_ranger_deck/multi_ranger_deck-datasheet.pdf">Multi-ranger deck datasheet</a> for the hardware range specification.</p></div>
+<p>Use the following image to verify the experimental environment. The resulting point cloud should reproduce the main outline of the outer barrier and internal partitions. Document local gaps, duplicate edges, and drift, and relate them to filtering thresholds, flight speed, and accumulated Flow-deck error.</p>
+<figure><img src="../assets/images/manual-07-autonomous-mapping-review/002.png" alt="Autonomous exploration and mapping test area" loading="lazy" decoding="async"></figure>
+<details><summary>View the complete course script</summary><pre><code>{escaped_code}</code></pre></details>
+'''
+
+
+def apply_autonomous_mapping_overrides(lang: str, body: str) -> str:
+    if lang == "zh":
+        pattern = r'<h3>实验：自主建图</h3>.*?(?=<h2>复习</h2>)'
+    else:
+        pattern = r'<h3>Experiment: Autonomous mapping</h3>.*?(?=<h2>Review</h2>)'
+    return re.sub(
+        pattern,
+        lambda _match: autonomous_mapping_section(lang),
+        body,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
     if manual.slug == "manual-01-vm":
         return apply_vm_manual_overrides(lang, body)
+    if manual.slug == "manual-07-autonomous-mapping-review":
+        return apply_autonomous_mapping_overrides(lang, body)
     if manual.slug == "manual-09-cflib":
         return apply_cflib_copyable_code_overrides(lang, body)
     if manual.slug != "manual-03-crazyflie-setup":
