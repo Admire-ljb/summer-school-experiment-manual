@@ -1341,45 +1341,43 @@ def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], ima
 def wall_following_examples(lang: str) -> str:
     if lang == "zh":
         return '''
-<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Wall Following</p>
-<p><code>wall_following.py</code> 和 <code>multiranger_wall_following.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p>
+<div class="admonition"><p class="admonition-title">算法来源与课堂代码</p>
+<p>沿墙状态机参考 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。官方示例面向一般直墙环境，默认离墙距离和速度不适用于本课程约 40-50 cm 宽的通道；本手册提供经过窄通道参数调整、测距去抖和运行时限保护的课堂版本。</p>
 <ul>
 <li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">官方文件链接</a></li>
-<li><code>multiranger_wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">官方文件链接</a></li>
+<li><a href="../assets/code/wall_following.py" download>下载课堂控制器：wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>下载课堂运行脚本：multiranger_wall_following.py</a></li>
 </ul></div>
-<p>建议在虚拟机中按以下方式使用：</p>
+<p>将两个课堂文件放在虚拟机的同一个 <code>~/workspace</code> 目录中。<code>--wall-side left</code> 表示飞行时墙保持在无人机左侧；如需沿右墙飞行，改为 <code>--wall-side right</code>。</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是所在小组分配的完整 radio URI。官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>，不需要修改脚本内的默认地址。首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>课堂参数为：参考离墙距离 <code>0.18 m</code>、前方转向距离 <code>0.24 m</code>、最大前进速度 <code>0.08 m/s</code>、最大侧向修正速度 <code>0.035 m/s</code>。侧面读数必须连续显示为远距离 <code>0.80 s</code> 后才判定墙体结束，以抑制挡板接缝或短暂丢帧造成的误转向。前方小于 <code>0.14 m</code>、任一侧小于 <code>0.09 m</code>、上方小于 <code>0.15 m</code> 或达到最长飞行时间时，脚本停止运动并退出 <code>MotionCommander</code> 以执行降落。</p>
+<div class="admonition warning"><p class="admonition-title">首次测试</p><p>先拆除复杂障碍，在低速直墙环境验证左右方向、悬停和上方手势停止；确认无误后再进入窄通道。代码中的阈值以传感器测得距离为准，不等同于机身外缘到墙面的实际净空。</p></div>
 '''
     return '''
-<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
-<p><code>wall_following.py</code> and <code>multiranger_wall_following.py</code> come from Bitcraze's official <code>crazyflie-demos</code> repository. Use the files in the official repository as the source of record; this manual lists the source links and classroom usage steps.</p>
+<div class="admonition"><p class="admonition-title">Algorithm source and classroom scripts</p>
+<p>The wall-following state machine is based on Bitcraze's official <code>crazyflie-demos</code> repository. The official demo targets general straight-wall environments; its default wall distance and speed are not suitable for the approximately 40-50 cm-wide course corridors. This manual provides a classroom version with narrow-corridor parameters, range debouncing, and a flight-time limit.</p>
 <ul>
 <li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">official file link</a></li>
-<li><code>multiranger_wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">official file link</a></li>
+<li><a href="../assets/code/wall_following.py" download>Download the classroom controller: wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>Download the classroom runner: multiranger_wall_following.py</a></li>
 </ul></div>
-<p>Recommended usage in the virtual machine:</p>
+<p>Place both classroom files in the same <code>~/workspace</code> directory. <code>--wall-side left</code> keeps the wall on the aircraft's left; use <code>--wall-side right</code> to follow a right-hand wall.</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>The classroom settings are a <code>0.18 m</code> reference wall distance, <code>0.24 m</code> front turn distance, <code>0.08 m/s</code> maximum forward speed, and <code>0.035 m/s</code> maximum lateral correction. A side reading must remain far for <code>0.80 s</code> before the controller declares the end of a wall, suppressing false turns caused by panel seams or short dropouts. The script stops and leaves <code>MotionCommander</code> to land when the front distance is below <code>0.14 m</code>, either side is below <code>0.09 m</code>, the upper distance is below <code>0.15 m</code>, or the flight-time limit is reached.</p>
+<div class="admonition warning"><p class="admonition-title">First test</p><p>Remove complex obstacles first and verify left/right behavior, hover, and the upper-sensor stop gesture beside one straight wall at low speed. The thresholds are sensor ranges and are not the same as the physical clearance from the aircraft frame to the wall.</p></div>
 '''
 
 
 def apply_wall_following_examples(manual: Manual, lang: str, body: str) -> str:
-    if "Official demo repository: Multiranger Wall Following" in body:
+    if "Algorithm source and classroom scripts" in body:
         return body
-    if "官方示例仓库：Multiranger Wall Following" in body:
+    if "算法来源与课堂代码" in body:
         return body
     examples = wall_following_examples(lang)
     if lang == "zh":
@@ -1389,6 +1387,146 @@ def apply_wall_following_examples(manual: Manual, lang: str, body: str) -> str:
     if marker in body:
         return body.replace(marker, examples, 1)
     return body + examples
+
+
+def cleanup_wall_following_text(manual: Manual, lang: str, body: str) -> str:
+    title_pairs = {
+        "<h3>实验四（拓展选做）：walk follow the wall</h3>":
+        "<h3>实验四（拓展选做）：沿墙飞行</h3>",
+        "<h3>实验一：walk follow the wall</h3>":
+        "<h3>实验一：沿墙飞行</h3>",
+        "<h3>Experiment 4 (optional extension): walk follow the wall</h3>":
+        "<h3>Experiment 4 (optional extension): Wall-following flight</h3>",
+        "<h3>Experiment 1: walk follow the wall</h3>":
+        "<h3>Experiment 1: Wall-following flight</h3>",
+    }
+    for old, new in title_pairs.items():
+        body = body.replace(old, new)
+
+    if manual.slug == "manual-06-complex-map":
+        if lang == "zh":
+            pattern = r'<p>如下图所示，在multiranger_wall_following\.py文件中的75到77行</p>.*?(?=<h3>实验二：)'
+        else:
+            pattern = r'<p>As shown in the figure below, lines 75 to 77 in the multiranger_wall_following\.py file</p>.*?(?=<h3>Experiment 2:)'
+        body = re.sub(pattern, "", body, count=1, flags=re.DOTALL)
+    return body
+
+
+def replace_code_block_from_asset(
+    body: str,
+    signatures: tuple[str, ...],
+    asset_name: str,
+    lang: str,
+) -> str:
+    code_path = ROOT / "assets" / "code" / asset_name
+    code = code_path.read_text(encoding="utf-8")
+    replaced = False
+
+    def callback(match: re.Match[str]) -> str:
+        nonlocal replaced
+        original = html.unescape(match.group(1))
+        if replaced or not all(signature in original for signature in signatures):
+            return match.group(0)
+        replaced = True
+        label = "下载经审核的完整脚本" if lang == "zh" else "Download the reviewed script"
+        return (
+            f'<p><a href="../assets/code/{asset_name}" download>{label}: '
+            f'<code>{asset_name}</code></a></p>'
+            f'<pre><code>{html.escape(code)}</code></pre>'
+        )
+
+    return re.sub(
+        r"<pre><code>(.*?)</code></pre>",
+        callback,
+        body,
+        flags=re.DOTALL,
+    )
+
+
+def apply_flight_code_safety_overrides(
+    manual: Manual, lang: str, body: str
+) -> str:
+    replacements = {
+        "manual-03-crazyflie-setup": [
+            (("Doing a 270deg circle",), "motion_commander_sequence.py"),
+        ],
+        "manual-04-multiranger": [
+            (("multiranger.front:",), "multiranger_read.py"),
+            (("allows a user to \"push\"",), "multiranger_push.py"),
+        ],
+        "manual-05-ranging": [
+            (("already,wait a second",), "multiranger_stop.py"),
+            (("BOX_LIMIT = 0.3", "def move_box_limit"), "flow_box_bounce.py"),
+        ],
+        "manual-09-cflib": [
+            (("mc.turn_left(180)", "logconf.start()"), "logged_motion_sequence.py"),
+            (("BOX_LIMIT = 0.5", "mc.start_forward()"), "flow_box_bounce.py"),
+        ],
+        "manual-10-motion-commander": [
+            (("Doing a 270deg circle",), "motion_commander_sequence.py"),
+        ],
+        "manual-12-position-commander": [
+            (("PositionHlCommander", "pc.go_to(1.0"), "position_hl_square.py"),
+        ],
+    }
+    for signatures, asset_name in replacements.get(manual.slug, []):
+        body = replace_code_block_from_asset(body, signatures, asset_name, lang)
+
+    if manual.slug in {"manual-05-ranging", "manual-09-cflib"}:
+        body = body.replace("period_in_ms=10", "period_in_ms=100")
+    return body
+
+
+def apply_pointcloud_safety_override(manual: Manual, lang: str, body: str) -> str:
+    if manual.slug != "manual-06-complex-map":
+        return body
+    if lang == "zh":
+        title = "官方示例仓库：Multiranger Point Cloud"
+        section = '''<div class="admonition"><p class="admonition-title">算法来源与课堂手动建图脚本</p>
+<p>点云坐标变换和可视化参考 Bitcraze 官方 <code>multiranger_pointcloud.py</code>。课堂运行使用增加了受控降落、最长飞行时间、日志超时和方向测距保护的版本；官方文件保留为源码参考，不直接作为正式飞行入口。</p>
+<ul>
+<li>官方示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li>
+<li><a href="../assets/code/manual_multiranger_pointcloud.py" download>下载课堂脚本：manual_multiranger_pointcloud.py</a></li>
+</ul></div>
+<p>将课堂脚本放入 <code>~/workspace</code> 后运行：</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 manual_multiranger_pointcloud.py</code></pre>
+<p>方向键控制前、后、左、右平移，<code>A</code>/<code>D</code> 控制低速偏航；课堂版固定飞行高度，不再通过按键修改高度。按 <code>Esc</code>、关闭窗口、上方手势停止、日志超时或达到 90 秒上限时，脚本退出 <code>MotionCommander</code> 并降落。某一运动方向小于 <code>0.18 m</code> 时，该方向的平移指令会被抑制。</p>'''
+        control_text = "<p>运行后，使用方向键控制前、后、左、右平移，使用 <code>A</code>/<code>D</code> 低速调整航向。飞行高度固定为 <code>0.35 m</code>；松开按键后对应速度立即归零。建图时保持低速，并持续对照现场障碍与点云轮廓。</p>"
+    else:
+        title = "Official demo repository: Multiranger Point Cloud"
+        section = '''<div class="admonition"><p class="admonition-title">Algorithm source and classroom manual-mapping script</p>
+<p>The point-cloud transformation and visualization are based on Bitcraze's official <code>multiranger_pointcloud.py</code>. Formal classroom flight uses a version with controlled landing, a flight-time limit, stale-log handling, and direction-aware range guards. The official file remains a source reference and is not the classroom flight entry point.</p>
+<ul>
+<li>Official demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li>
+<li><a href="../assets/code/manual_multiranger_pointcloud.py" download>Download the classroom script: manual_multiranger_pointcloud.py</a></li>
+</ul></div>
+<p>Place the classroom script in <code>~/workspace</code> and run:</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 manual_multiranger_pointcloud.py</code></pre>
+<p>The arrow keys command forward, back, left, and right translation; <code>A</code>/<code>D</code> command slow yaw. The classroom version keeps a fixed height. Pressing <code>Escape</code>, closing the window, using the upper-sensor stop gesture, a stale log, or the 90-second limit exits <code>MotionCommander</code> and lands. Translation is suppressed in any commanded direction with less than <code>0.18 m</code> clearance.</p>'''
+        control_text = "<p>Use the arrow keys for forward, back, left, and right translation and <code>A</code>/<code>D</code> for slow yaw. The flight height remains fixed at <code>0.35 m</code>, and releasing a key immediately zeros the corresponding velocity. Keep the motion slow and compare the physical obstacles with the point-cloud outline throughout the run.</p>"
+
+    start_pattern = (
+        rf'<div class="admonition"><p class="admonition-title">{re.escape(title)}</p>'
+        r'.*?(?=<figure><img src="\.\./assets/(?:images|images-en)/manual-06-complex-map/003\.png")'
+    )
+    body = re.sub(start_pattern, section + "\n", body, count=1, flags=re.DOTALL)
+    control_pattern = (
+        r'(<figure><img src="\.\./assets/(?:images|images-en)/manual-06-complex-map/003\.png"'
+        r' alt="manual image" loading="lazy" decoding="async"></figure>)\s*'
+        r'<p>.*?</p>(?=\s*<figure><img src="\.\./assets/(?:images|images-en)/manual-06-complex-map/004\.png")'
+    )
+    body = re.sub(
+        control_pattern,
+        lambda match: match.group(1) + "\n" + control_text,
+        body,
+        count=1,
+        flags=re.DOTALL,
+    )
+    return body
 
 def apply_course_material_overrides(manual: Manual, lang: str, body: str) -> str:
     common_pairs = {
@@ -1533,6 +1671,8 @@ git checkout 2024.7.1</code></pre>""",
         body = body.replace(old, new)
     if manual.slug in {"manual-05-ranging", "manual-06-complex-map"}:
         body = apply_wall_following_examples(manual, lang, body)
+        body = cleanup_wall_following_text(manual, lang, body)
+    body = apply_pointcloud_safety_override(manual, lang, body)
     return body
 
 
@@ -1632,8 +1772,8 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 
-URI = uri_helper.uri_from_env(default='radio://0/80/2M/E7E7E7E7E7')
-DEFAULT_HEIGHT = 0.5
+URI = uri_helper.uri_from_env(default='')
+DEFAULT_HEIGHT = 0.35
 deck_attached_event = Event()
 
 logging.basicConfig(level=logging.ERROR)
@@ -1647,6 +1787,16 @@ def param_deck_flow(_, value_str):
         print('Deck is attached!')
     else:
         print('Deck is NOT attached!')
+
+
+def request_arming(scf, armed):
+    for service_name in ('platform', 'supervisor'):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, 'send_arming_request', None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError('This cflib version has no arming service.')
 
 
 def take_off_simple(scf):
@@ -1669,9 +1819,15 @@ if __name__ == '__main__':
             print('No flow deck detected!')
             sys.exit(1)
 
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        take_off_simple(scf)"""
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            take_off_simple(scf)
+        finally:
+            if armed:
+                request_arming(scf, False)"""
     forward_back_function = """def move_linear_simple(scf):
     with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
         time.sleep(1)
@@ -1764,8 +1920,8 @@ def group_uri_reminder(lang: str) -> str:
 
 
 def apply_group_uri_overrides(manual: Manual, lang: str, body: str) -> str:
-    generic_uri = "radio://0/80/2M/E7E7E7E7E7"
-    encoded_uri = "radio://0/80/2M/E7E7E7E7E7"
+    generic_uri = ""
+    encoded_uri = ""
 
     body = body.replace(
         "from cflib.positioning.motion_commander import MotionCommander\n"
@@ -1784,6 +1940,18 @@ def apply_group_uri_overrides(manual: Manual, lang: str, body: str) -> str:
         r"uri_helper\.uri_from_env\(default=&#x27;radio://0/[0-9]+/(?:2M|1M|250K)/[0-9A-Fa-f]{10}&#x27;\)",
         f"uri_helper.uri_from_env(default=&#x27;{generic_uri}&#x27;)",
         body,
+    )
+    body = body.replace(
+        "URI = uri_helper.uri_from_env(default=&#x27;&#x27;)",
+        "URI = uri_helper.uri_from_env(default=&#x27;&#x27;)\n"
+        "if not URI:\n"
+        "    raise RuntimeError(&#x27;CFLIB_URI is empty; configure the group URI first.&#x27;)",
+    )
+    body = body.replace(
+        "uri = uri_helper.uri_from_env(default=&#x27;&#x27;)",
+        "uri = uri_helper.uri_from_env(default=&#x27;&#x27;)\n"
+        "if not uri:\n"
+        "    raise RuntimeError(&#x27;CFLIB_URI is empty; configure the group URI first.&#x27;)",
     )
 
     if manual.slug == "manual-06-complex-map":
@@ -2254,6 +2422,8 @@ def write_pages() -> dict[str, dict[str, int]]:
         en_body = apply_course_material_overrides(manual, "en", en_body)
         zh_body = apply_manual_overrides(manual, "zh", zh_body)
         en_body = apply_manual_overrides(manual, "en", en_body)
+        zh_body = apply_flight_code_safety_overrides(manual, "zh", zh_body)
+        en_body = apply_flight_code_safety_overrides(manual, "en", en_body)
         zh_body = apply_group_uri_overrides(manual, "zh", zh_body)
         en_body = apply_group_uri_overrides(manual, "en", en_body)
         zh_body = apply_course_material_overrides(manual, "zh", zh_body)

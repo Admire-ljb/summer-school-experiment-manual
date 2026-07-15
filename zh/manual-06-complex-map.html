@@ -61,40 +61,42 @@
 <p>本次实验将主要进行python脚本的运行，编程库参考资料可直接打开 Bitcraze cflib User Guides：</p>
 <pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>
 <p>若在进行实验中遇到困难，可直接打开上述网址进一步参考。同时部分操作和知识要点也在上节课的实验手册中有提及，如有不会的地方可以再参考上节的实验手册，这部分操作这节实验手册不再赘述。</p>
-<h3>实验一：walk follow the wall</h3>
+<h3>实验一：沿墙飞行</h3>
 <p>该实验为上节课的拓展实验，现在给出代码中可以调节的参数，同学们可以再修改参数试验一下运行的效果。</p>
 
-<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Wall Following</p>
-<p><code>wall_following.py</code> 和 <code>multiranger_wall_following.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p>
+<div class="admonition"><p class="admonition-title">算法来源与课堂代码</p>
+<p>沿墙状态机参考 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。官方示例面向一般直墙环境，默认离墙距离和速度不适用于本课程约 40-50 cm 宽的通道；本手册提供经过窄通道参数调整、测距去抖和运行时限保护的课堂版本。</p>
 <ul>
 <li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">官方文件链接</a></li>
-<li><code>multiranger_wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">官方文件链接</a></li>
+<li><a href="../assets/code/wall_following.py" download>下载课堂控制器：wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>下载课堂运行脚本：multiranger_wall_following.py</a></li>
 </ul></div>
-<p>建议在虚拟机中按以下方式使用：</p>
+<p>将两个课堂文件放在虚拟机的同一个 <code>~/workspace</code> 目录中。<code>--wall-side left</code> 表示飞行时墙保持在无人机左侧；如需沿右墙飞行，改为 <code>--wall-side right</code>。</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是所在小组分配的完整 radio URI。官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>，不需要修改脚本内的默认地址。首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>课堂参数为：参考离墙距离 <code>0.18 m</code>、前方转向距离 <code>0.24 m</code>、最大前进速度 <code>0.08 m/s</code>、最大侧向修正速度 <code>0.035 m/s</code>。侧面读数必须连续显示为远距离 <code>0.80 s</code> 后才判定墙体结束，以抑制挡板接缝或短暂丢帧造成的误转向。前方小于 <code>0.14 m</code>、任一侧小于 <code>0.09 m</code>、上方小于 <code>0.15 m</code> 或达到最长飞行时间时，脚本停止运动并退出 <code>MotionCommander</code> 以执行降落。</p>
+<div class="admonition warning"><p class="admonition-title">首次测试</p><p>先拆除复杂障碍，在低速直墙环境验证左右方向、悬停和上方手势停止；确认无误后再进入窄通道。代码中的阈值以传感器测得距离为准，不等同于机身外缘到墙面的实际净空。</p></div>
 
-<p>如下图所示，在multiranger_wall_following.py文件中的75到77行</p>
-<figure><img src="../assets/images/manual-06-complex-map/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>在初始化实例的这个过程中，第一个参数angle_value_buffer这个参数控制着无人机判断角度的容差，这个值越大，无人机反应越迟钝，但路径会相对顺滑，这个值越小，无人机反应会越敏捷，路径抖动也会更多。Reference_distance_from_wall这个值控制无人机期望的距离墙面的最近距离，单位为m，这个值越大，无人机离墙面越远。max_forward_speed这个值则代表无人机最快的前进速度，单位为m/s。同学们可以稍微修改这几个参数，观察无人机的飞行路径是否有显著的变化，但在这个过程中一定要注意参数的合理性，数值不要过于极端，保证飞行安全。</p>
 <h3>实验二：更多方案的避障飞行</h3>
 <p>现在大家已经能熟练掌握光流传感器和避障传感器的使用方法了，接下来按照下图所示的障碍地图环境，让无人机从A区域起飞，整个流程中无人机的飞行高度不要超过0.4m，探索整个地图，也就是一路飞行不要碰撞到墙壁，直到在B区域内降落。现在同学们已经掌握了motioncommander和multiranger的编程方法，想一想，这样的地图环境用什么样的编程方式，从逻辑上可以更高效地完成这个事先已知的地图环境中的固定飞行路线任务。</p>
 <p>注意，这个实验的内容会和最终考核的部分内容有关联，这个实验希望提升和检验同学们编程的熟练度，以及如果用更巧妙的代码逻辑来实现这类任务，则会使大家的实践考核结果锦上添花。</p>
 <figure><img src="../assets/images/manual-06-complex-map/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>实验三：手动控制飞行建图</h3>
-<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p><ul><li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py">官方文件链接</a></li></ul></div><p>建议在虚拟机中按以下方式使用：</p><pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud
-echo &quot;$CFLIB_URI&quot;
-python3 multiranger_pointcloud.py</code></pre><p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是本组完整 URI；官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>。该示例需要图形界面和 Python 可视化依赖，若提示缺少依赖，请根据官方 README 安装 <code>numpy</code>、<code>vispy</code> 和 <code>PyQt6</code>。首次运行应在安全场地中进行，并确认窗口关闭后无人机会正常降落。</p>
+<div class="admonition"><p class="admonition-title">算法来源与课堂手动建图脚本</p>
+<p>点云坐标变换和可视化参考 Bitcraze 官方 <code>multiranger_pointcloud.py</code>。课堂运行使用增加了受控降落、最长飞行时间、日志超时和方向测距保护的版本；官方文件保留为源码参考，不直接作为正式飞行入口。</p>
+<ul>
+<li>官方示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li>
+<li><a href="../assets/code/manual_multiranger_pointcloud.py" download>下载课堂脚本：manual_multiranger_pointcloud.py</a></li>
+</ul></div>
+<p>将课堂脚本放入 <code>~/workspace</code> 后运行：</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 manual_multiranger_pointcloud.py</code></pre>
+<p>方向键控制前、后、左、右平移，<code>A</code>/<code>D</code> 控制低速偏航；课堂版固定飞行高度，不再通过按键修改高度。按 <code>Esc</code>、关闭窗口、上方手势停止、日志超时或达到 90 秒上限时，脚本退出 <code>MotionCommander</code> 并降落。某一运动方向小于 <code>0.18 m</code> 时，该方向的平移指令会被抑制。</p>
 <figure><img src="../assets/images/manual-06-complex-map/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>运行该程序后将会使用键盘手动操控无人机在障碍环境中进行飞行感知周边环境，使用方向键控制无人机的飞行方向，无人机会升高到默认的0.3m的高度，慢速控制无人机的转向为a和d键，快速控制无人机的转向为z和x键，由w和s键控制高度。由于multiranger的采样速度有限，因此如果无人机的飞行动作过快，采样出来的环境地图很可能不清晰，因此如果想要得到更清晰的点云地图，可以稍微放慢无人机的飞行速度以获得更清晰的点云地图。</p>
+<p>运行后，使用方向键控制前、后、左、右平移，使用 <code>A</code>/<code>D</code> 低速调整航向。飞行高度固定为 <code>0.35 m</code>；松开按键后对应速度立即归零。建图时保持低速，并持续对照现场障碍与点云轮廓。</p>
 <figure><img src="../assets/images/manual-06-complex-map/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>现在运行这个程序，对这节课的地图障碍构建出一个清晰的点云地图。</p>
 <h2>建图结果参考</h2>

@@ -66,52 +66,95 @@
 <h3>Experiment 1: Take off and proceed, obstacle landing detected</h3>
 <p>In the last lesson, everyone learned to call the multiranger module individually to view its parameters, and ran a ready-made program to achieve the effect of &quot;pushing&quot; the drone. Next, students will follow the sample program and program to implement specific functions step by step from the basics.</p>
 <p>Next, a complete example program that can be run is given. Today&#x27;s related programming based on the multiranger module can use this as a template for further code writing.</p>
-<pre><code>import logging
-import sys
+<p><a href="../assets/code/multiranger_stop.py" download>Download the reviewed script: <code>multiranger_stop.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Fly forward slowly and land before the front obstacle.&quot;&quot;&quot;
+
+import threading
 import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
-def is_close(range):
-    MIN_DISTANCE = 0.4  # m
-    if range is None:
-        return False
-    else:
-        return range &lt; MIN_DISTANCE
-if __name__ == &#x27;__main__&#x27;:
-    # Initialize the low-level drivers
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+FRONT_STOP_DISTANCE_M = 0.28
+UP_STOP_DISTANCE_M = 0.15
+FORWARD_SPEED_MPS = 0.10
+MAX_FLIGHT_TIME_S = 20.0
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def wait_for_decks(scf):
+    attached = {
+        &quot;bcFlow2&quot;: threading.Event(),
+        &quot;bcMultiranger&quot;: threading.Event(),
+    }
+
+    def callback(name, value):
+        deck_name = name.rsplit(&quot;.&quot;, 1)[-1]
+        if deck_name in attached and int(value):
+            attached[deck_name].set()
+
+    for deck_name in attached:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=deck_name, cb=callback
+        )
+    time.sleep(1.0)
+    return all(event.wait(timeout=4.0) for event in attached.values())
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-    with SyncCrazyflie(URI, cf=cf) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        with MotionCommander(scf) as motion_commander:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                print(&#x27;already,wait a second&#x27;)
-                time.sleep(1.0)
-                VELOCITY = 0.3
-                velocity_x = 0.3
-                velocity_y = 0.0
-                while keep_flying: # Continue the loop while flight is allowed
-                     # Check whether an obstacle is above the drone
-                    if is_close(multiranger.up):
-                        keep_flying = False # Obstacle detected; stop flying
-                     # Check whether an obstacle is in front of the drone
-                    if is_close(multiranger.front):
-                        keep_flying = False  # Obstacle detected; stop flying
-# Command the drone to fly at the configured speed
-                    motion_commander.start_linear_motion(
-                        velocity_x, velocity_y, 0)
-                    time.sleep(0.1)
-            print(&#x27;Demo terminated!&#x27;)</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        if not wait_for_decks(scf):
+            raise RuntimeError(
+                &quot;Flow deck or Multi-ranger deck was not detected; takeoff cancelled.&quot;
+            )
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=0.35) as commander:
+                with Multiranger(scf) as multiranger:
+                    deadline = time.monotonic() + MAX_FLIGHT_TIME_S
+                    while time.monotonic() &lt; deadline:
+                        front = multiranger.front
+                        up = multiranger.up
+                        should_stop = (
+                            up is not None and up &lt; UP_STOP_DISTANCE_M
+                        ) or (
+                            front is not None and front &lt; FRONT_STOP_DISTANCE_M
+                        )
+                        if should_stop:
+                            commander.stop()
+                            break
+                        commander.start_forward(FORWARD_SPEED_MPS)
+                        time.sleep(0.1)
+                    commander.stop()
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <p>This code implements a simple function. The drone takes off, stabilizes its attitude for 1 second and flies forward at a speed of 0.3m per second. Until an obstacle is detected within 0.4m in front of the drone, it will stop moving forward and land.</p>
 <h3>Program execution flow</h3>
 <p>Start the program → Connect the drone → Prepare to unlock</p>
@@ -130,103 +173,147 @@ if __name__ == &#x27;__main__&#x27;:
 <p>Run the complete code below (i.e. Bouncing_box.py):</p>
 <p>Note that before running this code, try to place the drone in the center of the operating site. This code mainly calls the function of the flowdeck module to achieve visual navigation and positioning, and does not use the function of multiranger. Let the drone &quot;bounce&quot; in a square area, that is, every time it comes into contact with the invisible square boundary, the speed of the drone in the x and y directions changes, achieving a &quot;bounce back&quot; effect.</p>
 <p>Because the flowdeck function is used, the best effect is only run on a non-reflective site. It will also bounce infinitely on this invisible square area until the program is manually stopped. BOX_LIMIT = 0.3 sets the size of the square area. Students can modify this value appropriately. Note that it is best to place it in the middle of the field when taking off.</p>
-<pre><code>import logging
-import sys
+<p><a href="../assets/code/flow_box_bounce.py" download>Download the reviewed script: <code>flow_box_bounce.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Bounded Flow-deck position exercise with stale-log and time limits.&quot;&quot;&quot;
+
+import threading
 import time
-from threading import Event
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-DEFAULT_HEIGHT = 0.35
-BOX_LIMIT = 0.3
-deck_attached_event = Event()
-logging.basicConfig(level=logging.ERROR)
-position_estimate = [0, 0]
-def move_box_limit(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        body_x_cmd = 0.2
-        body_y_cmd = 0.1
-        max_vel = 0.2
-        while (1):
-            #if position_estimate[0] &gt; BOX_LIMIT:
-            #    mc.start_back()
-            #elif position_estimate[0] &lt; -BOX_LIMIT:
-            #    mc.start_forward()
-            if position_estimate[0] &gt; BOX_LIMIT:
-                body_x_cmd = -max_vel
-            elif position_estimate[0] &lt; -BOX_LIMIT:
-                body_x_cmd = max_vel
-            if position_estimate[1] &gt; BOX_LIMIT:
-                body_y_cmd = -max_vel
-            elif position_estimate[1] &lt; -BOX_LIMIT:
-                body_y_cmd = max_vel
-            mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)
-            time.sleep(0.1)
-def move_linear_simple(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        time.sleep(1)
-        mc.forward(0.5)
-        time.sleep(1)
-        mc.back(0.5)
-        time.sleep(1)
-def take_off_simple(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT):
-        time.sleep(2)
-def log_pos_callback(timestamp, data, logconf):
-    print(data)
-    global position_estimate
-    position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]
-    position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]
-def param_deck_flow(_, value_str):
-    value = int(value_str)
-    print(value)
-    if value:
-        deck_attached_event.set()
-        print(&#x27;Deck is attached!&#x27;)
-    else:
-        print(&#x27;Deck is NOT attached!&#x27;)
-if __name__ == &#x27;__main__&#x27;:
-    cflib.crtp.init_drivers()
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,
-                                         cb=param_deck_flow)
-        time.sleep(1)
-        logconf = LogConfig(name=&#x27;Position&#x27;, period_in_ms=10)
-        logconf.add_variable(&#x27;stateEstimate.x&#x27;, &#x27;float&#x27;)
-        logconf.add_variable(&#x27;stateEstimate.y&#x27;, &#x27;float&#x27;)
-        scf.cf.log.add_config(logconf)
-        logconf.data_received_cb.add_callback(log_pos_callback)
-        if not deck_attached_event.wait(timeout=5):
-            print(&#x27;No flow deck detected!&#x27;)
-            sys.exit(1)
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        logconf.start()
-        move_box_limit(scf)
-        logconf.stop()</code></pre>
-<p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
-<h3>Experiment 4 (optional extension): walk follow the wall</h3>
 
-<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
-<p><code>wall_following.py</code> and <code>multiranger_wall_following.py</code> come from Bitcraze's official <code>crazyflie-demos</code> repository. Use the files in the official repository as the source of record; this manual lists the source links and classroom usage steps.</p>
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+DEFAULT_HEIGHT_M = 0.35
+BOX_LIMIT_M = 0.35
+MAX_VELOCITY_MPS = 0.15
+MAX_FLIGHT_TIME_S = 45.0
+LOG_STALE_TIMEOUT_S = 0.60
+
+flow_deck_attached = threading.Event()
+position_lock = threading.Lock()
+position_estimate = [0.0, 0.0]
+last_position_update = 0.0
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def flow_deck_callback(name, value):
+    if int(value):
+        flow_deck_attached.set()
+
+
+def position_callback(timestamp, data, log_config):
+    global last_position_update
+    with position_lock:
+        position_estimate[0] = float(data[&quot;stateEstimate.x&quot;])
+        position_estimate[1] = float(data[&quot;stateEstimate.y&quot;])
+        last_position_update = time.monotonic()
+
+
+def move_box_limit(scf):
+    body_x = MAX_VELOCITY_MPS
+    body_y = MAX_VELOCITY_MPS * 0.5
+    deadline = time.monotonic() + MAX_FLIGHT_TIME_S
+
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT_M) as commander:
+        while time.monotonic() &lt; deadline:
+            with position_lock:
+                x, y = position_estimate
+                update_age = time.monotonic() - last_position_update
+            if update_age &gt; LOG_STALE_TIMEOUT_S:
+                commander.stop()
+                raise RuntimeError(&quot;Position log is stale; landing.&quot;)
+            if x &gt;= BOX_LIMIT_M:
+                body_x = -MAX_VELOCITY_MPS
+            elif x &lt;= -BOX_LIMIT_M:
+                body_x = MAX_VELOCITY_MPS
+            if y &gt;= BOX_LIMIT_M:
+                body_y = -MAX_VELOCITY_MPS
+            elif y &lt;= -BOX_LIMIT_M:
+                body_y = MAX_VELOCITY_MPS
+            commander.start_linear_motion(body_x, body_y, 0.0)
+            time.sleep(0.1)
+        commander.stop()
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=&quot;bcFlow2&quot;, cb=flow_deck_callback
+        )
+        time.sleep(1.0)
+        if not flow_deck_attached.wait(timeout=5.0):
+            raise RuntimeError(&quot;Flow deck was not detected; takeoff cancelled.&quot;)
+
+        position_log = LogConfig(name=&quot;Position&quot;, period_in_ms=1000)
+        position_log.add_variable(&quot;stateEstimate.x&quot;, &quot;float&quot;)
+        position_log.add_variable(&quot;stateEstimate.y&quot;, &quot;float&quot;)
+        scf.cf.log.add_config(position_log)
+        position_log.data_received_cb.add_callback(position_callback)
+        log_started = False
+        armed = False
+        try:
+            position_log.start()
+            log_started = True
+            if not wait_for_first_position(timeout=2.0):
+                raise RuntimeError(&quot;No position log data; takeoff cancelled.&quot;)
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            move_box_limit(scf)
+        finally:
+            if log_started:
+                position_log.stop()
+            if armed:
+                request_arming(scf, False)
+
+
+def wait_for_first_position(timeout):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() &lt; deadline:
+        with position_lock:
+            if last_position_update &gt; 0.0:
+                return True
+        time.sleep(0.05)
+    return False
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
+<h3>Experiment 4 (optional extension): Wall-following flight</h3>
+
+<div class="admonition"><p class="admonition-title">Algorithm source and classroom scripts</p>
+<p>The wall-following state machine is based on Bitcraze's official <code>crazyflie-demos</code> repository. The official demo targets general straight-wall environments; its default wall distance and speed are not suitable for the approximately 40-50 cm-wide course corridors. This manual provides a classroom version with narrow-corridor parameters, range debouncing, and a flight-time limit.</p>
 <ul>
 <li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">official file link</a></li>
-<li><code>multiranger_wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">official file link</a></li>
+<li><a href="../assets/code/wall_following.py" download>Download the classroom controller: wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>Download the classroom runner: multiranger_wall_following.py</a></li>
 </ul></div>
-<p>Recommended usage in the virtual machine:</p>
+<p>Place both classroom files in the same <code>~/workspace</code> directory. <code>--wall-side left</code> keeps the wall on the aircraft's left; use <code>--wall-side right</code> to follow a right-hand wall.</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>The classroom settings are a <code>0.18 m</code> reference wall distance, <code>0.24 m</code> front turn distance, <code>0.08 m/s</code> maximum forward speed, and <code>0.035 m/s</code> maximum lateral correction. A side reading must remain far for <code>0.80 s</code> before the controller declares the end of a wall, suppressing false turns caused by panel seams or short dropouts. The script stops and leaves <code>MotionCommander</code> to land when the front distance is below <code>0.14 m</code>, either side is below <code>0.09 m</code>, the upper distance is below <code>0.15 m</code>, or the flight-time limit is reached.</p>
+<div class="admonition warning"><p class="admonition-title">First test</p><p>Remove complex obstacles first and verify left/right behavior, hover, and the upper-sensor stop gesture beside one straight wall at low speed. The thresholds are sensor ranges and are not the same as the physical clearance from the aircraft frame to the wall.</p></div>
 
 <p>This code mainly implements the function of the drone walking along the wall to achieve the purpose of exploring along the wall. Students can use this to experience the concept of autonomous exploration by the drone and pave the way for subsequent courses.</p>
 

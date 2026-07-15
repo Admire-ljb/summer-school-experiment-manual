@@ -76,105 +76,168 @@
 <figure><img src="../assets/images/manual-04-multiranger/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>可以看到，在multiranger.py这个文件中，定义了multiranger类的成员属性，multiranger传感器在工作时会返回六个参数：front、back、left、right、up和down。分别对应着无人机在着六个方向上距离障碍物的距离，具体该如何调用multiranger模块并且查看他的工作状态呢？</p>
 <p>接下来，将下方的代码在虚拟机上运行起来，调用无人机上的multiranger模块。具体的操作流程大家应该很熟悉了，这里再简单复述一下，在虚拟机的workspace文件夹下创建一个python文件命名为multiranger_paramet.py，将如下代码复制粘贴至multiranger_paramet.py。该代码主要实现的功能为由无线模块远程连接无人机，实现一个multiranger类，通过该类来调用multiranger模块，在终端中输出该模块的返回值，该代码中，返回了multiranger模块前方也就是无人机的前方朝向距离障碍物的距离，单位为米。</p>
-<pre><code>import logging
-import sys
+<p><a href="../assets/code/multiranger_read.py" download>下载经审核的完整脚本: <code>multiranger_read.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Print Multi-ranger readings for 30 seconds without arming the aircraft.&quot;&quot;&quot;
+
+import threading
 import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
-def is_close(range):
-    MIN_DISTANCE = 0.2  # m
-    if range is None:
-        return False
-    else:
-        return range &lt; MIN_DISTANCE
-if __name__ == &#x27;__main__&#x27;:
-    # Initialize the low-level drivers
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+READ_TIME_S = 30.0
+
+
+def wait_for_multiranger(scf):
+    attached = threading.Event()
+
+    def callback(name, value):
+        if int(value):
+            attached.set()
+
+    scf.cf.param.add_update_callback(
+        group=&quot;deck&quot;, name=&quot;bcMultiranger&quot;, cb=callback
+    )
+    time.sleep(1.0)
+    return attached.wait(timeout=4.0)
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-    with SyncCrazyflie(URI, cf=cf) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        if not wait_for_multiranger(scf):
+            raise RuntimeError(&quot;Multi-ranger deck was not detected.&quot;)
         with Multiranger(scf) as multiranger:
-                keep_flying = True
-                while keep_flying:
-                   print(&quot;--------------------------------------&quot;)
-                   print(&quot;multiranger.front:&quot;+str(multiranger.front))
-                   time.sleep(0.1)
-        print(&#x27;Demo terminated!&#x27;)</code></pre>
+            deadline = time.monotonic() + READ_TIME_S
+            try:
+                while time.monotonic() &lt; deadline:
+                    print(
+                        &quot;front=%s back=%s left=%s right=%s up=%s down=%s&quot;
+                        % (
+                            multiranger.front,
+                            multiranger.back,
+                            multiranger.left,
+                            multiranger.right,
+                            multiranger.up,
+                            multiranger.down,
+                        )
+                    )
+                    time.sleep(0.1)
+            except KeyboardInterrupt:
+                print(&quot;Reading stopped by the operator.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <p>现在，大家能通过cflib的库函数调用查看到了multiranger模块返回的无人机前方离障碍物的距离，现在根据前面查看到的multiranger.py的内容，调用multiranger类的属性，查看其它五个方向（back、left、right、up、down）离障碍物的距离,在终端中输出。</p>
 <h3>实验二：“推动“无人机</h3>
 <p>现在用multiranger模块结合flow deck模块，实现一些有趣的效果。</p>
 <p>在虚拟机的workspace文件夹下创建一个python文件命名为multiranger_push.py，将如下代码复制粘贴至multiranger_push.py。该代码的运行效果为，无人机将会自动生成至默认高度悬停，如果检测到四周有障碍物的距离小于0.2米，则会往反方向飞行自动避障，如果人为去接近它，则像是在推动驱赶它。如果手靠近无人机上方，则它也会有反应，慢慢降低高度至降落。</p>
 <p>尝试稍微再改变一些参数，让无人机更敏感一些？在0.3米或0.4米的距离就让它开始反应。</p>
-<pre><code>&quot;&quot;&quot;
-Example scripts that allows a user to &quot;push&quot; the Crazyflie 2.0 around
-using your hands while it&#x27;s hovering.
-This examples uses the Flow and Multi-ranger decks to measure distances
-in all directions and tries to keep away from anything that comes closer
-than 0.2m by setting a velocity in the opposite direction.
-The demo is ended by either pressing Ctrl-C or by holding your hand above the
-Crazyflie.
-For the example to run the following hardware is needed:
- * Crazyflie 2.0
- * Crazyradio PA
- * Flow deck
- * Multiranger deck
-&quot;&quot;&quot;
-import logging
-import sys
+<p><a href="../assets/code/multiranger_push.py" download>下载经审核的完整脚本: <code>multiranger_push.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Low-speed reactive Multi-ranger demonstration with a flight-time limit.&quot;&quot;&quot;
+
+import math
+import threading
 import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
-def is_close(range):
-    MIN_DISTANCE = 0.2  # m
-    if range is None:
-        return False
-    else:
-        return range &lt; MIN_DISTANCE
-if __name__ == &#x27;__main__&#x27;:
-    # Initialize the low-level drivers
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+MIN_DISTANCE_M = 0.18
+VELOCITY_MPS = 0.20
+MAX_FLIGHT_TIME_S = 60.0
+
+
+def is_close(value):
+    return value is not None and math.isfinite(value) and value &lt; MIN_DISTANCE_M
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def wait_for_decks(scf):
+    attached = {
+        &quot;bcFlow2&quot;: threading.Event(),
+        &quot;bcMultiranger&quot;: threading.Event(),
+    }
+
+    def callback(name, value):
+        deck_name = name.rsplit(&quot;.&quot;, 1)[-1]
+        if deck_name in attached and int(value):
+            attached[deck_name].set()
+
+    for deck_name in attached:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=deck_name, cb=callback
+        )
+    time.sleep(1.0)
+    return all(event.wait(timeout=4.0) for event in attached.values())
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-    with SyncCrazyflie(URI, cf=cf) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        with MotionCommander(scf) as motion_commander:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                while keep_flying:
-                    VELOCITY = 0.5
-                    velocity_x = 0.0
-                    velocity_y = 0.0
-                    if is_close(multiranger.front):
-                        velocity_x -= VELOCITY
-                    if is_close(multiranger.back):
-                        velocity_x += VELOCITY
-                    if is_close(multiranger.left):
-                        velocity_y -= VELOCITY
-                    if is_close(multiranger.right):
-                        velocity_y += VELOCITY
-                    if is_close(multiranger.up):
-                        keep_flying = False
-                    motion_commander.start_linear_motion(
-                        velocity_x, velocity_y, 0)
-                    time.sleep(0.1)
-            print(&#x27;Demo terminated!&#x27;)</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        if not wait_for_decks(scf):
+            raise RuntimeError(
+                &quot;Flow deck or Multi-ranger deck was not detected; takeoff cancelled.&quot;
+            )
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=0.35) as commander:
+                with Multiranger(scf) as multiranger:
+                    deadline = time.monotonic() + MAX_FLIGHT_TIME_S
+                    while time.monotonic() &lt; deadline:
+                        if is_close(multiranger.up):
+                            commander.stop()
+                            break
+                        velocity_x = 0.0
+                        velocity_y = 0.0
+                        if is_close(multiranger.front):
+                            velocity_x -= VELOCITY_MPS
+                        if is_close(multiranger.back):
+                            velocity_x += VELOCITY_MPS
+                        if is_close(multiranger.left):
+                            velocity_y -= VELOCITY_MPS
+                        if is_close(multiranger.right):
+                            velocity_y += VELOCITY_MPS
+                        commander.start_linear_motion(velocity_x, velocity_y, 0.0)
+                        time.sleep(0.1)
+                    commander.stop()
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <h2>链接资料整理</h2>
 <p>本节将手册中出现的外部链接整理为离线可读要点。为避免材料过长，网页内容以课堂用途和关键提示形式归纳，原始 URL 保留供课后查阅。</p>
 <ol class="numbered-list" start="1">

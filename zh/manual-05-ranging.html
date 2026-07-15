@@ -64,52 +64,95 @@
 <h3>实验一：起飞前进，检测到障碍降落</h3>
 <p>上节课的内容，大家学会了单独调用multiranger模块查看其参数，以及运行了一个现成的程序实现了“推动”无人机的效果。接下来同学们将跟着示例程序，自己从基础，一步一步地编程实现特定的功能。</p>
 <p>接下来给出一个可以运行的完整的示例程序，今天基于multiranger模块的相关编程，都可以以此为模板进行进一步的代码编写。</p>
-<pre><code>import logging
-import sys
+<p><a href="../assets/code/multiranger_stop.py" download>下载经审核的完整脚本: <code>multiranger_stop.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Fly forward slowly and land before the front obstacle.&quot;&quot;&quot;
+
+import threading
 import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
 from cflib.utils.multiranger import Multiranger
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
-def is_close(range):
-    MIN_DISTANCE = 0.4  # m
-    if range is None:
-        return False
-    else:
-        return range &lt; MIN_DISTANCE
-if __name__ == &#x27;__main__&#x27;:
-    # Initialize the low-level drivers
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+FRONT_STOP_DISTANCE_M = 0.28
+UP_STOP_DISTANCE_M = 0.15
+FORWARD_SPEED_MPS = 0.10
+MAX_FLIGHT_TIME_S = 20.0
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def wait_for_decks(scf):
+    attached = {
+        &quot;bcFlow2&quot;: threading.Event(),
+        &quot;bcMultiranger&quot;: threading.Event(),
+    }
+
+    def callback(name, value):
+        deck_name = name.rsplit(&quot;.&quot;, 1)[-1]
+        if deck_name in attached and int(value):
+            attached[deck_name].set()
+
+    for deck_name in attached:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=deck_name, cb=callback
+        )
+    time.sleep(1.0)
+    return all(event.wait(timeout=4.0) for event in attached.values())
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    cf = Crazyflie(rw_cache=&#x27;./cache&#x27;)
-    with SyncCrazyflie(URI, cf=cf) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        with MotionCommander(scf) as motion_commander:
-            with Multiranger(scf) as multiranger:
-                keep_flying = True
-                print(&#x27;already,wait a second&#x27;)
-                time.sleep(1.0)
-                VELOCITY = 0.3
-                velocity_x = 0.3
-                velocity_y = 0.0
-                while keep_flying: # Continue the loop while flight is allowed
-                     # Check whether an obstacle is above the drone
-                    if is_close(multiranger.up):
-                        keep_flying = False # Obstacle detected; stop flying
-                     # Check whether an obstacle is in front of the drone
-                    if is_close(multiranger.front):
-                        keep_flying = False  # Obstacle detected; stop flying
-# Command the drone to fly at the configured speed
-                    motion_commander.start_linear_motion(
-                        velocity_x, velocity_y, 0)
-                    time.sleep(0.1)
-            print(&#x27;Demo terminated!&#x27;)</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        if not wait_for_decks(scf):
+            raise RuntimeError(
+                &quot;Flow deck or Multi-ranger deck was not detected; takeoff cancelled.&quot;
+            )
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=0.35) as commander:
+                with Multiranger(scf) as multiranger:
+                    deadline = time.monotonic() + MAX_FLIGHT_TIME_S
+                    while time.monotonic() &lt; deadline:
+                        front = multiranger.front
+                        up = multiranger.up
+                        should_stop = (
+                            up is not None and up &lt; UP_STOP_DISTANCE_M
+                        ) or (
+                            front is not None and front &lt; FRONT_STOP_DISTANCE_M
+                        )
+                        if should_stop:
+                            commander.stop()
+                            break
+                        commander.start_forward(FORWARD_SPEED_MPS)
+                        time.sleep(0.1)
+                    commander.stop()
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <p>该代码实现了一个简单的功能，无人机起飞，稳定姿态1秒后以0.3m每秒的速度向前飞行，直到检测到无人机前方0.4m内有障碍物，则会停止前进并且降落。</p>
 <h3>程序执行流程</h3>
 <p>启动程序 → 连接无人机 → 解锁准备</p>
@@ -128,103 +171,147 @@ if __name__ == &#x27;__main__&#x27;:
 <p>运行下面完整的代码（也就是Bouncing_box.py）：</p>
 <p>注意，运行该代码前尽量将无人机放在运行场地中心的位置，该代码主要调用了flowdeck模块的功能实现视觉导航和定位，没有用到multiranger的功能。让无人机实现在一个正方形的区域内“弹跳”，即每次接触到这个看不见的正方形边界之后，无人机在x与y方向上的速度方向改变，达到一个“回头弹跳”的效果。</p>
 <p>因为使用的是flowdeck的功能，所以只在没有反光的场地上运行的效果最好，同样地会在这片看不见的正方形区域上无限弹跳，直到手动停止程序。BOX_LIMIT = 0.3则设置的是该正方形区域的大小，同学们可以适当修改这个值，注意起飞时最好放在场地中间。</p>
-<pre><code>import logging
-import sys
+<p><a href="../assets/code/flow_box_bounce.py" download>下载经审核的完整脚本: <code>flow_box_bounce.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Bounded Flow-deck position exercise with stale-log and time limits.&quot;&quot;&quot;
+
+import threading
 import time
-from threading import Event
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-DEFAULT_HEIGHT = 0.35
-BOX_LIMIT = 0.3
-deck_attached_event = Event()
-logging.basicConfig(level=logging.ERROR)
-position_estimate = [0, 0]
-def move_box_limit(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        body_x_cmd = 0.2
-        body_y_cmd = 0.1
-        max_vel = 0.2
-        while (1):
-            #if position_estimate[0] &gt; BOX_LIMIT:
-            #    mc.start_back()
-            #elif position_estimate[0] &lt; -BOX_LIMIT:
-            #    mc.start_forward()
-            if position_estimate[0] &gt; BOX_LIMIT:
-                body_x_cmd = -max_vel
-            elif position_estimate[0] &lt; -BOX_LIMIT:
-                body_x_cmd = max_vel
-            if position_estimate[1] &gt; BOX_LIMIT:
-                body_y_cmd = -max_vel
-            elif position_estimate[1] &lt; -BOX_LIMIT:
-                body_y_cmd = max_vel
-            mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)
-            time.sleep(0.1)
-def move_linear_simple(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-        time.sleep(1)
-        mc.forward(0.5)
-        time.sleep(1)
-        mc.back(0.5)
-        time.sleep(1)
-def take_off_simple(scf):
-    with MotionCommander(scf, default_height=DEFAULT_HEIGHT):
-        time.sleep(2)
-def log_pos_callback(timestamp, data, logconf):
-    print(data)
-    global position_estimate
-    position_estimate[0] = data[&#x27;stateEstimate.x&#x27;]
-    position_estimate[1] = data[&#x27;stateEstimate.y&#x27;]
-def param_deck_flow(_, value_str):
-    value = int(value_str)
-    print(value)
-    if value:
-        deck_attached_event.set()
-        print(&#x27;Deck is attached!&#x27;)
-    else:
-        print(&#x27;Deck is NOT attached!&#x27;)
-if __name__ == &#x27;__main__&#x27;:
-    cflib.crtp.init_drivers()
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        scf.cf.param.add_update_callback(group=&#x27;deck&#x27;, name=&#x27;bcFlow2&#x27;,
-                                         cb=param_deck_flow)
-        time.sleep(1)
-        logconf = LogConfig(name=&#x27;Position&#x27;, period_in_ms=10)
-        logconf.add_variable(&#x27;stateEstimate.x&#x27;, &#x27;float&#x27;)
-        logconf.add_variable(&#x27;stateEstimate.y&#x27;, &#x27;float&#x27;)
-        scf.cf.log.add_config(logconf)
-        logconf.data_received_cb.add_callback(log_pos_callback)
-        if not deck_attached_event.wait(timeout=5):
-            print(&#x27;No flow deck detected!&#x27;)
-            sys.exit(1)
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
-        logconf.start()
-        move_box_limit(scf)
-        logconf.stop()</code></pre>
-<p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
-<h3>实验四（拓展选做）：walk follow the wall</h3>
 
-<div class="admonition"><p class="admonition-title">官方示例仓库：Multiranger Wall Following</p>
-<p><code>wall_following.py</code> 和 <code>multiranger_wall_following.py</code> 来源于 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。课堂以官方仓库中的文件为准，手册列出来源和使用方式。</p>
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+DEFAULT_HEIGHT_M = 0.35
+BOX_LIMIT_M = 0.35
+MAX_VELOCITY_MPS = 0.15
+MAX_FLIGHT_TIME_S = 45.0
+LOG_STALE_TIMEOUT_S = 0.60
+
+flow_deck_attached = threading.Event()
+position_lock = threading.Lock()
+position_estimate = [0.0, 0.0]
+last_position_update = 0.0
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def flow_deck_callback(name, value):
+    if int(value):
+        flow_deck_attached.set()
+
+
+def position_callback(timestamp, data, log_config):
+    global last_position_update
+    with position_lock:
+        position_estimate[0] = float(data[&quot;stateEstimate.x&quot;])
+        position_estimate[1] = float(data[&quot;stateEstimate.y&quot;])
+        last_position_update = time.monotonic()
+
+
+def move_box_limit(scf):
+    body_x = MAX_VELOCITY_MPS
+    body_y = MAX_VELOCITY_MPS * 0.5
+    deadline = time.monotonic() + MAX_FLIGHT_TIME_S
+
+    with MotionCommander(scf, default_height=DEFAULT_HEIGHT_M) as commander:
+        while time.monotonic() &lt; deadline:
+            with position_lock:
+                x, y = position_estimate
+                update_age = time.monotonic() - last_position_update
+            if update_age &gt; LOG_STALE_TIMEOUT_S:
+                commander.stop()
+                raise RuntimeError(&quot;Position log is stale; landing.&quot;)
+            if x &gt;= BOX_LIMIT_M:
+                body_x = -MAX_VELOCITY_MPS
+            elif x &lt;= -BOX_LIMIT_M:
+                body_x = MAX_VELOCITY_MPS
+            if y &gt;= BOX_LIMIT_M:
+                body_y = -MAX_VELOCITY_MPS
+            elif y &lt;= -BOX_LIMIT_M:
+                body_y = MAX_VELOCITY_MPS
+            commander.start_linear_motion(body_x, body_y, 0.0)
+            time.sleep(0.1)
+        commander.stop()
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
+    cflib.crtp.init_drivers()
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=&quot;bcFlow2&quot;, cb=flow_deck_callback
+        )
+        time.sleep(1.0)
+        if not flow_deck_attached.wait(timeout=5.0):
+            raise RuntimeError(&quot;Flow deck was not detected; takeoff cancelled.&quot;)
+
+        position_log = LogConfig(name=&quot;Position&quot;, period_in_ms=1000)
+        position_log.add_variable(&quot;stateEstimate.x&quot;, &quot;float&quot;)
+        position_log.add_variable(&quot;stateEstimate.y&quot;, &quot;float&quot;)
+        scf.cf.log.add_config(position_log)
+        position_log.data_received_cb.add_callback(position_callback)
+        log_started = False
+        armed = False
+        try:
+            position_log.start()
+            log_started = True
+            if not wait_for_first_position(timeout=2.0):
+                raise RuntimeError(&quot;No position log data; takeoff cancelled.&quot;)
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            move_box_limit(scf)
+        finally:
+            if log_started:
+                position_log.stop()
+            if armed:
+                request_arming(scf, False)
+
+
+def wait_for_first_position(timeout):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() &lt; deadline:
+        with position_lock:
+            if last_position_update &gt; 0.0:
+                return True
+        time.sleep(0.05)
+    return False
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
+<h3>实验四（拓展选做）：沿墙飞行</h3>
+
+<div class="admonition"><p class="admonition-title">算法来源与课堂代码</p>
+<p>沿墙状态机参考 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。官方示例面向一般直墙环境，默认离墙距离和速度不适用于本课程约 40-50 cm 宽的通道；本手册提供经过窄通道参数调整、测距去抖和运行时限保护的课堂版本。</p>
 <ul>
 <li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">官方文件链接</a></li>
-<li><code>multiranger_wall_following.py</code>：<a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">官方文件链接</a></li>
+<li><a href="../assets/code/wall_following.py" download>下载课堂控制器：wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>下载课堂运行脚本：multiranger_wall_following.py</a></li>
 </ul></div>
-<p>建议在虚拟机中按以下方式使用：</p>
+<p>将两个课堂文件放在虚拟机的同一个 <code>~/workspace</code> 目录中。<code>--wall-side left</code> 表示飞行时墙保持在无人机左侧；如需沿右墙飞行，改为 <code>--wall-side right</code>。</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>运行前请确认 Crazyflie、Crazyradio、Flow deck 和 Multi-ranger deck 已连接正常，并核对终端输出的是所在小组分配的完整 radio URI。官方脚本通过 <code>uri_helper.uri_from_env()</code> 读取 <code>CFLIB_URI</code>，不需要修改脚本内的默认地址。首次测试应在低速、空旷、安全的场地中进行，并先确认悬停和急停方式。</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>课堂参数为：参考离墙距离 <code>0.18 m</code>、前方转向距离 <code>0.24 m</code>、最大前进速度 <code>0.08 m/s</code>、最大侧向修正速度 <code>0.035 m/s</code>。侧面读数必须连续显示为远距离 <code>0.80 s</code> 后才判定墙体结束，以抑制挡板接缝或短暂丢帧造成的误转向。前方小于 <code>0.14 m</code>、任一侧小于 <code>0.09 m</code>、上方小于 <code>0.15 m</code> 或达到最长飞行时间时，脚本停止运动并退出 <code>MotionCommander</code> 以执行降落。</p>
+<div class="admonition warning"><p class="admonition-title">首次测试</p><p>先拆除复杂障碍，在低速直墙环境验证左右方向、悬停和上方手势停止；确认无误后再进入窄通道。代码中的阈值以传感器测得距离为准，不等同于机身外缘到墙面的实际净空。</p></div>
 
 <p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
 <h2>飞行记录参考</h2>

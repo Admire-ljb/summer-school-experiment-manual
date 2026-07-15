@@ -177,47 +177,75 @@ echo "$CFLIB_URI"</code></pre>
 <p>Then enter the python3 test.py command in the terminal to run the script. After the script starts running, it waits for a period of initialization and sends instructions to the drone wirelessly. After receiving the instructions, the drone performs corresponding flight movements.</p>
 <p>In addition, the official experimental tutorial website is: https://www.bitcraze.io/documentation/tutorials/getting-started-with-stem-drone-bundle/</p>
 <p>The content of the test.py script is:</p>
-<pre><code>import logging
+<p><a href="../assets/code/motion_commander_sequence.py" download>Download the reviewed script: <code>motion_commander_sequence.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Finite MotionCommander sequence with Flow-deck and URI checks.&quot;&quot;&quot;
+
+import threading
 import time
+
 import cflib.crtp
+from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.utils import uri_helper
-URI = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
-if __name__ == &#x27;__main__&#x27;:
-    # Initialize the low-level drivers (don&#x27;t list the debug drivers)
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+flow_deck_attached = threading.Event()
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def flow_deck_callback(name, value):
+    if int(value):
+        flow_deck_attached.set()
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers(enable_debug_driver=False)
-    with SyncCrazyflie(URI) as scf:
-        # We take off when the commander is created
-        with MotionCommander(scf) as mc:
-            print(&#x27;Taking off!&#x27;)
-            time.sleep(1)
-            # There is a set of functions that move a specific distance
-            # We can move in all directions
-            print(&#x27;Moving forward 0.5m&#x27;)
-            mc.forward(0.5)
-            # Wait a bit
-            time.sleep(1)
-            print(&#x27;Moving up 0.2m&#x27;)
-            mc.up(0.2)
-            # Wait a bit
-            time.sleep(1)
-            print(&#x27;Doing a 270deg circle&#x27;);
-            mc.circle_right(0.5, velocity=0.5, angle_degrees=270)
-            print(&#x27;Moving down 0.2m&#x27;)
-            mc.down(0.2)
-            # Wait a bit
-            time.sleep(1)
-            print(&#x27;Rolling left 0.2m at 0.6m/s&#x27;)
-            mc.left(0.2, velocity=0.6)
-            # Wait a bit
-            time.sleep(1)
-            print(&#x27;Moving forward 0.5m&#x27;)
-            mc.forward(0.5)
-            # We land when the MotionCommander goes out of scope
-            print(&#x27;Landing!&#x27;)</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=&quot;bcFlow2&quot;, cb=flow_deck_callback
+        )
+        time.sleep(1.0)
+        if not flow_deck_attached.wait(timeout=5.0):
+            raise RuntimeError(&quot;Flow deck was not detected; takeoff cancelled.&quot;)
+
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=0.30) as commander:
+                time.sleep(1.0)
+                commander.forward(0.50, velocity=0.20)
+                time.sleep(1.0)
+                commander.up(0.20, velocity=0.15)
+                time.sleep(1.0)
+                commander.circle_right(0.50, velocity=0.20, angle_degrees=270)
+                commander.down(0.20, velocity=0.15)
+                time.sleep(1.0)
+                commander.left(0.20, velocity=0.20)
+                time.sleep(1.0)
+                commander.forward(0.50, velocity=0.20)
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <h2>Reference links</h2>
 <p>This section organizes external links that appear in the manual into bullet points that are readable offline. To prevent the material from being too long, the web content is summarized in the form of classroom purposes and key tips, and the original URL is retained for reference after class.</p>
 <ol class="numbered-list" start="1">

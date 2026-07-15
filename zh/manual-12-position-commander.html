@@ -119,32 +119,62 @@
 <p>即，每次运行带有positioncommander类的代码时，无人机一定要放在起飞的位置，放平稳后再上电，此时坐标定位为（0，0，0），然后再运行程序。并且因为每次飞行和降落时都会让定位产生偏差，所以每次飞行都要严格按照这样的流程，让无人机在起飞位置静止地上电，也就是如果无人机正常平稳降落了，要运行下一个程序前，也得重新上电，执行该步骤。否则无人机的定位会紊乱，起飞就会炸机，一定要注意！</p>
 <h3>实验一：从正方形到立方体</h3>
 <p>给出如下示例程序，该程序实现的效果为无人机起飞，在z轴坐标为0.5的平面上，依次遍历四个坐标点，飞行轨迹为一个正方形。可以给该python脚本命名为position_commander_demo.py</p>
-<pre><code>import time
+<p><a href="../assets/code/position_hl_square.py" download>下载经审核的完整脚本: <code>position_hl_square.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Fly a finite 1 m square with PositionHlCommander.&quot;&quot;&quot;
+
+import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.position_hl_commander import PositionHlCommander
 from cflib.utils import uri_helper
-# URI to the Crazyflie to connect to
-uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-def simple_sequence():
-    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(2.0)
-        with PositionHlCommander(
-        scf,
-        x=0.0, y=0.0, z=0.0,
-        default_velocity=0.25,
-        default_height=0.35,
-        controller=PositionHlCommander.CONTROLLER_PID) as pc:
-            pc.go_to(1.0, 0.0, 0.5)
-            pc.go_to(1.0, 1.0, 0.5)
-            pc.go_to(0.0, 1.0, 0.5)
-            pc.go_to(0.0, 0.0, 0.5)
-if __name__ == &#x27;__main__&#x27;:
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    simple_sequence()</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with PositionHlCommander(
+                scf,
+                x=0.0,
+                y=0.0,
+                z=0.0,
+                default_velocity=0.20,
+                default_height=0.35,
+                controller=PositionHlCommander.CONTROLLER_PID,
+            ) as commander:
+                commander.go_to(1.0, 0.0, 0.35)
+                commander.go_to(1.0, 1.0, 0.35)
+                commander.go_to(0.0, 1.0, 0.35)
+                commander.go_to(0.0, 0.0, 0.35)
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <p>现在，修改该程序，让无人机的飞行轨迹遍历空中立体的矩形的八个点，注意，矩形的高度为0.5m即可，即设置z轴的最大高度为1m即可。</p>
 <h3>实验二：以坐标轴来实现花样立体飞行</h3>
 <p>让无人机的飞行轨迹在xy平面上呈现一个标准的五角星，然后，再让这颗五角星立起来，在xz或者yz平面上呈现一个标准的五角星。这样的要求，如果用之前的motioncommander来做，是不是就会比较麻烦，如果用坐标来实现，是不是也就是几行代码的事？</p>

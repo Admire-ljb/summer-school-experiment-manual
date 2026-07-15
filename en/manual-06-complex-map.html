@@ -63,40 +63,42 @@
 <p>This experiment mainly runs Python scripts. Open the Bitcraze cflib User Guides directly:</p>
 <pre><code>https://www.bitcraze.io/documentation/repository/crazyflie-lib-python/master/user-guides/</code></pre>
 <p>If you encounter difficulties during the experiment, open the URL listed above for further reference. Some operations and knowledge points are also mentioned in the previous experiment manual; this part is not repeated here.</p>
-<h3>Experiment 1: walk follow the wall</h3>
+<h3>Experiment 1: Wall-following flight</h3>
 <p>This experiment is an expanded experiment of the previous class. Now the parameters that can be adjusted in the code are given. Students can modify the parameters to test the operation effect.</p>
 
-<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Wall Following</p>
-<p><code>wall_following.py</code> and <code>multiranger_wall_following.py</code> come from Bitcraze's official <code>crazyflie-demos</code> repository. Use the files in the official repository as the source of record; this manual lists the source links and classroom usage steps.</p>
+<div class="admonition"><p class="admonition-title">Algorithm source and classroom scripts</p>
+<p>The wall-following state machine is based on Bitcraze's official <code>crazyflie-demos</code> repository. The official demo targets general straight-wall environments; its default wall distance and speed are not suitable for the approximately 40-50 cm-wide course corridors. This manual provides a classroom version with narrow-corridor parameters, range debouncing, and a flight-time limit.</p>
 <ul>
 <li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
 <li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><code>wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/wall_following.py">official file link</a></li>
-<li><code>multiranger_wall_following.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_wall_following/multiranger_wall_following.py">official file link</a></li>
+<li><a href="../assets/code/wall_following.py" download>Download the classroom controller: wall_following.py</a></li>
+<li><a href="../assets/code/multiranger_wall_following.py" download>Download the classroom runner: multiranger_wall_following.py</a></li>
 </ul></div>
-<p>Recommended usage in the virtual machine:</p>
+<p>Place both classroom files in the same <code>~/workspace</code> directory. <code>--wall-side left</code> keeps the wall on the aircraft's left; use <code>--wall-side right</code> to follow a right-hand wall.</p>
 <pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py</code></pre>
-<p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete radio URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>; do not edit its default address. For the first test, use a low-speed, open, safe area and confirm hover and emergency-stop behavior first.</p>
+python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
+<p>The classroom settings are a <code>0.18 m</code> reference wall distance, <code>0.24 m</code> front turn distance, <code>0.08 m/s</code> maximum forward speed, and <code>0.035 m/s</code> maximum lateral correction. A side reading must remain far for <code>0.80 s</code> before the controller declares the end of a wall, suppressing false turns caused by panel seams or short dropouts. The script stops and leaves <code>MotionCommander</code> to land when the front distance is below <code>0.14 m</code>, either side is below <code>0.09 m</code>, the upper distance is below <code>0.15 m</code>, or the flight-time limit is reached.</p>
+<div class="admonition warning"><p class="admonition-title">First test</p><p>Remove complex obstacles first and verify left/right behavior, hover, and the upper-sensor stop gesture beside one straight wall at low speed. The thresholds are sensor ranges and are not the same as the physical clearance from the aircraft frame to the wall.</p></div>
 
-<p>As shown in the figure below, lines 75 to 77 in the multiranger_wall_following.py file</p>
-<figure><img src="../assets/images/manual-06-complex-map/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>In the process of initializing the instance, the first parameter angle_value_buffer controls the tolerance of the UAV&#x27;s judgment angle. The larger the value, the slower the UAV&#x27;s response will be, but the path will be relatively smooth. The smaller the value, the more agile the UAV&#x27;s response will be and the path will jitter more. Reference_distance_from_wall This value controls the shortest distance the drone expects to be from the wall, in m. The larger the value, the farther the drone is from the wall. The value max_forward_speed represents the fastest forward speed of the drone, in m/s. Students can slightly modify these parameters and observe whether there are significant changes in the flight path of the drone. However, during this process, they must pay attention to the rationality of the parameters, and the values ​​should not be too extreme to ensure flight safety.</p>
 <h3>Experiment 2: More options for obstacle avoidance flight</h3>
 <p>Now that everyone is proficient in using optical flow sensors and obstacle avoidance sensors, let the drone take off from area A according to the obstacle map environment shown in the figure below. During the entire process, the flying height of the drone should not exceed 0.4m. Explore the entire map, that is, fly all the way without hitting the wall until it lands in area B. Now that the students have mastered the programming methods of motioncommander and multiranger, think about what kind of programming method can be used in such a map environment to logically complete the fixed flight route task in this map environment known in advance more efficiently.</p>
 <p>Note that the content of this experiment will be related to part of the final assessment. This experiment hopes to improve and test the students&#x27; programming proficiency. If more clever code logic is used to implement such tasks, it will make everyone&#x27;s practical assessment results even better.</p>
 <figure><img src="../assets/images/manual-06-complex-map/002.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>Experiment 3: Manually control flight mapping</h3>
-<div class="admonition"><p class="admonition-title">Official demo repository: Multiranger Point Cloud</p><p><code>multiranger_pointcloud.py</code> comes from Bitcraze's official <code>crazyflie-demos</code> repository. Use the file in the official repository as the source of record; this manual lists the source link and classroom usage steps.</p><ul><li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li><li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li><li><code>multiranger_pointcloud.py</code>: <a href="https://github.com/bitcraze/crazyflie-demos/blob/main/demos/scripts/cflib/multiranger/multiranger_pointcloud/multiranger_pointcloud.py">official file link</a></li></ul></div><p>Recommended usage in the virtual machine:</p><pre><code>cd ~/workspace
-git clone https://github.com/bitcraze/crazyflie-demos.git
-cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_pointcloud
-echo &quot;$CFLIB_URI&quot;
-python3 multiranger_pointcloud.py</code></pre><p>Before running the demo, confirm that the Crazyflie, Crazyradio, Flow deck, and Multi-ranger deck are connected correctly, and verify that the terminal prints the complete URI assigned to the group. The official script reads <code>CFLIB_URI</code> through <code>uri_helper.uri_from_env()</code>. This example requires a graphical desktop and Python visualization dependencies; if dependencies are missing, install <code>numpy</code>, <code>vispy</code>, and <code>PyQt6</code> according to the official README. Run the first test in a safe area and confirm that the drone lands normally after the visualization window is closed.</p>
+<div class="admonition"><p class="admonition-title">Algorithm source and classroom manual-mapping script</p>
+<p>The point-cloud transformation and visualization are based on Bitcraze's official <code>multiranger_pointcloud.py</code>. Formal classroom flight uses a version with controlled landing, a flight-time limit, stale-log handling, and direction-aware range guards. The official file remains a source reference and is not the classroom flight entry point.</p>
+<ul>
+<li>Official demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_pointcloud">demos/scripts/cflib/multiranger/multiranger_pointcloud</a></li>
+<li><a href="../assets/code/manual_multiranger_pointcloud.py" download>Download the classroom script: manual_multiranger_pointcloud.py</a></li>
+</ul></div>
+<p>Place the classroom script in <code>~/workspace</code> and run:</p>
+<pre><code>cd ~/workspace
+echo "$CFLIB_URI"
+python3 manual_multiranger_pointcloud.py</code></pre>
+<p>The arrow keys command forward, back, left, and right translation; <code>A</code>/<code>D</code> command slow yaw. The classroom version keeps a fixed height. Pressing <code>Escape</code>, closing the window, using the upper-sensor stop gesture, a stale log, or the 90-second limit exits <code>MotionCommander</code> and lands. Translation is suppressed in any commanded direction with less than <code>0.18 m</code> clearance.</p>
 <figure><img src="../assets/images/manual-06-complex-map/003.png" alt="manual image" loading="lazy" decoding="async"></figure>
-<p>After running this program, you will use the keyboard to manually control the drone to fly in an obstacle environment and sense the surrounding environment. Use the direction keys to control the flight direction of the drone. The drone will rise to the default height of 0.3m. The a and d keys are used to control the drone&#x27;s steering slowly, the z and x keys are used to control the drone&#x27;s steering quickly, and the height is controlled by the w and s keys. Since the multiranger&#x27;s sampling speed is limited, if the drone flies too fast, the sampled environment map may not be clear. Therefore, if you want to get a clearer point cloud map, you can slightly slow down the drone&#x27;s flight speed to get a clearer point cloud map.</p>
+<p>Use the arrow keys for forward, back, left, and right translation and <code>A</code>/<code>D</code> for slow yaw. The flight height remains fixed at <code>0.35 m</code>, and releasing a key immediately zeros the corresponding velocity. Keep the motion slow and compare the physical obstacles with the point-cloud outline throughout the run.</p>
 <figure><img src="../assets/images/manual-06-complex-map/004.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <p>Now run this program to construct a clear point cloud map of the map obstacles for this lesson.</p>
 

@@ -121,32 +121,62 @@
 <p>That is, every time you run the code with the positioncommander class, the drone must be placed at the take-off position, and then powered on after it is stable. At this time, the coordinates are positioned at (0, 0, 0), and then run the program. And because the positioning will deviate every time you fly and land, you must strictly follow this process every time you fly, and power on the drone stationary at the take-off position. That is, if the drone lands normally and smoothly, you must power on again and perform this step before running the next program. Otherwise, the positioning of the drone will be disordered and the drone will explode when taking off. Be careful!</p>
 <h3>Experiment 1: From square to cube</h3>
 <p>The following example program is given. The effect achieved by this program is that the drone takes off. On the plane with the z-axis coordinate of 0.5, it traverses four coordinate points in sequence, and the flight trajectory is a square. You can name the python script position_commander_demo.py</p>
-<pre><code>import time
+<p><a href="../assets/code/position_hl_square.py" download>Download the reviewed script: <code>position_hl_square.py</code></a></p><pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;Fly a finite 1 m square with PositionHlCommander.&quot;&quot;&quot;
+
+import time
+
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.position_hl_commander import PositionHlCommander
 from cflib.utils import uri_helper
-# URI to the Crazyflie to connect to
-uri = uri_helper.uri_from_env(default=&#x27;radio://0/80/2M/E7E7E7E7E7&#x27;)
-def simple_sequence():
-    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&#x27;./cache&#x27;)) as scf:
-        # Arm the Crazyflie
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(2.0)
-        with PositionHlCommander(
-        scf,
-        x=0.0, y=0.0, z=0.0,
-        default_velocity=0.25,
-        default_height=0.35,
-        controller=PositionHlCommander.CONTROLLER_PID) as pc:
-            pc.go_to(1.0, 0.0, 0.5)
-            pc.go_to(1.0, 1.0, 0.5)
-            pc.go_to(0.0, 1.0, 0.5)
-            pc.go_to(0.0, 0.0, 0.5)
-if __name__ == &#x27;__main__&#x27;:
+
+
+URI = uri_helper.uri_from_env(default=&quot;&quot;)
+
+
+def request_arming(scf, armed):
+    for service_name in (&quot;platform&quot;, &quot;supervisor&quot;):
+        service = getattr(scf.cf, service_name, None)
+        request = getattr(service, &quot;send_arming_request&quot;, None)
+        if request is not None:
+            request(armed)
+            return
+    raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
+
+
+def main():
+    if not URI:
+        raise RuntimeError(&quot;CFLIB_URI is empty; configure the group URI first.&quot;)
     cflib.crtp.init_drivers()
-    simple_sequence()</code></pre>
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
+        armed = False
+        try:
+            request_arming(scf, True)
+            armed = True
+            time.sleep(1.0)
+            with PositionHlCommander(
+                scf,
+                x=0.0,
+                y=0.0,
+                z=0.0,
+                default_velocity=0.20,
+                default_height=0.35,
+                controller=PositionHlCommander.CONTROLLER_PID,
+            ) as commander:
+                commander.go_to(1.0, 0.0, 0.35)
+                commander.go_to(1.0, 1.0, 0.35)
+                commander.go_to(0.0, 1.0, 0.35)
+                commander.go_to(0.0, 0.0, 0.35)
+        finally:
+            if armed:
+                request_arming(scf, False)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
 <p>Now, modify the program so that the drone&#x27;s flight trajectory traverses eight points of a three-dimensional rectangle in the air. Note that the height of the rectangle is 0.5m, that is, set the maximum height of the z-axis to 1m.</p>
 <h3>Experiment 2: Use coordinate axes to realize pattern three-dimensional flight</h3>
 <p>Let the drone&#x27;s flight trajectory present a standard five-pointed star on the xy plane, and then let the five-pointed star stand up to present a standard five-pointed star on the xz or yz plane. Would it be more troublesome to implement such a request using the previous motioncommander? If implemented using coordinates, would it only require a few lines of code?</p>

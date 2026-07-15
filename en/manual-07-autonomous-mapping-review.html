@@ -498,6 +498,7 @@ class MappingDemo:
             if request is not None:
                 request(armed)
                 return
+        raise RuntimeError(&quot;This cflib version has no arming service.&quot;)
 
     def _explore(self, mc: MotionCommander) -&gt; None:
         start_time = time.monotonic()
@@ -827,18 +828,23 @@ class MappingDemo:
             )
 
 
-def wait_for_flow_deck(scf: SyncCrazyflie) -&gt; bool:
-    attached = threading.Event()
+def wait_for_required_decks(scf: SyncCrazyflie) -&gt; bool:
+    attached = {
+        &quot;bcFlow2&quot;: threading.Event(),
+        &quot;bcMultiranger&quot;: threading.Event(),
+    }
 
-    def flow_callback(name: str, value: str) -&gt; None:
-        if int(value):
-            attached.set()
+    def deck_callback(name: str, value: str) -&gt; None:
+        deck_name = name.rsplit(&quot;.&quot;, 1)[-1]
+        if deck_name in attached and int(value):
+            attached[deck_name].set()
 
-    scf.cf.param.add_update_callback(
-        group=&quot;deck&quot;, name=&quot;bcFlow2&quot;, cb=flow_callback
-    )
+    for deck_name in attached:
+        scf.cf.param.add_update_callback(
+            group=&quot;deck&quot;, name=deck_name, cb=deck_callback
+        )
     time.sleep(1.0)
-    return attached.wait(timeout=5.0)
+    return all(event.wait(timeout=4.0) for event in attached.values())
 
 
 def get_group_uri() -&gt; str:
@@ -855,8 +861,10 @@ def main() -&gt; None:
     print(&quot;Using URI: %s&quot; % uri)
     cflib.crtp.init_drivers()
     with SyncCrazyflie(uri, cf=Crazyflie(rw_cache=&quot;./cache&quot;)) as scf:
-        if not wait_for_flow_deck(scf):
-            raise RuntimeError(&quot;Flow deck was not detected; takeoff cancelled.&quot;)
+        if not wait_for_required_decks(scf):
+            raise RuntimeError(
+                &quot;Flow deck or Multi-ranger deck was not detected; takeoff cancelled.&quot;
+            )
         demo = MappingDemo(scf)
         demo.start_flight()
         try:
