@@ -296,22 +296,39 @@ if __name__ == &quot;__main__&quot;:
     main()
 </code></pre>
 <p>接下来提出的要求将会具有一定的挑战性，根据前面学到的对multiranger的使用，我们使其在由真实墙面组成的一个正方形区域中，使用multiranger模块实现上述“盒子弹跳”的功能，实现的效果中，无人机是一定不会与墙面发生碰撞的。在此也给出提示，注意无人机的飞行速度和方向值的设置都参考一下上述的代码</p>
-<h3>实验四（拓展选做）：沿墙飞行</h3>
+<h3 id="official-wall-following">实验四（拓展选做）：沿墙飞行</h3>
 
-<div class="admonition"><p class="admonition-title">算法来源与课堂代码</p>
-<p>沿墙状态机参考 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。官方示例面向一般直墙环境，默认离墙距离和速度不适用于本课程约 40-50 cm 宽的通道；本手册提供经过窄通道参数调整、测距去抖和运行时限保护的课堂版本。</p>
+<div class="admonition"><p class="admonition-title">唯一代码来源：Bitcraze 官方示例</p>
+<p>本实验直接使用 Bitcraze 官方 <code>crazyflie-demos</code> 仓库中的沿墙示例，不再提供另一套课堂沿墙脚本。官方示例目录内的 <code>multiranger_wall_following.py</code> 和 <code>wall_following.py</code> 是同一程序的入口与状态机依赖，必须保留在同一目录中。</p>
 <ul>
-<li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
-<li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><a href="../assets/code/wall_following.py" download>下载课堂控制器：wall_following.py</a></li>
-<li><a href="../assets/code/multiranger_wall_following.py" download>下载课堂运行脚本：multiranger_wall_following.py</a></li>
+<li>官方仓库：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>沿墙示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
 </ul></div>
-<p>将两个课堂文件放在虚拟机的同一个 <code>~/workspace</code> 目录中。<code>--wall-side left</code> 表示飞行时墙保持在无人机左侧；如需沿右墙飞行，改为 <code>--wall-side right</code>。</p>
+<p>首次使用时克隆官方仓库并进入示例目录；已经下载过 <code>crazyflie-demos</code> 的小组只需进入对应目录，不要再次复制脚本。</p>
 <pre><code>cd ~/workspace
-echo "$CFLIB_URI"
-python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
-<p>课堂参数为：参考离墙距离 <code>0.18 m</code>、前方转向距离 <code>0.24 m</code>、最大前进速度 <code>0.08 m/s</code>、最大侧向修正速度 <code>0.035 m/s</code>。侧面读数必须连续显示为远距离 <code>0.80 s</code> 后才判定墙体结束，以抑制挡板接缝或短暂丢帧造成的误转向。前方小于 <code>0.14 m</code>、任一侧小于 <code>0.09 m</code>、上方小于 <code>0.15 m</code> 或达到最长飞行时间时，脚本停止运动并退出 <code>MotionCommander</code> 以执行降落。</p>
-<div class="admonition warning"><p class="admonition-title">首次测试</p><p>先拆除复杂障碍，在低速直墙环境验证左右方向、悬停和上方手势停止；确认无误后再进入窄通道。代码中的阈值以传感器测得距离为准，不等同于机身外缘到墙面的实际净空。</p></div>
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"</code></pre>
+<p>在官方 <code>multiranger_wall_following.py</code> 中，仅将 <code>WallFollowing(...)</code> 初始化改为以下推荐参数。<code>reference_distance_from_wall + ranger_value_buffer = 0.24 m</code>，即前方测距低于约 <code>0.24 m</code> 时进入转角处理。</p>
+<pre><code>wall_following = WallFollowing(
+    angle_value_buffer=0.1,
+    reference_distance_from_wall=0.18,
+    max_forward_speed=0.08,
+    max_turn_rate=0.35,
+    ranger_value_buffer=0.06,
+    range_lost_threshold=0.30,
+    init_state=WallFollowing.StateWallFollowing.FORWARD)</code></pre>
+<p>跟随左墙时使用官方示例中的 <code>RIGHT + left_range</code> 组合；跟随右墙时使用 <code>LEFT + right_range</code> 组合。这里的方向表示转向方向，不是墙位于机体哪一侧。两组配置只保留实际需要的一组。</p>
+<pre><code># 跟随左墙
+wall_following_direction = WallFollowing.WallFollowingDirection.RIGHT
+side_range = left_range
+
+# 跟随右墙
+wall_following_direction = WallFollowing.WallFollowingDirection.LEFT
+side_range = right_range</code></pre>
+<p>确认 <code>CFLIB_URI</code> 为本组完整地址后，在当前官方示例目录运行：</p>
+<pre><code>python3 multiranger_wall_following.py</code></pre>
+<div class="admonition warning"><p class="admonition-title">适用条件与首次测试</p><p>官方示例明确适用于带转角的连续直墙。挡板接缝、低矮障碍和大面积开口可能造成单点测距短暂丢失，因此应先覆盖明显接缝，在低速直墙环境核对跟墙侧、转向方向及上方手势停止，再进入 40-50 cm 通道。飞行期间由一名组员专门观察并随时准备停止实验。</p></div>
 
 <p>该代码主要实现无人机沿着墙面走的功能，以达到沿着墙面探索的目的，同学们可以以此感受一下无人机自主探索的概念，为之后的课程做好铺垫。</p>
 <h2>飞行记录参考</h2>

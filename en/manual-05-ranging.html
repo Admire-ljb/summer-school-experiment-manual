@@ -298,22 +298,39 @@ if __name__ == &quot;__main__&quot;:
     main()
 </code></pre>
 <p>The next requirement will be somewhat challenging. Based on the use of multiranger learned previously, we used the multiranger module to implement the above-mentioned &quot;box bounce&quot; function in a square area composed of real walls. In the effect achieved, the drone will definitely not collide with the wall. Tips are also given here. Please note that the flight speed and direction value settings of the drone refer to the above code.</p>
-<h3>Experiment 4 (optional extension): Wall-following flight</h3>
+<h3 id="official-wall-following">Experiment 4 (optional extension): Wall-following Flight</h3>
 
-<div class="admonition"><p class="admonition-title">Algorithm source and classroom scripts</p>
-<p>The wall-following state machine is based on Bitcraze's official <code>crazyflie-demos</code> repository. The official demo targets general straight-wall environments; its default wall distance and speed are not suitable for the approximately 40-50 cm-wide course corridors. This manual provides a classroom version with narrow-corridor parameters, range debouncing, and a flight-time limit.</p>
+<div class="admonition"><p class="admonition-title">Single code source: the official Bitcraze example</p>
+<p>This experiment uses the wall-following example from Bitcraze's official <code>crazyflie-demos</code> repository. No separate classroom wall-following implementation is provided. The <code>multiranger_wall_following.py</code> entry point and its <code>wall_following.py</code> state-machine dependency must remain together in the official example directory.</p>
 <ul>
-<li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
-<li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><a href="../assets/code/wall_following.py" download>Download the classroom controller: wall_following.py</a></li>
-<li><a href="../assets/code/multiranger_wall_following.py" download>Download the classroom runner: multiranger_wall_following.py</a></li>
+<li>Official repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
+<li>Wall-following example: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
 </ul></div>
-<p>Place both classroom files in the same <code>~/workspace</code> directory. <code>--wall-side left</code> keeps the wall on the aircraft's left; use <code>--wall-side right</code> to follow a right-hand wall.</p>
+<p>Clone the official repository once and enter the example directory. If <code>crazyflie-demos</code> is already present, enter the existing directory instead of making another copy.</p>
 <pre><code>cd ~/workspace
-echo "$CFLIB_URI"
-python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
-<p>The classroom settings are a <code>0.18 m</code> reference wall distance, <code>0.24 m</code> front turn distance, <code>0.08 m/s</code> maximum forward speed, and <code>0.035 m/s</code> maximum lateral correction. A side reading must remain far for <code>0.80 s</code> before the controller declares the end of a wall, suppressing false turns caused by panel seams or short dropouts. The script stops and leaves <code>MotionCommander</code> to land when the front distance is below <code>0.14 m</code>, either side is below <code>0.09 m</code>, the upper distance is below <code>0.15 m</code>, or the flight-time limit is reached.</p>
-<div class="admonition warning"><p class="admonition-title">First test</p><p>Remove complex obstacles first and verify left/right behavior, hover, and the upper-sensor stop gesture beside one straight wall at low speed. The thresholds are sensor ranges and are not the same as the physical clearance from the aircraft frame to the wall.</p></div>
+git clone https://github.com/bitcraze/crazyflie-demos.git
+cd crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
+echo "$CFLIB_URI"</code></pre>
+<p>In the official <code>multiranger_wall_following.py</code>, change only the <code>WallFollowing(...)</code> initialization to the following recommended settings. Because <code>reference_distance_from_wall + ranger_value_buffer = 0.24 m</code>, corner handling starts when the front range falls below approximately <code>0.24 m</code>.</p>
+<pre><code>wall_following = WallFollowing(
+    angle_value_buffer=0.1,
+    reference_distance_from_wall=0.18,
+    max_forward_speed=0.08,
+    max_turn_rate=0.35,
+    ranger_value_buffer=0.06,
+    range_lost_threshold=0.30,
+    init_state=WallFollowing.StateWallFollowing.FORWARD)</code></pre>
+<p>To follow a left-hand wall, use the official <code>RIGHT + left_range</code> combination. To follow a right-hand wall, use <code>LEFT + right_range</code>. The enum names the turning direction, not the side on which the wall is located. Keep only the pair required for the run.</p>
+<pre><code># Follow a wall on the left
+wall_following_direction = WallFollowing.WallFollowingDirection.RIGHT
+side_range = left_range
+
+# Follow a wall on the right
+wall_following_direction = WallFollowing.WallFollowingDirection.LEFT
+side_range = right_range</code></pre>
+<p>After verifying that <code>CFLIB_URI</code> contains the complete URI assigned to the group, run the official entry point from this directory:</p>
+<pre><code>python3 multiranger_wall_following.py</code></pre>
+<div class="admonition warning"><p class="admonition-title">Operating conditions and first test</p><p>The official example is intended for continuous straight walls with corners. Panel seams, low obstacles, and large openings may briefly remove a single-point range return. Cover obvious seams first, verify the selected wall side, turning direction, and upper-sensor stop gesture beside one straight wall at low speed, and only then enter the 40-50 cm corridor. One team member must continuously observe the aircraft and be ready to stop the run.</p></div>
 
 <p>This code mainly implements the function of the drone walking along the wall to achieve the purpose of exploring along the wall. Students can use this to experience the concept of autonomous exploration by the drone and pave the way for subsequent courses.</p>
 

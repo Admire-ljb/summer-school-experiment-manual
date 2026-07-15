@@ -66,20 +66,13 @@
 <h3>Experiment 1: Wall-following flight</h3>
 <p>This experiment is an expanded experiment of the previous class. Now the parameters that can be adjusted in the code are given. Students can modify the parameters to test the operation effect.</p>
 
-<div class="admonition"><p class="admonition-title">Algorithm source and classroom scripts</p>
-<p>The wall-following state machine is based on Bitcraze's official <code>crazyflie-demos</code> repository. The official demo targets general straight-wall environments; its default wall distance and speed are not suitable for the approximately 40-50 cm-wide course corridors. This manual provides a classroom version with narrow-corridor parameters, range debouncing, and a flight-time limit.</p>
-<ul>
-<li>Repository: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
-<li>Demo directory: <a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><a href="../assets/code/wall_following.py" download>Download the classroom controller: wall_following.py</a></li>
-<li><a href="../assets/code/multiranger_wall_following.py" download>Download the classroom runner: multiranger_wall_following.py</a></li>
-</ul></div>
-<p>Place both classroom files in the same <code>~/workspace</code> directory. <code>--wall-side left</code> keeps the wall on the aircraft's left; use <code>--wall-side right</code> to follow a right-hand wall.</p>
-<pre><code>cd ~/workspace
+<div class="admonition"><p class="admonition-title">Reuse the official example</p>
+<p>This experiment continues with the Bitcraze official wall-following example configured in Experiment 5. Do not add or copy another wall-following implementation. See <a href="manual-05-ranging.html#official-wall-following">Experiment 5: Wall-following Flight</a> for the official directory, recommended parameters, left/right wall selection, and setup instructions.</p></div>
+<p>Before the run, enter the existing official example directory and verify the group URI:</p>
+<pre><code>cd ~/workspace/crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
-<p>The classroom settings are a <code>0.18 m</code> reference wall distance, <code>0.24 m</code> front turn distance, <code>0.08 m/s</code> maximum forward speed, and <code>0.035 m/s</code> maximum lateral correction. A side reading must remain far for <code>0.80 s</code> before the controller declares the end of a wall, suppressing false turns caused by panel seams or short dropouts. The script stops and leaves <code>MotionCommander</code> to land when the front distance is below <code>0.14 m</code>, either side is below <code>0.09 m</code>, the upper distance is below <code>0.15 m</code>, or the flight-time limit is reached.</p>
-<div class="admonition warning"><p class="admonition-title">First test</p><p>Remove complex obstacles first and verify left/right behavior, hover, and the upper-sensor stop gesture beside one straight wall at low speed. The thresholds are sensor ranges and are not the same as the physical clearance from the aircraft frame to the wall.</p></div>
+python3 multiranger_wall_following.py</code></pre>
+<div class="admonition warning"><p class="admonition-title">Arena requirements</p><p>Keep wall panels continuous and cover obvious seams. Verify the selected wall side and turning direction beside one straight wall before entering the complex map. One team member must continuously observe the aircraft and stop the run when necessary.</p></div>
 
 <h3>Experiment 2: More options for obstacle avoidance flight</h3>
 <p>Now that everyone is proficient in using optical flow sensors and obstacle avoidance sensors, let the drone take off from area A according to the obstacle map environment shown in the figure below. During the entire process, the flying height of the drone should not exceed 0.4m. Explore the entire map, that is, fly all the way without hitting the wall until it lands in area B. Now that the students have mastered the programming methods of motioncommander and multiranger, think about what kind of programming method can be used in such a map environment to logically complete the fixed flight route task in this map environment known in advance more efficiently.</p>

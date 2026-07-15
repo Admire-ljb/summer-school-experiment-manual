@@ -64,20 +64,13 @@
 <h3>实验一：沿墙飞行</h3>
 <p>该实验为上节课的拓展实验，现在给出代码中可以调节的参数，同学们可以再修改参数试验一下运行的效果。</p>
 
-<div class="admonition"><p class="admonition-title">算法来源与课堂代码</p>
-<p>沿墙状态机参考 Bitcraze 官方 <code>crazyflie-demos</code> 仓库。官方示例面向一般直墙环境，默认离墙距离和速度不适用于本课程约 40-50 cm 宽的通道；本手册提供经过窄通道参数调整、测距去抖和运行时限保护的课堂版本。</p>
-<ul>
-<li>仓库主页：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main">https://github.com/bitcraze/crazyflie-demos/tree/main</a></li>
-<li>示例目录：<a href="https://github.com/bitcraze/crazyflie-demos/tree/main/demos/scripts/cflib/multiranger/multiranger_wall_following">demos/scripts/cflib/multiranger/multiranger_wall_following</a></li>
-<li><a href="../assets/code/wall_following.py" download>下载课堂控制器：wall_following.py</a></li>
-<li><a href="../assets/code/multiranger_wall_following.py" download>下载课堂运行脚本：multiranger_wall_following.py</a></li>
-</ul></div>
-<p>将两个课堂文件放在虚拟机的同一个 <code>~/workspace</code> 目录中。<code>--wall-side left</code> 表示飞行时墙保持在无人机左侧；如需沿右墙飞行，改为 <code>--wall-side right</code>。</p>
-<pre><code>cd ~/workspace
+<div class="admonition"><p class="admonition-title">沿用官方示例</p>
+<p>本实验继续使用实验 5 已配置的 Bitcraze 官方沿墙示例，不新增或复制其他沿墙脚本。官方目录、推荐参数、左右墙配置和运行命令见<a href="manual-05-ranging.html#official-wall-following">实验 5：沿墙飞行</a>。</p></div>
+<p>开始前进入原有官方示例目录并核对本组 URI：</p>
+<pre><code>cd ~/workspace/crazyflie-demos/demos/scripts/cflib/multiranger/multiranger_wall_following
 echo "$CFLIB_URI"
-python3 multiranger_wall_following.py --wall-side left --max-time 90</code></pre>
-<p>课堂参数为：参考离墙距离 <code>0.18 m</code>、前方转向距离 <code>0.24 m</code>、最大前进速度 <code>0.08 m/s</code>、最大侧向修正速度 <code>0.035 m/s</code>。侧面读数必须连续显示为远距离 <code>0.80 s</code> 后才判定墙体结束，以抑制挡板接缝或短暂丢帧造成的误转向。前方小于 <code>0.14 m</code>、任一侧小于 <code>0.09 m</code>、上方小于 <code>0.15 m</code> 或达到最长飞行时间时，脚本停止运动并退出 <code>MotionCommander</code> 以执行降落。</p>
-<div class="admonition warning"><p class="admonition-title">首次测试</p><p>先拆除复杂障碍，在低速直墙环境验证左右方向、悬停和上方手势停止；确认无误后再进入窄通道。代码中的阈值以传感器测得距离为准，不等同于机身外缘到墙面的实际净空。</p></div>
+python3 multiranger_wall_following.py</code></pre>
+<div class="admonition warning"><p class="admonition-title">场地要求</p><p>保持挡板连续并覆盖明显接缝。先在单面直墙旁复核跟墙侧和转向方向，再进入复杂地图；一名组员全程负责观察和停止实验。</p></div>
 
 <h3>实验二：更多方案的避障飞行</h3>
 <p>现在大家已经能熟练掌握光流传感器和避障传感器的使用方法了，接下来按照下图所示的障碍地图环境，让无人机从A区域起飞，整个流程中无人机的飞行高度不要超过0.4m，探索整个地图，也就是一路飞行不要碰撞到墙壁，直到在B区域内降落。现在同学们已经掌握了motioncommander和multiranger的编程方法，想一想，这样的地图环境用什么样的编程方式，从逻辑上可以更高效地完成这个事先已知的地图环境中的固定飞行路线任务。</p>
