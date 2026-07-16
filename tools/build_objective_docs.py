@@ -2196,6 +2196,64 @@ def apply_competition_rules_override(lang: str, body: str) -> str:
     body = body.replace(speed_intro, speed_replacement)
     for source, replacement in replacements.items():
         body = body.replace(source, replacement)
+    if lang == "zh":
+        challenge_marker = '<h2>最终综合展示评价说明</h2>'
+        challenge_section = '''<h2>挑战板块（20% 附加分）</h2>
+<p>挑战板块为自愿参加的附加任务，满分上限为基础综合评价满分的 20%。不参加或挑战未形成有效成绩，不扣除创意板块和竞速板块已经获得的基础成绩。</p>
+<div class="admonition"><p class="admonition-title">核心变化：开口位置赛前未知</p>
+<p>挑战任务建立在创意板块规则之上。A、B、C 任务区域及 R1、R2、R3、R4 奖励点的位置保持固定；贴靠场地外墙的挡板保持固定，仅朝向场地内部的挡板段和开口会由助教在每次挑战前调整。参赛组在起飞前不能获知、查看或试飞当次布局。</p></div>
+<figure class="wide-figure"><img src="../assets/images/manual-13-project-demo/challenge-variable-openings.png" alt="挑战板块固定任务区域与可变挡板开口示意图" loading="lazy" decoding="async"><figcaption><strong>挑战板块场地示意</strong><span>A、B、C 与 R1-R4 的位置固定，贴靠场地外墙的挡板不变。橙色标记仅表示 A、B、C 朝向场地内部一侧的开口可能调整；正式挑战的开口位置由助教赛前设置，起飞前不公布。</span></figcaption></figure>
+<h3>挑战规则</h3>
+<ul>
+<li>沿用创意板块的任务路线、计分公式和奖励数值：从 A 区起飞，经过 B、C 后返回 A 区，R1-R4 均可计入奖励。</li>
+<li>沿用创意板块的飞行限制：全程恒定速度且低于 <code>0.3 m/s</code>，飞行高度不得高于 45 cm 挡板顶沿，单次任务最多允许 2 次明确碰撞。</li>
+<li>A、B、C 和 R1-R4 的位置固定，贴靠场地外墙的挡板也保持固定；仅朝向场地内部的挡板段、通道方向及开口位置可以变化，当次布局以助教完成的现场摆放为准。</li>
+<li>参赛代码应根据飞行中的传感器数据识别可通行方向。仅依赖预先写死的挡板坐标或固定开口位置，不能满足挑战要求。</li>
+<li>挑战成绩仍使用创意板块公式计算，数值越小越好；有效挑战成绩用于单独核算最高 20% 的附加分。</li>
+</ul>
+<h3>挑战流程</h3>
+<ol>
+<li>小组完成代码、硬件和急停检查后，先通知助教，不得自行开始挑战。</li>
+<li>助教仅调整 A、B、C 朝向场地内部一侧的挡板和开口位置，贴靠场地外墙的挡板不作调整；参赛组在起飞前不得查看布局或进行试飞。</li>
+<li>助教确认场地安全并开始协助录像后，通知小组起飞。录像应完整覆盖起飞、经过 B/C、奖励点判定、碰撞情况和返回 A 区降落。</li>
+<li>任务结束后，由助教记录当次布局、计时、奖励点、碰撞次数、降落位置和任务是否有效。</li>
+</ol>
+'''
+        evaluation_replacements = {
+            '<p>原则上两个板块（创意+竞速）的展示表现各占50%，综合评价指数计算如下：</p>': '<p>基础综合评价仍由创意板块和竞速板块各占 50% 组成；挑战板块在基础评价之外单独提供最高 20% 的附加分。</p>',
+            '<p>最终，综合评价指数越小的组别，综合项目展示评价越好。</p>': '<p>基础综合评价指数越小，基础评价越好。挑战附加分在基础评价完成后单独记录；不参加挑战或挑战成绩失效时，附加分记为 0，但不倒扣基础评价。</p>',
+        }
+    else:
+        challenge_marker = '<h2>Final integrated demonstration evaluation</h2>'
+        challenge_section = '''<h2>Challenge Section (20% Bonus)</h2>
+<p>The challenge section is optional and can add up to 20% of the maximum base evaluation score. Choosing not to participate, or failing to record a valid challenge result, does not reduce the base score already earned from the creative and speed sections.</p>
+<div class="admonition"><p class="admonition-title">Core change: opening positions are unknown before takeoff</p>
+<p>The challenge is based on the creative-section rules. The A, B, and C task zones and the R1, R2, R3, and R4 reward zones remain fixed. Baffles against the outer arena walls also remain fixed; only inward-facing baffle segments and openings are adjusted by a teaching assistant before each challenge. Teams may not know, inspect, or test-fly the current layout before takeoff.</p></div>
+<figure class="wide-figure"><img src="../assets/images-en/manual-13-project-demo/challenge-variable-openings.png" alt="Challenge schematic with fixed task zones and variable inward-facing baffle openings" loading="lazy" decoding="async"><figcaption><strong>Challenge Arena Schematic</strong><span>A, B, C, and R1-R4 remain fixed, as do baffles against the outer arena walls. Orange marks indicate only the possible adjustments to inward-facing openings around A, B, and C. Teaching assistants set these openings before the run, and the layout is not disclosed before takeoff.</span></figcaption></figure>
+<h3>Challenge rules</h3>
+<ul>
+<li>Use the creative-section route, scoring formula, and reward values: take off from A, pass through B and C, return to A, and count any R1-R4 rewards earned.</li>
+<li>Use the creative-section flight limits: one constant speed below <code>0.3 m/s</code>, flight below the top edge of the 45 cm baffles, and no more than two confirmed collisions in a run.</li>
+<li>A, B, C, and R1-R4 remain fixed, and baffles against the outer arena walls also remain fixed. Only inward-facing baffle segments, corridor directions, and opening positions may change; the layout prepared by the teaching assistant is authoritative.</li>
+<li>The program must identify traversable directions from sensor data during flight. A route that depends only on hard-coded baffle coordinates or fixed opening positions does not meet the challenge requirement.</li>
+<li>The creative-section formula is also used for the challenge, and a lower result is better. A valid challenge result is used to calculate the separate bonus of up to 20%.</li>
+</ul>
+<h3>Challenge procedure</h3>
+<ol>
+<li>After completing code, hardware, and emergency-stop checks, notify a teaching assistant before starting the challenge.</li>
+<li>The teaching assistant adjusts only the inward-facing baffles and openings around A, B, and C; baffles against the outer arena walls are not moved. The team may not inspect the layout or perform a test flight before takeoff.</li>
+<li>After confirming arena safety and starting the recording, the teaching assistant authorizes takeoff. The recording must cover takeoff, traversal of B/C, reward-zone decisions, collisions, and the return landing in A.</li>
+<li>After the run, the teaching assistant records the layout, elapsed time, reward zones, collision count, landing position, and whether the result is valid.</li>
+</ol>
+'''
+        evaluation_replacements = {
+            '<p>In principle, the display performance of the two sections (creative + racing) each accounts for 50%. The comprehensive evaluation index is calculated as follows:</p>': '<p>The base evaluation continues to assign 50% to the creative section and 50% to the speed section. The challenge section provides a separate bonus of up to 20% beyond the base evaluation.</p>',
+            '<p>Ultimately, the smaller the comprehensive evaluation index of the group, the better the comprehensive project display evaluation.</p>': '<p>A lower base evaluation index is better. The challenge bonus is recorded separately after the base evaluation. If a team does not enter the challenge or its challenge result is invalid, the bonus is zero and the base evaluation is not reduced.</p>',
+        }
+    if "Challenge Section (20% Bonus)" not in body and "挑战板块（20% 附加分）" not in body:
+        body = body.replace(challenge_marker, challenge_section + challenge_marker)
+    for source, replacement in evaluation_replacements.items():
+        body = body.replace(source, replacement)
     return body
 
 
