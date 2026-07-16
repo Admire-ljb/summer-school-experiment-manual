@@ -2089,7 +2089,47 @@ def apply_autonomous_mapping_overrides(lang: str, body: str) -> str:
     )
 
 
+def apply_competition_formula_override(lang: str, body: str) -> str:
+    if lang == "zh":
+        old = '''<p>S:最终成绩（m），越小越好</p>
+<p>v:无人机在整个任务流程中设置的恒定的速度（m/s）</p>
+<p>:无人机在整个任务流程中从在起点开始在xy平面上开始移动到开始降落的计时（s）</p>
+<p>:在代码中为了稳定无人机姿态，在无人机每进行一步移动后调用time.sleep的总时间（s）,在起飞前给老师确认代码时，确定这些时间。</p>
+<p>Reward:R2和R3的奖励值为1.4m，R4的奖励值为4.9m，R1的奖励值为1.05m</p>
+<p>Punish:最终降落在A区时的位置不规范，惩罚0.35m</p>'''
+        new = '''<div class="admonition"><p class="admonition-title">创意板块计分公式</p>
+<p><strong>S = v &times; (t<sub>1</sub> - t<sub>2</sub>) - Reward + Punish</strong></p>
+<ul>
+<li><code>S</code>：最终成绩（m），数值越小越好。</li>
+<li><code>v</code>：整个任务流程中设置的恒定飞行速度（m/s）。</li>
+<li><code>t<sub>1</sub></code>：无人机从起点开始在 xy 平面移动，到开始降落之间的现场计时（s）。</li>
+<li><code>t<sub>2</sub></code>：代码中每一步移动后为稳定姿态而调用 <code>time.sleep</code> 的总时长（s），起飞前由教师根据代码确认。</li>
+<li><code>Reward</code>：R2、R3 各奖励 1.4 m，R4 奖励 4.9 m，R1 奖励 1.05 m；满足对应条件的奖励累加后代入公式。</li>
+<li><code>Punish</code>：最终在 A 区降落但位置不规范时计 0.35 m；无此情况时为 0。</li>
+</ul></div>'''
+    else:
+        old = '''<p>S: Final score (m), the smaller the better</p>
+<p>v: The constant speed (m/s) set by the drone throughout the mission process</p>
+<p>: The timing of the drone starting to move on the xy plane from the starting point to landing in the entire mission process (s)</p>
+<p>: In order to stabilize the attitude of the drone in the code, the total time (s) of time.sleep is called after each step of the drone&#x27;s movement. These times are determined when confirming the code with the teacher before taking off.</p>
+<p>Reward: The reward value of R2 and R3 is 1.4m, the reward value of R4 is 4.9m, and the reward value of R1 is 1.05m</p>
+<p>Punish: The position when finally landing in area A was irregular and the penalty was 0.35m.</p>'''
+        new = '''<div class="admonition"><p class="admonition-title">Creative-section scoring formula</p>
+<p><strong>S = v &times; (t<sub>1</sub> - t<sub>2</sub>) - Reward + Punish</strong></p>
+<ul>
+<li><code>S</code>: final score in metres; a lower value is better.</li>
+<li><code>v</code>: constant flight speed used throughout the task, in m/s.</li>
+<li><code>t<sub>1</sub></code>: measured time from the first xy-plane movement at the start until landing begins, in seconds.</li>
+<li><code>t<sub>2</sub></code>: total duration of the <code>time.sleep</code> calls placed after movement steps to stabilize the aircraft, in seconds; the instructor confirms this value from the code before takeoff.</li>
+<li><code>Reward</code>: 1.4 m each for R2 and R3, 4.9 m for R4, and 1.05 m for R1. Add all rewards earned before substituting the value into the formula.</li>
+<li><code>Punish</code>: 0.35 m for a non-standard landing position inside Area A; otherwise 0.</li>
+</ul></div>'''
+    return body.replace(old, new)
+
+
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
+    if manual.slug == FINAL_TEST_SLUG:
+        return apply_competition_formula_override(lang, body)
     if manual.slug == "manual-01-vm":
         return apply_vm_manual_overrides(lang, body)
     if manual.slug == "manual-07-autonomous-mapping-review":

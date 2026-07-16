@@ -60,12 +60,16 @@
 <figure><img src="../assets/images/manual-13-project-demo/001.png" alt="manual image" loading="lazy" decoding="async"></figure>
 <h3>2. Demonstration procedure</h3>
 <p>In order to ensure the safety and stability of flight, the flight speed of the drone is limited to less than 0.3m per second and is constant throughout the entire process. Before each demonstration is ready to be shown to the teacher, the code details and flight speed and other parameters need to be shown to the teacher. After the teacher confirms, the code is run to allow the drone to take off. This demonstration can be counted as a valid score. During the teamwork during the demonstration, it is expected that one student will control the computer terminal and be responsible for takeoff and emergency stop, while the other student will be responsible for recording the entire process from takeoff to landing as a backup for the evaluation criteria. The teacher will be standing by to time the drone from the time it starts moving on the xy plane to the time it starts landing. The formula for calculating the final score is as follows:</p>
-<p>S: Final score (m), the smaller the better</p>
-<p>v: The constant speed (m/s) set by the drone throughout the mission process</p>
-<p>: The timing of the drone starting to move on the xy plane from the starting point to landing in the entire mission process (s)</p>
-<p>: In order to stabilize the attitude of the drone in the code, the total time (s) of time.sleep is called after each step of the drone&#x27;s movement. These times are determined when confirming the code with the teacher before taking off.</p>
-<p>Reward: The reward value of R2 and R3 is 1.4m, the reward value of R4 is 4.9m, and the reward value of R1 is 1.05m</p>
-<p>Punish: The position when finally landing in area A was irregular and the penalty was 0.35m.</p>
+<div class="admonition"><p class="admonition-title">Creative-section scoring formula</p>
+<p><strong>S = v &times; (t<sub>1</sub> - t<sub>2</sub>) - Reward + Punish</strong></p>
+<ul>
+<li><code>S</code>: final score in metres; a lower value is better.</li>
+<li><code>v</code>: constant flight speed used throughout the task, in m/s.</li>
+<li><code>t<sub>1</sub></code>: measured time from the first xy-plane movement at the start until landing begins, in seconds.</li>
+<li><code>t<sub>2</sub></code>: total duration of the <code>time.sleep</code> calls placed after movement steps to stabilize the aircraft, in seconds; the instructor confirms this value from the code before takeoff.</li>
+<li><code>Reward</code>: 1.4 m each for R2 and R3, 4.9 m for R4, and 1.05 m for R1. Add all rewards earned before substituting the value into the formula.</li>
+<li><code>Punish</code>: 0.35 m for a non-standard landing position inside Area A; otherwise 0.</li>
+</ul></div>
 <h3>3. Detailed evaluation criteria</h3>
 <p>The final display evaluation results of the creative section from low to high are: pass, good, and excellent.</p>
 <p>Completing the basic tasks (i.e. taking off from point A, passing through B and C and then returning to A) will result in a passing score in this section.</p>
