@@ -2613,7 +2613,7 @@ def write_assets() -> None:
 
 
 STYLE = """
-:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--buaa:#8e2432;--text:#30343b;--muted:#68717d;--border:#dfe5ea;--code:#f5f7f9;--paper:#fff}
+:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--text:#30343b;--muted:#68717d;--border:#dfe5ea;--code:#f5f7f9;--paper:#fff}
 *{box-sizing:border-box}
 html{font-size:16px}
 body{margin:0;color:var(--text);background:#edf0f2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;font-size:16px;line-height:1.72;letter-spacing:0}
@@ -2624,13 +2624,7 @@ a:hover{color:var(--accent-dark);text-decoration:underline}
 .wy-side-nav-search{background:var(--accent);color:#fff;padding:24px 18px 18px;text-align:center}
 .icon-home{display:block;color:#fff;font-size:20px;font-weight:700;line-height:1.25}
 .icon-home:hover{color:#fff}
-.version{margin:8px 0 10px;font-size:13px;opacity:.85}
-.admire-badge{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:4px;background:rgba(24,54,73,.22);text-align:left}
-.admire-mark{display:grid;place-items:center;flex:0 0 42px;width:42px;height:30px;border-radius:3px;background:var(--buaa);color:#fff;font-size:10px;font-weight:800;line-height:1}
-.admire-copy{min-width:0;line-height:1.2}
-.admire-copy strong,.admire-copy small{display:block;color:#fff;letter-spacing:0}
-.admire-copy strong{font-size:13px;font-weight:750}
-.admire-copy small{margin-top:3px;font-size:10px;opacity:.86}
+.version{margin:8px 0 16px;font-size:13px;opacity:.85}
 #doc-search{width:100%;height:36px;border:0;border-radius:4px;padding:0 10px;color:#333}
 .wy-menu{padding:16px 0 32px}
 .caption{margin:0;padding:0 20px 8px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}
@@ -2645,9 +2639,16 @@ a:hover{color:var(--accent-dark);text-decoration:underline}
 .breadcrumbs{position:relative;color:var(--muted);font-size:14px;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px}
 .breadcrumbs span{margin:0 6px}
 .github-link{float:right}
-.language-switch{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin:0 0 10px;font-size:14px}
-.language-switch span,.language-switch a{border:1px solid var(--border);border-radius:4px;padding:4px 9px}
-.language-switch span{background:#f3f6f6;color:#555}
+.language-switch{display:flex;gap:16px;align-items:center;justify-content:space-between;min-height:54px;margin:0 0 10px;font-size:14px}
+.language-options{display:flex;flex:0 0 auto;gap:8px;align-items:center}
+.language-options span,.language-options a{border:1px solid var(--border);border-radius:4px;padding:4px 9px}
+.language-options span{background:#f3f6f6;color:#555}
+.page-affiliation{display:flex;align-items:center;min-width:0;gap:10px;text-align:left}
+.page-affiliation img{display:block;flex:0 0 48px;width:48px;height:48px;object-fit:contain}
+.page-affiliation-copy{min-width:0;line-height:1.22}
+.page-affiliation-copy strong,.page-affiliation-copy small{display:block;letter-spacing:0}
+.page-affiliation-copy strong{color:#27323b;font-size:14px;font-weight:750}
+.page-affiliation-copy small{margin-top:3px;color:var(--muted);font-size:11px}
 h1,h2,h3{color:#1f2328;font-family:inherit;font-weight:650;line-height:1.32;letter-spacing:0}
 h1{font-size:32px;margin:22px 0 12px}
 h2{font-size:24px;margin:42px 0 18px;padding:0 0 9px;border-bottom:1px solid var(--border)}
@@ -2710,6 +2711,11 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
   h2{font-size:22px;margin-top:34px}
   h3{font-size:18px}
   .github-link{float:none;display:block;margin-top:8px}
+  .language-switch{gap:10px;min-height:46px}
+  .page-affiliation{gap:7px}
+  .page-affiliation img{flex-basis:40px;width:40px;height:40px}
+  .page-affiliation-copy strong{font-size:12px}
+  .page-affiliation-copy small{font-size:10px}
   .manual-credit{align-items:flex-start;flex-direction:column;gap:8px;margin-top:42px}
 }
 """.strip() + "\n"
@@ -2733,26 +2739,29 @@ if (search) {
 }
 
 const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
-const sideHeader = document.querySelector('.wy-side-nav-search');
-if (sideHeader && !sideHeader.querySelector('.admire-badge')) {
-  const badge = document.createElement('div');
-  badge.className = 'admire-badge';
-  badge.setAttribute('aria-label', isZh ? '北京航空航天大学 ADMIRE 组' : 'Beihang University ADMIRE Group');
+const languageSwitch = document.querySelector('.language-switch');
+if (languageSwitch && !languageSwitch.querySelector('.page-affiliation')) {
+  const options = document.createElement('div');
+  options.className = 'language-options';
+  Array.from(languageSwitch.children).forEach((child) => options.appendChild(child));
 
-  const mark = document.createElement('span');
-  mark.className = 'admire-mark';
-  mark.setAttribute('aria-hidden', 'true');
-  mark.textContent = 'BUAA';
+  const affiliation = document.createElement('div');
+  affiliation.className = 'page-affiliation';
+  const emblem = document.createElement('img');
+  emblem.src = '../assets/images/beihang-university-emblem.png';
+  emblem.alt = isZh ? '北京航空航天大学校徽' : 'Beihang University emblem';
+  emblem.width = 48;
+  emblem.height = 48;
 
   const copy = document.createElement('span');
-  copy.className = 'admire-copy';
+  copy.className = 'page-affiliation-copy';
   const groupName = document.createElement('strong');
   groupName.textContent = 'ADMIRE Group';
   const university = document.createElement('small');
   university.textContent = isZh ? '北京航空航天大学' : 'Beihang University';
   copy.append(groupName, university);
-  badge.append(mark, copy);
-  sideHeader.insertBefore(badge, search || null);
+  affiliation.append(emblem, copy);
+  languageSwitch.append(affiliation, options);
 }
 
 const content = document.querySelector('.rst-content');
@@ -2769,7 +2778,7 @@ if (content && !content.querySelector('.manual-credit')) {
 
   const author = document.createElement('div');
   const authorName = document.createElement('span');
-  authorName.textContent = isZh ? '手册编写者：楼嘉彬 · Lou Jiabin' : 'Manual author: 楼嘉彬 · Lou Jiabin';
+  authorName.textContent = isZh ? '编写者：楼嘉彬 · Lou Jiabin' : 'Author: 楼嘉彬 · Lou Jiabin';
   const email = document.createElement('a');
   email.href = 'mailto:loujiabin@buaa.edu.cn';
   email.textContent = 'loujiabin@buaa.edu.cn';

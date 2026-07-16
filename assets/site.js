@@ -16,26 +16,29 @@ if (search) {
 }
 
 const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
-const sideHeader = document.querySelector('.wy-side-nav-search');
-if (sideHeader && !sideHeader.querySelector('.admire-badge')) {
-  const badge = document.createElement('div');
-  badge.className = 'admire-badge';
-  badge.setAttribute('aria-label', isZh ? '北京航空航天大学 ADMIRE 组' : 'Beihang University ADMIRE Group');
+const languageSwitch = document.querySelector('.language-switch');
+if (languageSwitch && !languageSwitch.querySelector('.page-affiliation')) {
+  const options = document.createElement('div');
+  options.className = 'language-options';
+  Array.from(languageSwitch.children).forEach((child) => options.appendChild(child));
 
-  const mark = document.createElement('span');
-  mark.className = 'admire-mark';
-  mark.setAttribute('aria-hidden', 'true');
-  mark.textContent = 'BUAA';
+  const affiliation = document.createElement('div');
+  affiliation.className = 'page-affiliation';
+  const emblem = document.createElement('img');
+  emblem.src = '../assets/images/beihang-university-emblem.png';
+  emblem.alt = isZh ? '北京航空航天大学校徽' : 'Beihang University emblem';
+  emblem.width = 48;
+  emblem.height = 48;
 
   const copy = document.createElement('span');
-  copy.className = 'admire-copy';
+  copy.className = 'page-affiliation-copy';
   const groupName = document.createElement('strong');
   groupName.textContent = 'ADMIRE Group';
   const university = document.createElement('small');
   university.textContent = isZh ? '北京航空航天大学' : 'Beihang University';
   copy.append(groupName, university);
-  badge.append(mark, copy);
-  sideHeader.insertBefore(badge, search || null);
+  affiliation.append(emblem, copy);
+  languageSwitch.append(affiliation, options);
 }
 
 const content = document.querySelector('.rst-content');
@@ -52,7 +55,7 @@ if (content && !content.querySelector('.manual-credit')) {
 
   const author = document.createElement('div');
   const authorName = document.createElement('span');
-  authorName.textContent = isZh ? '手册编写者：楼嘉彬 · Lou Jiabin' : 'Manual author: 楼嘉彬 · Lou Jiabin';
+  authorName.textContent = isZh ? '编写者：楼嘉彬 · Lou Jiabin' : 'Author: 楼嘉彬 · Lou Jiabin';
   const email = document.createElement('a');
   email.href = 'mailto:loujiabin@buaa.edu.cn';
   email.textContent = 'loujiabin@buaa.edu.cn';
