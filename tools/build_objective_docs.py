@@ -2613,7 +2613,7 @@ def write_assets() -> None:
 
 
 STYLE = """
-:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--text:#30343b;--muted:#68717d;--border:#dfe5ea;--code:#f5f7f9;--paper:#fff}
+:root{--sidebar:#343131;--sidebar-dark:#2a2727;--sidebar-link:#d9d9d9;--accent:#2980b9;--accent-dark:#1f5f8b;--buaa:#8e2432;--text:#30343b;--muted:#68717d;--border:#dfe5ea;--code:#f5f7f9;--paper:#fff}
 *{box-sizing:border-box}
 html{font-size:16px}
 body{margin:0;color:var(--text);background:#edf0f2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;font-size:16px;line-height:1.72;letter-spacing:0}
@@ -2624,7 +2624,13 @@ a:hover{color:var(--accent-dark);text-decoration:underline}
 .wy-side-nav-search{background:var(--accent);color:#fff;padding:24px 18px 18px;text-align:center}
 .icon-home{display:block;color:#fff;font-size:20px;font-weight:700;line-height:1.25}
 .icon-home:hover{color:#fff}
-.version{margin:8px 0 16px;font-size:13px;opacity:.85}
+.version{margin:8px 0 10px;font-size:13px;opacity:.85}
+.admire-badge{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:8px 10px;border:1px solid rgba(255,255,255,.3);border-radius:4px;background:rgba(24,54,73,.22);text-align:left}
+.admire-mark{display:grid;place-items:center;flex:0 0 42px;width:42px;height:30px;border-radius:3px;background:var(--buaa);color:#fff;font-size:10px;font-weight:800;line-height:1}
+.admire-copy{min-width:0;line-height:1.2}
+.admire-copy strong,.admire-copy small{display:block;color:#fff;letter-spacing:0}
+.admire-copy strong{font-size:13px;font-weight:750}
+.admire-copy small{margin-top:3px;font-size:10px;opacity:.86}
 #doc-search{width:100%;height:36px;border:0;border-radius:4px;padding:0 10px;color:#333}
 .wy-menu{padding:16px 0 32px}
 .caption{margin:0;padding:0 20px 8px;color:#55a5d9;font-size:12px;font-weight:700;text-transform:uppercase}
@@ -2684,6 +2690,10 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .doc-card strong{display:block;color:#222}
 .doc-card em{display:block;color:var(--muted);font-style:normal;font-size:14px}
 .step{padding-left:12px;border-left:3px solid #d9e8f2;color:#36414d}
+.manual-credit{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-top:56px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:13px;line-height:1.55}
+.manual-credit strong{display:block;color:#333b44;font-size:14px}
+.manual-credit span{display:block}
+.manual-credit a{white-space:nowrap}
 .mobile-bar{display:none;align-items:center;gap:12px;background:var(--sidebar);color:#fff;padding:10px 14px}
 #menu-toggle{appearance:none;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:4px;width:34px;height:32px;font-size:20px}
 .hidden-by-search{display:none!important}
@@ -2700,12 +2710,101 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
   h2{font-size:22px;margin-top:34px}
   h3{font-size:18px}
   .github-link{float:none;display:block;margin-top:8px}
+  .manual-credit{align-items:flex-start;flex-direction:column;gap:8px;margin-top:42px}
 }
 """.strip() + "\n"
 
 SCRIPT = """
-const toggle=document.getElementById('menu-toggle');if(toggle){toggle.addEventListener('click',()=>document.body.classList.toggle('nav-open'))}const search=document.getElementById('doc-search');const navItems=Array.from(document.querySelectorAll('#nav-list li'));if(search){search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();navItems.forEach(item=>{const text=item.textContent.toLowerCase();item.classList.toggle('hidden-by-search',q&&!text.includes(q))})})}
-const isZh=document.documentElement.lang.toLowerCase().startsWith('zh');document.querySelectorAll('pre code').forEach(code=>{const pre=code.parentElement;if(!pre||pre.querySelector('.copy-code'))return;pre.classList.add('has-copy-button');const button=document.createElement('button');button.type='button';button.className='copy-code';button.textContent=isZh?'复制':'Copy';button.setAttribute('aria-label',isZh?'复制代码':'Copy code');button.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code.textContent);button.textContent=isZh?'已复制':'Copied'}catch(error){const range=document.createRange();range.selectNodeContents(code);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);button.textContent=isZh?'请按 Ctrl+C':'Press Ctrl+C'}setTimeout(()=>{button.textContent=isZh?'复制':'Copy'},1600)});pre.appendChild(button)})
+const toggle = document.getElementById('menu-toggle');
+if (toggle) {
+  toggle.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+}
+
+const search = document.getElementById('doc-search');
+const navItems = Array.from(document.querySelectorAll('#nav-list li'));
+if (search) {
+  search.addEventListener('input', () => {
+    const query = search.value.trim().toLowerCase();
+    navItems.forEach((item) => {
+      const text = item.textContent.toLowerCase();
+      item.classList.toggle('hidden-by-search', query && !text.includes(query));
+    });
+  });
+}
+
+const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
+const sideHeader = document.querySelector('.wy-side-nav-search');
+if (sideHeader && !sideHeader.querySelector('.admire-badge')) {
+  const badge = document.createElement('div');
+  badge.className = 'admire-badge';
+  badge.setAttribute('aria-label', isZh ? '北京航空航天大学 ADMIRE 组' : 'Beihang University ADMIRE Group');
+
+  const mark = document.createElement('span');
+  mark.className = 'admire-mark';
+  mark.setAttribute('aria-hidden', 'true');
+  mark.textContent = 'BUAA';
+
+  const copy = document.createElement('span');
+  copy.className = 'admire-copy';
+  const groupName = document.createElement('strong');
+  groupName.textContent = 'ADMIRE Group';
+  const university = document.createElement('small');
+  university.textContent = isZh ? '北京航空航天大学' : 'Beihang University';
+  copy.append(groupName, university);
+  badge.append(mark, copy);
+  sideHeader.insertBefore(badge, search || null);
+}
+
+const content = document.querySelector('.rst-content');
+if (content && !content.querySelector('.manual-credit')) {
+  const footer = document.createElement('footer');
+  footer.className = 'manual-credit';
+
+  const affiliation = document.createElement('div');
+  const affiliationName = document.createElement('strong');
+  affiliationName.textContent = isZh ? '北航 ADMIRE 组' : 'BUAA ADMIRE Group';
+  const affiliationDetail = document.createElement('span');
+  affiliationDetail.textContent = isZh ? '北京航空航天大学' : 'Beihang University';
+  affiliation.append(affiliationName, affiliationDetail);
+
+  const author = document.createElement('div');
+  const authorName = document.createElement('span');
+  authorName.textContent = isZh ? '手册编写者：楼嘉彬 · Lou Jiabin' : 'Manual author: 楼嘉彬 · Lou Jiabin';
+  const email = document.createElement('a');
+  email.href = 'mailto:loujiabin@buaa.edu.cn';
+  email.textContent = 'loujiabin@buaa.edu.cn';
+  author.append(authorName, email);
+  footer.append(affiliation, author);
+  content.appendChild(footer);
+}
+
+document.querySelectorAll('pre code').forEach((code) => {
+  const pre = code.parentElement;
+  if (!pre || pre.querySelector('.copy-code')) return;
+  pre.classList.add('has-copy-button');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'copy-code';
+  button.textContent = isZh ? '复制' : 'Copy';
+  button.setAttribute('aria-label', isZh ? '复制代码' : 'Copy code');
+  button.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(code.textContent);
+      button.textContent = isZh ? '已复制' : 'Copied';
+    } catch (error) {
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      button.textContent = isZh ? '请按 Ctrl+C' : 'Press Ctrl+C';
+    }
+    setTimeout(() => {
+      button.textContent = isZh ? '复制' : 'Copy';
+    }, 1600);
+  });
+  pre.appendChild(button);
+});
 """.strip() + "\n"
 
 
