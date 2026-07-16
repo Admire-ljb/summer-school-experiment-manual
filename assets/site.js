@@ -55,7 +55,7 @@ if (content && !content.querySelector('.manual-credit')) {
 
   const author = document.createElement('div');
   const authorName = document.createElement('span');
-  authorName.textContent = isZh ? '编写者：楼嘉彬 · Lou Jiabin' : 'Author: 楼嘉彬 · Lou Jiabin';
+  authorName.textContent = isZh ? '编写者：楼嘉彬' : 'Author: Lou Jiabin';
   const email = document.createElement('a');
   email.href = 'mailto:loujiabin@buaa.edu.cn';
   email.textContent = 'loujiabin@buaa.edu.cn';
