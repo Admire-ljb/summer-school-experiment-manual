@@ -2089,7 +2089,7 @@ def apply_autonomous_mapping_overrides(lang: str, body: str) -> str:
     )
 
 
-def apply_competition_formula_override(lang: str, body: str) -> str:
+def apply_competition_rules_override(lang: str, body: str) -> str:
     if lang == "zh":
         old = '''<p>S:最终成绩（m），越小越好</p>
 <p>v:无人机在整个任务流程中设置的恒定的速度（m/s）</p>
@@ -2124,12 +2124,84 @@ def apply_competition_formula_override(lang: str, body: str) -> str:
 <li><code>Reward</code>: 1.4 m each for R2 and R3, 4.9 m for R4, and 1.05 m for R1. Add all rewards earned before substituting the value into the formula.</li>
 <li><code>Punish</code>: 0.35 m for a non-standard landing position inside Area A; otherwise 0.</li>
 </ul></div>'''
-    return body.replace(old, new)
+    body = body.replace(old, new)
+    if lang == "zh":
+        creative_intro = '<p>该板块的展示任务希望同学们根据学习到的 Crazyflie 无人机传感器应用知识以及相应的软件编程知识来完成，不限定使用何种传感器或程序模块，鼓励同学们在规则基础上发挥创意，以更优策略完成任务。</p>'
+        creative_summary = '''
+<h3>规则摘要</h3>
+<table><tbody>
+<tr><th>项目</th><th>创意板块规则</th></tr>
+<tr><td>任务路线</td><td>从 A 区起飞，经过 B、C 区后返回 A 区降落；B、C 的先后顺序不限。</td></tr>
+<tr><td>速度</td><td>全程采用同一个恒定速度，且必须低于 <code>0.3 m/s</code>。</td></tr>
+<tr><td>高度</td><td>飞行高度不得高于挡板顶沿，场地挡板高度为 <code>45 cm</code>。</td></tr>
+<tr><td>碰撞</td><td>单次有效任务最多允许 2 次明确碰撞；发生第 3 次碰撞时，本次任务立即失效。</td></tr>
+<tr><td>奖励点</td><td>R1、R2、R3、R4 均为奖励点。R1 位于起终点 A 区，同样计入奖励。</td></tr>
+<tr><td>成绩方向</td><td>按计分公式计算，最终数值越小越好。</td></tr>
+</tbody></table>'''
+        speed_intro = '<p>该板块的展示主题为“速度”，最快完成任务即为最优。但是同学们一定要注意飞行安全，同时也要尽量保证无人机硬件的安全与完整。</p>'
+        speed_replacement = '''<p>该板块以完成时间为主要排序依据，不设置比赛速度上限，但必须同时满足高度和零碰撞要求。任何一次明确碰撞都会使本次竞速成绩失效。</p>
+<h3>规则摘要</h3>
+<table><tbody>
+<tr><th>项目</th><th>竞速板块规则</th></tr>
+<tr><td>任务路线</td><td>从图示起点起飞，进入终点区域并完成降落。</td></tr>
+<tr><td>速度</td><td>不设速度上限；参赛组自行确定速度和控制策略。</td></tr>
+<tr><td>高度</td><td>飞行高度不得高于挡板顶沿，场地挡板高度为 <code>45 cm</code>。</td></tr>
+<tr><td>碰撞</td><td>不允许碰撞；发生任何一次明确碰撞，本次成绩立即失效。</td></tr>
+<tr><td>计时</td><td>从无人机离开地面开始，到在终点区域完全降落并静止为止。</td></tr>
+<tr><td>成绩方向</td><td>计入落点罚时后，用时越短越好。</td></tr>
+</tbody></table>'''
+        replacements = {
+            '<p>奖励机制：无人机的飞行路径经过了R2、R3、R4都会获得奖励。</p>': '<p>奖励机制：R1、R2、R3、R4 均设置奖励。R1 位于起终点 A 区；R2、R3、R4 分布在任务路径中。每个奖励点在单次任务中最多计入一次。</p>',
+            '<p>希望同学们考虑整体无人机飞行路径的代价：飞行路径长度+奖励</p>': '<p>创意板块的成绩同时考虑有效飞行距离、奖励和降落惩罚，具体以展示流程中的计分公式为准。</p>',
+            '<p>整个飞行过程中无人机的高度不能超过挡板的高度，且不能与挡板发生碰撞（极其轻微的刮擦不算），否则算作此次飞行任务失败。</p>': '<p>整个飞行过程中，无人机飞行高度不得高于挡板顶沿（45 cm）。单次任务最多允许 2 次明确碰撞；发生第 3 次碰撞时，本次飞行任务立即失效。极轻微擦碰不计入碰撞次数；是否构成明确碰撞以教师现场判定和视频记录为准。碰撞次数不直接代入计分公式，只用于判断本次任务是否有效。</p>',
+            '<p>对于R2、R3、R4区域，在飞行过程中无人机的垂直方向上的投影经过了该区域则可以获得该区域的奖励，无人机降落时静止在地面上的投影有两个电机的部分位于R1区域则可以获得该区域的奖励。</p>': '<p>R1、R2、R3、R4 均可获得奖励。对于 R2、R3、R4，无人机在飞行过程中的垂直投影经过对应区域即可获得该区域奖励；R1 位于起终点 A 区，无人机最终降落并静止后，至少两个电机的投影位于 R1 区域内或边界上，即可获得 R1 奖励。每个奖励点在单次任务中只计一次。</p>',
+            '<p>大体的任务要求如下：无人机在如图所示的起点任意位置开始起飞，降落在终点的区域。从无人机开始起飞离开地面开始计时，到无人机完全降落静止在终点区域为止。所用时间更少成绩更好。不限制飞行高度，但是一定要注意飞行安全！注意保护无人机硬件不被损坏！</p>': '<p>无人机从图示起点区域内任意位置起飞，并在终点区域完成降落。竞速板块不设置速度上限；飞行高度不得高于挡板顶沿（45 cm）。从无人机离开地面开始计时，到无人机在终点区域完全降落并静止时停止计时。发生任何一次明确碰撞时，本次成绩立即失效，不再继续计时排名。</p>',
+            '<p>最终无人机是否降落在终点的评判标准为，无人机至少有两个电机的位置处于终点区域内，在边界上也算。如果没有达到上述标准，但是至少有一个电机的位置处于终点区域内或者位于边界上，罚时5秒计入成绩。其它的降落情况都不计入成绩。</p>': '<p>有效竞速任务必须全程保持在挡板顶沿以下且没有发生碰撞。最终降落时，至少两个电机位于终点区域内或边界上，视为正常完成；若只有一个电机位于终点区域内或边界上，成绩增加 5 秒罚时；其它降落情况均视为本次成绩失效。</p>',
+        }
+    else:
+        creative_intro = '<p>The display tasks in this section are expected to be completed by students based on the Crazyflie drone sensor application knowledge and corresponding software programming knowledge they have learned. There are no restrictions on which sensors or program modules to use. Students are encouraged to be creative based on the rules and complete the tasks with better strategies.</p>'
+        creative_summary = '''
+<h3>Rule summary</h3>
+<table><tbody>
+<tr><th>Item</th><th>Creative-section rule</th></tr>
+<tr><td>Route</td><td>Take off from Area A, pass through Areas B and C in either order, and return to Area A to land.</td></tr>
+<tr><td>Speed</td><td>Use one constant speed throughout the run, and keep it below <code>0.3 m/s</code>.</td></tr>
+<tr><td>Height</td><td>Do not fly above the top edge of the arena baffles, which are <code>45 cm</code> high.</td></tr>
+<tr><td>Collisions</td><td>A valid run may contain at most two confirmed collisions. The third collision immediately invalidates the run.</td></tr>
+<tr><td>Reward zones</td><td>R1, R2, R3, and R4 are all reward zones. R1 is located inside the start/finish Area A and also earns a reward.</td></tr>
+<tr><td>Ranking</td><td>Apply the scoring formula; a lower final value is better.</td></tr>
+</tbody></table>'''
+        speed_intro = '<p>The display theme of this section is &quot;speed&quot;, and the fastest completion of the task is the best. However, students must pay attention to flight safety and try to ensure the safety and integrity of the drone hardware.</p>'
+        speed_replacement = '''<p>This section is ranked primarily by completion time. There is no competition speed limit, but the height and zero-collision requirements remain mandatory. Any confirmed collision invalidates the current speed-trial result.</p>
+<h3>Rule summary</h3>
+<table><tbody>
+<tr><th>Item</th><th>Speed-section rule</th></tr>
+<tr><td>Route</td><td>Take off from the indicated start area, enter the finish area, and complete the landing.</td></tr>
+<tr><td>Speed</td><td>No speed limit; each team selects its own speed and control strategy.</td></tr>
+<tr><td>Height</td><td>Do not fly above the top edge of the arena baffles, which are <code>45 cm</code> high.</td></tr>
+<tr><td>Collisions</td><td>No collisions are allowed. Any confirmed collision immediately invalidates the run.</td></tr>
+<tr><td>Timing</td><td>From the moment the aircraft leaves the ground until it has fully landed and stopped inside the finish area.</td></tr>
+<tr><td>Ranking</td><td>After any landing-time penalty is added, a shorter time is better.</td></tr>
+</tbody></table>'''
+        replacements = {
+            '<p>Reward mechanism: The drone&#x27;s flight path will receive rewards if it passes through R2, R3, and R4.</p>': '<p>Reward mechanism: R1, R2, R3, and R4 all carry rewards. R1 is located inside the start/finish Area A, while R2, R3, and R4 are distributed along the task route. Each reward zone may be counted only once in a run.</p>',
+            '<p>I hope students will consider the cost of the overall drone flight path: flight path length + reward</p>': '<p>The creative-section score combines effective flight distance, earned rewards, and the landing penalty, as defined by the scoring formula below.</p>',
+            '<p>During the entire flight, the height of the drone cannot exceed the height of the baffle, and it cannot collide with the baffle (extremely slight scratches do not count), otherwise the flight mission will be considered a failure.</p>': '<p>Throughout the run, the aircraft must remain below the top edge of the 45 cm baffles. A run may contain at most two confirmed collisions; the third collision immediately invalidates the run. Extremely light brushing contact is not counted as a collision. The instructor determines confirmed collisions from on-site observation and the video record. Collision count is not substituted into the scoring formula; it is used only to determine whether the run remains valid.</p>',
+            '<p>For R2, R3, and R4 areas, if the vertical projection of the drone passes through this area during flight, you can get rewards in this area. When the drone lands, the part of the projection that is stationary on the ground and has two motors is in the R1 area, you can get rewards in this area.</p>': '<p>R1, R2, R3, and R4 can all earn rewards. For R2, R3, and R4, the reward is earned when the aircraft&#x27;s vertical projection passes through the corresponding zone. R1 is inside the start/finish Area A; its reward is earned when, after the final landing, the projection of at least two motors lies inside R1 or on its boundary. Each reward zone is counted only once per run.</p>',
+            '<p>The general mission requirements are as follows: the drone takes off from any starting point as shown in the figure and lands at the end point. The timing starts from the time when the drone takes off and leaves the ground, until the drone completely lands and remains stationary in the end area. Less time spent, better results. There is no flight height limit, but you must pay attention to flight safety! Pay attention to protect the drone hardware from damage!</p>': '<p>The aircraft takes off from any position inside the indicated start area and lands inside the finish area. The speed section has no speed limit, but the aircraft must remain below the top edge of the 45 cm baffles. Timing starts when the aircraft leaves the ground and stops when it has completely landed and become stationary inside the finish area. Any confirmed collision immediately invalidates the run, which is then excluded from the time ranking.</p>',
+            '<p>The final criterion for judging whether the drone lands at the end point is that the position of at least two motors of the drone is within the end point area, including on the boundary. If the above criteria are not met, but at least one motor is located within the finish area or on the boundary, a 5-second penalty will be included in the score. Other landing situations will not be included in the score.</p>': '<p>A valid speed run must remain below the baffle height and contain no collisions. At the final landing, at least two motors must be inside the finish area or on its boundary for a normal completion. If only one motor is inside the finish area or on its boundary, add a 5-second penalty. All other landing outcomes invalidate the run.</p>',
+        }
+    if "Creative-section rule" not in body and "创意板块规则" not in body:
+        body = body.replace(creative_intro, creative_intro + creative_summary)
+    body = body.replace(speed_intro, speed_replacement)
+    for source, replacement in replacements.items():
+        body = body.replace(source, replacement)
+    return body
 
 
 def apply_manual_overrides(manual: Manual, lang: str, body: str) -> str:
     if manual.slug == FINAL_TEST_SLUG:
-        return apply_competition_formula_override(lang, body)
+        return apply_competition_rules_override(lang, body)
     if manual.slug == "manual-01-vm":
         return apply_vm_manual_overrides(lang, body)
     if manual.slug == "manual-07-autonomous-mapping-review":
