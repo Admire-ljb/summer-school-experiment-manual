@@ -12,3 +12,10 @@ Files:
 ## Group Registration QR Code
 
 Send the public Feishu form URL after disabling login verification. A second QR code can then be generated with the same style.
+
+## Group Registration QR Code
+
+Files:
+
+- `group-registration-qr.png`: plain QR code extracted from the provided Feishu form QR image.
+- `group-registration-qr-card.png`: classroom/PPT card with bilingual Chinese-English label.

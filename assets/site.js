@@ -5,6 +5,7 @@ if (toggle) {
 
 const search = document.getElementById('doc-search');
 const navItems = Array.from(document.querySelectorAll('#nav-list li'));
+const navLinks = Array.from(document.querySelectorAll('#nav-list a'));
 if (search) {
   search.addEventListener('input', () => {
     const query = search.value.trim().toLowerCase();
@@ -14,6 +15,23 @@ if (search) {
     });
   });
 }
+
+function syncHashNavigation() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const matched = navLinks.find((link) => {
+    const url = new URL(link.getAttribute('href'), window.location.href);
+    const linkPage = url.pathname.split('/').pop() || 'index.html';
+    return linkPage === currentPage && url.hash === hash;
+  });
+  if (!matched) return;
+  navLinks.forEach((link) => link.classList.remove('active'));
+  matched.classList.add('active');
+}
+
+syncHashNavigation();
+window.addEventListener('hashchange', syncHashNavigation);
 
 const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
 const languageSwitch = document.querySelector('.language-switch');
