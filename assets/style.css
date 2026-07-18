@@ -87,10 +87,14 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .project-card video{display:block;width:100%;aspect-ratio:16/9;background:#111}
 .project-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#f3f5f7}
 .project-card iframe{display:block;width:100%;aspect-ratio:16/9;background:#111;border:0}
+.project-card--wide{grid-column:1/-1}
 .bilibili-card{margin:18px 0 30px}
 .project-card figcaption{padding:12px 14px 14px;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .project-card figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .project-card figcaption span{display:block}
+.project-card.project-card--wide figcaption{padding:16px 18px 18px}
+.project-card.project-card--wide figcaption strong{font-size:18px}
+.project-card.project-card--wide figcaption span{font-size:15px}
 .annual-highlight-video{max-width:760px;margin:20px auto 26px}
 .annual-highlight-video video{display:block;width:100%;aspect-ratio:16/9;background:#111;border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .annual-highlight-video figcaption{max-width:720px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
