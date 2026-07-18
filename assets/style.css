@@ -82,8 +82,8 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .highlight-card strong,.highlight-card span{display:block;margin:0 14px}
 .highlight-card strong{padding-top:12px;color:#222;font-size:16px;line-height:1.4}
 .highlight-card span{padding:5px 0 14px;color:var(--muted);font-size:14px;line-height:1.5}
-.project-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;margin:18px 0 30px}
-.project-card{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.project-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:18px 0 30px}
+.project-card{background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);margin:0}
 .project-card video{display:block;width:100%;aspect-ratio:16/9;background:#111}
 .project-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#f3f5f7}
 .project-card iframe{display:block;width:100%;aspect-ratio:16/9;background:#111;border:0}
