@@ -1256,7 +1256,7 @@ def layout(lang: str, title: str, body: str, current_slug: str | None = None) ->
         if lang == "zh"
         else f'<a href="{zh_href}">Chinese</a><span>English</span>'
     )
-    project_title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c" if lang == "zh" else "Palm-sized UAV Experiment Manual"
+    project_title = "\u638c\u4e0a\u65e0\u4eba\u673a\u81ea\u4e3b\u7cfb\u7edf\u5b9e\u9a8c\u624b\u518c" if lang == "zh" else "Palm-sized UAV Autonomous Systems Laboratory Manual"
     search = "\u641c\u7d22\u6587\u6863" if lang == "zh" else "Search docs"
     caption = "\u76ee\u5f55" if lang == "zh" else "Contents"
     github = "\u5728 GitHub \u4e0a\u67e5\u770b" if lang == "zh" else "View on GitHub"
@@ -1319,7 +1319,7 @@ def write_index(lang: str) -> None:
         body += '</div><h2>\u6bd4\u8d5b\u8bf4\u660e</h2><div class="toctree-wrapper">' + competition_card + '</div>'
         title = "\u638c\u4e0a\u65e0\u4eba\u673a\u5b9e\u9a8c\u624b\u518c"
     else:
-        body = "<h1>Palm-sized UAV Experiment Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><div class=\"admonition\"><p class=\"admonition-title\">Course Materials Package</p><p>Download the <code>course-materials</code> folder from the <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">BUAA cloud link</a>. The link is valid until November 11, 2028 at 10:31. After downloading, extract it as <code>course-materials</code> so the paths in this manual match the folder name.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
+        body = "<h1>Palm-sized UAV Autonomous Systems Laboratory Manual</h1><p>This manual covers environment setup, sensor use, path-planning simulation, cflib programming, flight-control routines, and integrated project tasks for palm-sized UAV experiments.</p><div class=\"admonition warning\"><p class=\"admonition-title\">Safety note</p><p>Experiments involving real flight must be conducted only after the instructor or teaching assistant confirms the arena, equipment, batteries, and emergency-stop procedure.</p></div><div class=\"admonition\"><p class=\"admonition-title\">Course Materials Package</p><p>Download the <code>course-materials</code> folder from the <a href=\"https://bhpan.buaa.edu.cn/link/AA5DF49653676B4EDFBAB8B2A09B0FBEE9\">BUAA cloud link</a>. The link is valid until November 11, 2028 at 10:31. After downloading, extract it as <code>course-materials</code> so the paths in this manual match the folder name.</p></div><h2>Experiment list</h2><div class=\"toctree-wrapper\">"
         competition_card = ""
         for manual in MANUALS:
             card = f'<a class="doc-card" href="{manual.slug}.html"><span>{manual_label(manual, "en")}</span><strong>{html.escape(manual_display_title(manual, "en"))}</strong></a>\n'
@@ -1328,7 +1328,7 @@ def write_index(lang: str) -> None:
             else:
                 body += card
         body += '</div><h2>Competition Brief</h2><div class="toctree-wrapper">' + competition_card + '</div>'
-        title = "Palm-sized UAV Experiment Manual"
+        title = "Palm-sized UAV Autonomous Systems Laboratory Manual"
     (ROOT / lang / "index.html").write_text(layout(lang, title, body), encoding="utf-8")
 
 def english_body(manual: Manual, blocks: list[Block], cache: dict[str, str], image_map: dict[str, str]) -> str:
@@ -2818,10 +2818,10 @@ document.querySelectorAll('pre code').forEach((code) => {
 
 
 def write_root_files(manifest: dict[str, dict[str, int]]) -> None:
-    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Experiment Manual</title></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
+    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Autonomous Systems Laboratory Manual</title></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
     (ROOT / ".nojekyll").write_text("", encoding="utf-8")
     (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (ROOT / "README.md").write_text("""# Palm-sized UAV Experiment Manual
+    (ROOT / "README.md").write_text("""# Palm-sized UAV Autonomous Systems Laboratory Manual
 
 Bilingual experiment manual for palm-sized UAV summer school labs.
 

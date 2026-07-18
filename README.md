@@ -1,4 +1,4 @@
-# Palm-sized UAV Experiment Manual
+# Palm-sized UAV Autonomous Systems Laboratory Manual
 
 Bilingual experiment manual for palm-sized UAV summer school labs.
 
