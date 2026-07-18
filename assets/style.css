@@ -89,6 +89,17 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .project-card iframe{display:block;width:100%;aspect-ratio:16/9;background:#111;border:0}
 .project-card--wide{grid-column:1/-1}
 .bilibili-card{max-width:760px;margin:18px auto 30px}
+.interview-outline{max-width:760px;margin:-12px auto 34px;border:1px solid var(--border);border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.05);overflow:hidden}
+.interview-outline summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 18px;color:#2b333c;font-size:15px;font-weight:600;line-height:1.4;cursor:pointer;list-style:none}
+.interview-outline summary::-webkit-details-marker{display:none}
+.interview-outline summary::after{content:"+";flex:0 0 auto;color:var(--link);font-size:22px;font-weight:400;line-height:1}
+.interview-outline[open] summary::after{content:"-"}
+.interview-outline[open] summary{border-bottom:1px solid var(--border)}
+.interview-outline-content{padding:4px 18px 16px}
+.interview-outline-content section{padding:13px 0 12px;border-bottom:1px solid #edf0f2}
+.interview-outline-content section:last-child{border-bottom:0;padding-bottom:2px}
+.interview-outline-content h3{margin:0 0 6px;color:#2b333c;font-size:15px;line-height:1.5}
+.interview-outline-content p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
 .project-card figcaption{padding:12px 14px 14px;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .project-card figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .project-card figcaption span{display:block}
