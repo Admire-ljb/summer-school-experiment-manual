@@ -88,7 +88,7 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .project-card img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#f3f5f7}
 .project-card iframe{display:block;width:100%;aspect-ratio:16/9;background:#111;border:0}
 .project-card--wide{grid-column:1/-1}
-.bilibili-card{margin:18px 0 30px}
+.bilibili-card{max-width:760px;margin:18px auto 30px}
 .project-card figcaption{padding:12px 14px 14px;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .project-card figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .project-card figcaption span{display:block}
@@ -115,6 +115,7 @@ figure img{display:block;width:auto;height:auto;max-width:100%;max-height:76vh;o
 .certificate-card figcaption span{display:block}
 .acknowledgement-team{max-width:760px;margin:20px auto 30px}
 .acknowledgement-team img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#f3f5f7}
+.acknowledgement-team--natural img{aspect-ratio:auto;object-fit:contain}
 .acknowledgement-team figcaption{max-width:720px;margin:10px auto 0;color:var(--muted);font-size:14px;line-height:1.55;text-align:left}
 .acknowledgement-team figcaption strong{display:block;color:#2b333c;font-size:15px;margin-bottom:3px}
 .acknowledgement-team figcaption span{display:block}
