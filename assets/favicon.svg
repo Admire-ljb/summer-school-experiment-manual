@@ -1,15 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
-  <title id="title">Palm-sized UAV</title>
-  <desc id="desc">A compact quadrotor icon with a sensor indicator</desc>
-  <rect width="64" height="64" rx="14" fill="#123653"/>
-  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-width="4">
-    <path d="M20 21 29 29M44 21 35 29M20 43 29 35M44 43 35 35"/>
-    <circle cx="15" cy="17" r="7" fill="#20a7cf"/>
-    <circle cx="49" cy="17" r="7" fill="#20a7cf"/>
-    <circle cx="15" cy="47" r="7" fill="#20a7cf"/>
-    <circle cx="49" cy="47" r="7" fill="#20a7cf"/>
-  </g>
-  <rect x="23" y="24" width="18" height="16" rx="5" fill="#ffffff"/>
-  <path d="M27 40v5m10-5v5" stroke="#ffffff" stroke-linecap="round" stroke-width="3"/>
-  <circle cx="32" cy="32" r="3.5" fill="#f0a43a"/>
+  <title id="title">Laboratory Manual</title>
+  <desc id="desc">A compact two-page documentation icon</desc>
+  <rect width="64" height="64" rx="14" fill="#eef5f8"/>
+  <path d="M12 12h17c1.7 0 3 1.3 3 3v37H15c-1.7 0-3-1.3-3-3V12Z" fill="#ffffff" stroke="#50616b" stroke-linejoin="round" stroke-width="4"/>
+  <path d="M52 12H35c-1.7 0-3 1.3-3 3v37h17c1.7 0 3-1.3 3-3V12Z" fill="#ffffff" stroke="#50616b" stroke-linejoin="round" stroke-width="4"/>
+  <path d="M20 22h5M20 30h5M20 38h5M39 22h5M39 30h5M39 38h5" stroke="#20a7cf" stroke-linecap="round" stroke-width="4"/>
 </svg>

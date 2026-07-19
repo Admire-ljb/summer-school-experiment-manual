@@ -1266,7 +1266,7 @@ def layout(lang: str, title: str, body: str, current_slug: str | None = None) ->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(title)} - {html.escape(project_title)}</title>
-  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg?v=2">
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -2819,7 +2819,7 @@ document.querySelectorAll('pre code').forEach((code) => {
 
 
 def write_root_files(manifest: dict[str, dict[str, int]]) -> None:
-    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Autonomous Systems Laboratory Manual</title><link rel="icon" type="image/svg+xml" href="assets/favicon.svg"></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
+    (ROOT / "index.html").write_text('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=en/index.html"><title>Palm-sized UAV Autonomous Systems Laboratory Manual</title><link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2"></head><body><p><a href="en/index.html">English</a> &middot; <a href="zh/index.html">Chinese</a></p></body></html>\n', encoding="utf-8")
     (ROOT / ".nojekyll").write_text("", encoding="utf-8")
     (ROOT / "docs-manifest.json").write_text(json.dumps({"source_dir": str(SOURCE_DIR), "manuals": [manual.__dict__ for manual in MANUALS], "stats": manifest}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (ROOT / "README.md").write_text("""# Palm-sized UAV Autonomous Systems Laboratory Manual
